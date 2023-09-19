@@ -17,10 +17,6 @@ sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
           thetas = take 2000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
           gammas = take 2000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
 
-
-sphereInstance :: [Point3D]
-sphereInstance = sphere 150
-
 project :: Float -> Float -> Float -> Point3D -> Point
 project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
     where (lookAtX, lookAtY, lookAtZ) = (0.0, 0.0, 0.0)
@@ -38,16 +34,14 @@ project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
           projectedX = eyeZ/dz*dx - eyeX
           projectedY = eyeZ/dz*dy - eyeY
 
-projectInstance :: Point3D -> Point
-projectInstance = project 100 20 200
-
 frame :: Float -> Picture
-frame seconds = pictures (map redDot imageSpaceCoords)
+frame seconds = pictures (map redDot (imageSpaceCoords ++ imageSpaceCoords2))
                 where offset = movePoint (0.0, 0.0, 400.0)
                       rotation' = rotatePoint 'X' (seconds * 35.0) .
                                 rotatePoint 'Y' (seconds * 45.0)
-                      moved = map (offset . rotation') sphereInstance
-                      imageSpaceCoords = map projectInstance moved
+                      moved = map (offset . rotation') (sphere 60)                       
+                      imageSpaceCoords = map (project 100 100 300) moved
+                      imageSpaceCoords2 = map (project (-100) (-100) 300) moved
 
 main :: IO ()
 main = do
