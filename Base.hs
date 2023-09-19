@@ -3,11 +3,13 @@ module Base where
 import System.IO ()
 import Graphics.Gloss.Geometry.Angle
 
-
+type Point = (Float, Float)
 type Point3D = (Float, Float, Float)
 type Direction = (Float, Float, Float)
 type Base = (Direction, Direction, Direction)
 
+floatTupleToIntTuple :: (Float, Float) -> (Int, Int)
+floatTupleToIntTuple (x, y) = (round x, round y)
 
 showPoint3D :: Point3D -> String
 showPoint3D (x, y, z) = "Point3D: (" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ")"
@@ -39,6 +41,22 @@ polarToCartesian theta gamma radius = (x, y, z)
           y = radius * sinTheta * sin gammaRad
           z = radius * cos thetaRad
 
+
+project :: Float -> Float -> Float -> Point3D -> Point
+project baseX baseY baseZ (x0, y0, z0) = (projectedX, projectedY)
+    where (lookAtX, lookAtY, lookAtZ) = (0.0, 0.0, 0.0)
+          (x, y, z) = (x0 - lookAtX, y0 - lookAtY, z0 - lookAtZ)
+          (alpha, beta, gamma) = (degToRad 0.0, degToRad 0.0, degToRad 0.0)
+          (cosAlpha, sinAlpha) = (cos alpha, sin alpha)
+          (cosBeta, sinBeta) = (cos beta, sin beta)
+          (cosGamma, sinGamma) = (cos gamma, sin gamma)
+          (dx, dy, dz) = (cosBeta*(sinGamma*y + cosGamma*x) - sinBeta*z,
+                          sinAlpha*(cosBeta*z + sinBeta*(sinGamma*y + cosGamma*x)) +
+                          cosAlpha*(cosGamma*y - sinGamma*x),
+                          cosAlpha*(cosBeta*z + sinBeta*(sinGamma*y + cosGamma*x)) -
+                          sinAlpha*(cosGamma*y - sinGamma*x)) 
+          projectedX = baseZ/dz*dx - baseX
+          projectedY = baseZ/dz*dy - baseY
     
 -- -- Resta de puntos -> Dirección del primero al segundo
 (#) :: Point3D -> Point3D -> Direction

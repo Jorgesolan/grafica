@@ -1,18 +1,9 @@
 import Base
-import Graphics.Gloss
+import Files
+
+import qualified Data.ByteString as BS
 import System.Random
-import Graphics.Gloss.Geometry.Angle
-window :: Display
-window = InWindow "random points on sphere with Haskell" (600, 450) (20, 20)
 
-dot :: Color -> Point -> Picture
-dot col (x, y) = Color col $ translate x y $ thickCircle 1.0 2.0
-
-greenDot :: Point -> Picture
-greenDot (x, y) = dot green (x, y)
-
-fatSphere :: Color -> Float -> Point -> Picture
-fatSphere col radius (x, y) = Color col $ translate x y $ thickCircle 1.0 radius
 
 sphere :: Float -> [Point3D]
 sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
@@ -22,37 +13,29 @@ sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
             gammas = take 100 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
 
 
-project :: Float -> Float -> Float -> Point3D -> Point
-project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
-    where (lookAtX, lookAtY, lookAtZ) = (0.0, 0.0, 0.0)
-          (x, y, z) = (x0 - lookAtX, y0 - lookAtY, z0 - lookAtZ)
-          (alpha, beta, gamma) = (degToRad 0.0, degToRad 0.0, degToRad 0.0)
-          (cosAlpha, sinAlpha) = (cos alpha, sin alpha)
-          (cosBeta, sinBeta) = (cos beta, sin beta)
-          (cosGamma, sinGamma) = (cos gamma, sin gamma)
-          (dx, dy, dz) = (cosBeta*(sinGamma*y + cosGamma*x) - sinBeta*z,
-                          sinAlpha*(cosBeta*z + sinBeta*(sinGamma*y + cosGamma*x)) +
-                          cosAlpha*(cosGamma*y - sinGamma*x),
-                          cosAlpha*(cosBeta*z + sinBeta*(sinGamma*y + cosGamma*x)) -
-                          sinAlpha*(cosGamma*y - sinGamma*x)) 
-          projectedX = eyeZ/dz*dx - eyeX
-          projectedY = eyeZ/dz*dy - eyeY
+-- recenter :: Int -> Int -> (Int, Int) -> (Int, Int)
+-- recenter w h (x, y) = (x-w, y-h)
 
-frame :: Float -> Picture
-frame seconds = pictures ((map (fatSphere blue 150) (imageSpaceCoords ++ imageSpaceCoords2)) ++ (map greenDot (imageSpaceCoords' ++ imageSpaceCoords2')))
-      where 
-            offset = movePoint (0.0, 0.0, 400.0)
-            rotation' = rotatePoint 'X' (seconds * 35.0) .
-                    rotatePoint 'Y' (seconds * 45.0)
-            -- moved = map (offset . rotation') (sphere 200)
-            moved = map (offset . rotation') [(0.0, 1.0, (-2.0))] 
-            moved' = map (offset . rotation') (sphere 150)                       
-            imageSpaceCoords = map (project 100 100 (1000)) moved
-            imageSpaceCoords2 = map (project (-100) (-100) (-10)) moved
-            imageSpaceCoords' = map (project 100 100 (1000)) moved'
-            imageSpaceCoords2' = map (project (-100) (-100) (-10)) moved'
+ballgenerator :: Float -> Float -> Float -> [(Int,Int)]
+ballgenerator x y radius = map ((floatTupleToIntTuple).(project (x) (y) (-25)).(movePoint (0.0, 0.0, 200.0))) (sphere radius)
+
+filledpixels :: [(Int,Int)]
+filledpixels = ballgenerator (-100) (-300) 150
+
+filledpixels' :: [(Int,Int)]
+filledpixels' = ballgenerator (-300) (-100) 150
+
+filledpixels'' :: [(Int,Int)]
+filledpixels'' = ballgenerator (-200) (-200) 60
+
+
+allpixels :: BS.ByteString
+allpixels = generateCustomPixelData 400 400 (filledpixels ++ filledpixels' ++ filledpixels'')
+
 main :: IO ()
 main = do
       -- print (showDirection (concatDirections (3,3,3) (4,4,4)))
-      animate window black frame
+      -- animate window black frame
+      -- print ( )
+      writeBMP "custom_image.bmp" 400 400 allpixels
 
