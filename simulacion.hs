@@ -8,21 +8,22 @@ window = InWindow "random points on sphere with Haskell" (600, 450) (20, 20)
 dot :: Color -> Point -> Picture
 dot col (x, y) = Color col $ translate x y $ thickCircle 1.0 2.0
 
-redDot :: Point -> Picture
-redDot (x, y) = dot red (x, y)
+greenDot :: Point -> Picture
+greenDot (x, y) = dot green (x, y)
 
 sphere :: Float -> [Point3D]
 sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
-    where randomAnglePairs = zip thetas gammas
-          thetas = take 2000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
-          gammas = take 2000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+      where   
+            randomAnglePairs = zip thetas gammas
+            thetas = take 10000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
+            gammas = take 10000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+
 
 project :: Float -> Float -> Float -> Point3D -> Point
 project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
     where (lookAtX, lookAtY, lookAtZ) = (0.0, 0.0, 0.0)
           (x, y, z) = (x0 - lookAtX, y0 - lookAtY, z0 - lookAtZ)
           (alpha, beta, gamma) = (degToRad 0.0, degToRad 0.0, degToRad 0.0)
-      --     (eyeX, eyeY, eyeZ) = (0.0, 0.0, 300.0)
           (cosAlpha, sinAlpha) = (cos alpha, sin alpha)
           (cosBeta, sinBeta) = (cos beta, sin beta)
           (cosGamma, sinGamma) = (cos gamma, sin gamma)
@@ -35,16 +36,18 @@ project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
           projectedY = eyeZ/dz*dy - eyeY
 
 frame :: Float -> Picture
-frame seconds = pictures (map redDot (imageSpaceCoords ++ imageSpaceCoords2))
-                where offset = movePoint (0.0, 0.0, 400.0)
-                      rotation' = rotatePoint 'X' (seconds * 35.0) .
-                                rotatePoint 'Y' (seconds * 45.0)
-                      moved = map (offset . rotation') (sphere 60)                       
-                      imageSpaceCoords = map (project 100 100 300) moved
-                      imageSpaceCoords2 = map (project (-100) (-100) 300) moved
+frame _ = pictures (map greenDot (imageSpaceCoords ++ imageSpaceCoords2))
+      where 
+            offset = movePoint (0.0, 0.0, 400.0)
+      --     rotation' = rotatePoint 'X' (seconds * 35.0) .
+      --               rotatePoint 'Y' (seconds * 45.0)
+      --     moved = map (offset . rotation') (sphere 200)
+            moved = map (offset) (sphere 60)                       
+            imageSpaceCoords = map (project 100 100 (100)) moved
+            imageSpaceCoords2 = map (project (-100) (-100) 300) moved
 
 main :: IO ()
 main = do
-      print (showDirection (concatDirections (3,3,3) (4,4,4)))
-      animate window white frame
+      -- print (showDirection (concatDirections (3,3,3) (4,4,4)))
+      animate window black frame
 
