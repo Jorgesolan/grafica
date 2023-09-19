@@ -11,12 +11,15 @@ dot col (x, y) = Color col $ translate x y $ thickCircle 1.0 2.0
 greenDot :: Point -> Picture
 greenDot (x, y) = dot green (x, y)
 
+fatSphere :: Color -> Float -> Point -> Picture
+fatSphere col radius (x, y) = Color col $ translate x y $ thickCircle 1.0 radius
+
 sphere :: Float -> [Point3D]
 sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
       where   
             randomAnglePairs = zip thetas gammas
-            thetas = take 10000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
-            gammas = take 10000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+            thetas = take 100 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
+            gammas = take 100 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
 
 
 project :: Float -> Float -> Float -> Point3D -> Point
@@ -36,16 +39,18 @@ project eyeX eyeY eyeZ (x0, y0, z0) = (projectedX, projectedY)
           projectedY = eyeZ/dz*dy - eyeY
 
 frame :: Float -> Picture
-frame _ = pictures (map greenDot (imageSpaceCoords ++ imageSpaceCoords2))
+frame seconds = pictures ((map (fatSphere blue 150) (imageSpaceCoords ++ imageSpaceCoords2)) ++ (map greenDot (imageSpaceCoords' ++ imageSpaceCoords2')))
       where 
             offset = movePoint (0.0, 0.0, 400.0)
-      --     rotation' = rotatePoint 'X' (seconds * 35.0) .
-      --               rotatePoint 'Y' (seconds * 45.0)
-      --     moved = map (offset . rotation') (sphere 200)
-            moved = map (offset) (sphere 60)                       
-            imageSpaceCoords = map (project 100 100 (100)) moved
-            imageSpaceCoords2 = map (project (-100) (-100) 300) moved
-
+            rotation' = rotatePoint 'X' (seconds * 35.0) .
+                    rotatePoint 'Y' (seconds * 45.0)
+            -- moved = map (offset . rotation') (sphere 200)
+            moved = map (offset . rotation') [(0.0, 1.0, (-2.0))] 
+            moved' = map (offset . rotation') (sphere 150)                       
+            imageSpaceCoords = map (project 100 100 (1000)) moved
+            imageSpaceCoords2 = map (project (-100) (-100) (-10)) moved
+            imageSpaceCoords' = map (project 100 100 (1000)) moved'
+            imageSpaceCoords2' = map (project (-100) (-100) (-10)) moved'
 main :: IO ()
 main = do
       -- print (showDirection (concatDirections (3,3,3) (4,4,4)))
