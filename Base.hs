@@ -64,32 +64,32 @@ project baseX baseY baseZ (x0, y0, z0) = (projectedX, projectedY)
 
 -- instance Num Direction where
 -- -- -- Suma de direcciones
-concatDirections :: Direction -> Direction -> Direction
-concatDirections (x1, y1, z1) (x2, y2, z2) = (x1 + x2, y1 + y2, z1 + z2)
+(+++) :: Direction -> Direction -> Direction
+(x1, y1, z1) +++ (x2, y2, z2) = (x1 + x2, y1 + y2, z1 + z2)
 -- --  -- Producto vectorial
-vectorialProd :: Direction -> Direction -> Direction
-vectorialProd (xa, ya, za) (xb, yb, zb) = (ya*zb-za*yb, za*xb-xa*zb, xa*yb-ya*xb)
+(***) :: Direction -> Direction -> Direction
+(xa, ya, za) *** (xb, yb, zb) = (ya*zb-za*yb, za*xb-xa*zb, xa*yb-ya*xb)
 
 
 -- -- -- Producto escalar
-escalarProd :: Direction -> Direction -> Float
-escalarProd (xb, yb, zb) (xa, ya, za)  = (xb*xa + yb*ya + zb*za)
+(.*) :: Direction -> Direction -> Float
+(xb, yb, zb) .* (xa, ya, za)  = (xb*xa + yb*ya + zb*za)
 
 -- -- -- Escalado de dirección
 escalateDir :: Float -> Direction -> Direction
 escalateDir s (xa, ya, za) = (s*xa, s*ya, s*za)
 
--- -- -- Modulo
---  modd :: Direction -> Float
---  modd (xb, yb, zb) = sqrt(xb**2 + yb**2 + zb**2)
+-- -- Modulo
+modd :: Direction -> Float
+modd (xb, yb, zb) = sqrt(xb**2 + yb**2 + zb**2)
 
--- -- Normalización
---  normal :: Direction -> Direction
---  normal (xb, yb, zb)
---      | bmod == 0 = (0, 0, 0)
---      | otherwise = (xb / bmod), (yb / bmod), (zb / bmod)
---    where
---      bmod = modd (xb, yb, zb)
+-- Normalización
+normal :: Direction -> Direction
+normal (xb, yb, zb)
+     | bmod == 0 = (0, 0, 0)
+     | otherwise = ((xb / bmod), (yb / bmod), (zb / bmod))
+   where
+     bmod = modd (xb, yb, zb)
  
--- generateBase :: Base
--- generateBase = Base (Direction 1 0 0) (Direction 0 1 0) (Direction 0 0 1)
+generateBase :: Base
+generateBase = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
