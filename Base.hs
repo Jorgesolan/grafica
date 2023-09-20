@@ -93,6 +93,11 @@ project baseX baseY baseZ (x0, y0, z0) = (projectedX, projectedY)
 escalateDir :: Float -> Direction -> Direction
 escalateDir s (xa, ya, za) = (s*xa, s*ya, s*za)
 
+-- -- -- Escalado de puntos
+escalatePoint :: Float -> Point3D -> Point3D
+escalatePoint s (xa, ya, za) = (s*xa, s*ya, s*za)
+
+
 -- -- Modulo
 modd :: Direction -> Float
 modd (xb, yb, zb) = sqrt(xb**2 + yb**2 + zb**2)
