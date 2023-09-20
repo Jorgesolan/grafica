@@ -11,8 +11,10 @@ type Base = (Direction, Direction, Direction)
 floatTupleToIntTuple :: (Float, Float) -> (Int, Int)
 floatTupleToIntTuple (x, y) = (round x, round y)
 
-combinateTuples :: [Float] -> [Float] -> [(Float, Float)]
-combinateTuples list1 list2 = [(x, y) | x <- list1, y <- list2]
+combinate2Tuples :: [Float] -> [Float] -> [(Float, Float)]
+combinate2Tuples list1 list2 = [(x, y) | x <- list1, y <- list2]
+combinate3Tuples :: [Float] -> [Float] -> [Float] -> [(Float, Float, Float)]
+combinate3Tuples list1 list2 list3 = [(x, y, z) | x <- list1, y <- list2, z <- list3]
 
 floatListToFloatTuple :: [Float] -> (Float, Float)
 floatListToFloatTuple [x, y] = (x, y)
