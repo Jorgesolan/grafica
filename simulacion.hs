@@ -1,36 +1,49 @@
 import Base
 import Files
-
+-- import Control.Monad
 import qualified Data.ByteString as BS
 import System.Random
-
 
 sphere :: Float -> [Point3D]
 sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
       where   
             randomAnglePairs = zip thetas gammas
-            thetas = take 100 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
-            gammas = take 100 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+            -- randomAnglePairs = map floatListToFloatTuple (sequence [thetas, gammas])
+            thetas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
+            gammas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+                        
+            --thetas = [0.0,1.0 .. 360.0]
+            --gammas = [0.0, 0.1 .. 360.0]
 
 
 -- recenter :: Int -> Int -> (Int, Int) -> (Int, Int)
 -- recenter w h (x, y) = (x-w, y-h)
 
-ballgenerator :: Float -> Float -> Float -> [(Int,Int)]
-ballgenerator x y radius = map ((floatTupleToIntTuple).(project (x) (y) (-25)).(movePoint (0.0, 0.0, 200.0))) (sphere radius)
+-- ballgenerator :: Float -> [Point3D]
+-- ballgenerator radius = (sphere radius)
 
-filledpixels :: [(Int,Int)]
-filledpixels = ballgenerator (-100) (-300) 150
+hacerFoto  :: Float -> Float -> [Point3D] -> [(Int,Int)]
+hacerFoto x y puntos3D = map ((floatTupleToIntTuple).(project x y (-30))) puntos3D
 
-filledpixels' :: [(Int,Int)]
-filledpixels' = ballgenerator (-300) (-100) 150
+ballBase :: [Point3D]
+ballBase = (sphere 150)
 
-filledpixels'' :: [(Int,Int)]
-filledpixels'' = ballgenerator (-200) (-200) 60
+ballInstance :: [Point3D]
+ballInstance =  map (movePoint (0.0, 0.0, 200.0)) ballBase
+ballInstance2 :: [Point3D]
+ballInstance2 =  map (movePoint ((0), 0, 200.0)) ballBase
 
+foto :: [(Int,Int)]
+foto = hacerFoto (-100) (-100) (ballInstance ++ ballInstance2)
+
+-- filledpixels' :: [(Int,Int)]
+-- filledpixels' = ballgenerator (-300) (-100) 150
+
+-- filledpixels'' :: [(Int,Int)]
+-- filledpixels'' = ballgenerator (-200) (-200) 60
 
 allpixels :: BS.ByteString
-allpixels = generateCustomPixelData 400 400 (filledpixels ++ filledpixels' ++ filledpixels'')
+allpixels = generateCustomPixelData 400 400 (foto)
 
 main :: IO ()
 main = do
@@ -38,4 +51,4 @@ main = do
       -- animate window black frame
       -- print ( )
       writeBMP "custom_image.bmp" 400 400 allpixels
-
+      -- mapM_ showPoint3D (sphere 60)

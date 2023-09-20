@@ -11,11 +11,21 @@ type Base = (Direction, Direction, Direction)
 floatTupleToIntTuple :: (Float, Float) -> (Int, Int)
 floatTupleToIntTuple (x, y) = (round x, round y)
 
-showPoint3D :: Point3D -> String
-showPoint3D (x, y, z) = "Point3D: (" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ")"
+floatListToFloatTuple :: [Float] -> (Float, Float)
+floatListToFloatTuple [x, y] = (x, y)
+floatListToFloatTuple [_] = (0,0)
+floatListToFloatTuple [] = (0,0)
+floatListToFloatTuple (_:_:_:_) = (0,0)
 
-showDirection :: Direction -> String
-showDirection (x, y, z) = "Direction: (" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ")"
+-- showPoints3D :: [Point3D] -> IO ()
+-- showPoints3D (h:s) = showPoint3D h $ showPoints3D s
+-- showPoints3D [] = putStrLn $ ""
+
+showPoint3D :: Point3D -> IO ()
+showPoint3D (x, y, z) = putStrLn $ "Point3D: (" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ")"
+
+showDirection :: Direction -> IO ()
+showDirection (x, y, z) = putStrLn $ "Direction: (" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ")"
 
 
 rotatePoint :: Char -> Float -> Point3D -> Point3D
@@ -40,7 +50,6 @@ polarToCartesian theta gamma radius = (x, y, z)
           x = radius * sinTheta * cos gammaRad
           y = radius * sinTheta * sin gammaRad
           z = radius * cos thetaRad
-
 
 project :: Float -> Float -> Float -> Point3D -> Point
 project baseX baseY baseZ (x0, y0, z0) = (projectedX, projectedY)
