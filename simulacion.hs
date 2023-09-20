@@ -2,16 +2,18 @@ import Base
 import Files
 -- import Control.Monad
 import qualified Data.ByteString as BS
-import System.Random
+-- import System.Random
 
 sphere :: Float -> [Point3D]
 sphere rad = map (\(t, g) -> polarToCartesian t g rad) randomAnglePairs
       where   
-            randomAnglePairs = zip thetas gammas
-            -- randomAnglePairs = map floatListToFloatTuple (sequence [thetas, gammas])
-            thetas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
-            gammas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
-                        
+            -- randomAnglePairs = zip thetas gammas
+            -- -- randomAnglePairs = map floatListToFloatTuple (sequence [thetas, gammas])
+            -- thetas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 42
+            -- gammas = take 1000 $ randomRs (0.0::Float, 360.0) $ mkStdGen 1337
+            list1 = [0.0,10.0..360.0]
+            list2 = [0.0,10.0..360.0]
+            randomAnglePairs = combinateTuples list1 list2                        
             --thetas = [0.0,1.0 .. 360.0]
             --gammas = [0.0, 0.1 .. 360.0]
 
