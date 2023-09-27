@@ -6,6 +6,8 @@ import Numeric.LinearAlgebra
 data Point3D = Point3D Float Float Float
 data Direction = Direction Float Float Float
 data Base = Base Direction Direction Direction
+data RGB = RGB { red :: Float, green :: Float, blue :: Float } deriving (Show)
+
 
 instance Show Base where
     show (Base (Direction dx0 dy0 dz0) (Direction dx1 dy1 dz1) (Direction dx2 dy2 dz2)) = "Base:\n| " ++ show dx0 ++" " ++show dy0 ++" "++ show dz0 ++ " |\n" ++ "| " ++ show dx1 ++" " ++show dy1 ++" "++ show dz1 ++ " |\n"++ "| " ++ show dx2 ++" " ++show dy2 ++" "++ show dz2 ++ "| "
@@ -26,6 +28,8 @@ roundTo n (Point3D a b c) = Point3D a' b' c'
 
 roundTo5 = roundTo 5
 
+-- ************************************************
+-- Angulos y transformaciones
 radToDeg :: Float -> Float
 radToDeg radians = radians * (180.0 / pi)
 
@@ -36,6 +40,7 @@ normalizeAngle :: Float -> Float
 normalizeAngle f = f - (2*pi * floor' (f / (2*pi))) 
     where floor' :: Float -> Float
           floor' x = fromIntegral (floor x :: Int)
+-- ************************************************
 
 rotatePoint :: Char -> Float -> Point3D -> Point3D
 rotatePoint axis degree  (Point3D x y z)
