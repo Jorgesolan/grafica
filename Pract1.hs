@@ -1,6 +1,5 @@
 import Elem3D
 import System.Random
-import Graphics.Gloss.Geometry.Angle
 
 polarToCartesian :: Float -> Float -> Float -> Point3D
 polarToCartesian theta gamma radius = (Point3D x y z)

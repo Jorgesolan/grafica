@@ -1,7 +1,6 @@
 module Elem3D where
 
 import System.IO ()
-import Graphics.Gloss.Geometry.Angle
 import Numeric.LinearAlgebra
 
 data Point3D = Point3D Float Float Float
@@ -27,8 +26,16 @@ roundTo n (Point3D a b c) = Point3D a' b' c'
 
 roundTo5 = roundTo 5
 
-radiansToDegrees :: Float -> Float
-radiansToDegrees radians = radians * (180.0 / pi)
+radToDeg :: Float -> Float
+radToDeg radians = radians * (180.0 / pi)
+
+degToRad :: Float -> Float
+degToRad degree = degree * (pi / 180.0)
+
+normalizeAngle :: Float -> Float
+normalizeAngle f = f - (2*pi * floor' (f / (2*pi))) 
+    where floor' :: Float -> Float
+          floor' x = fromIntegral (floor x :: Int)
 
 rotatePoint :: Char -> Float -> Point3D -> Point3D
 rotatePoint axis degree  (Point3D x y z)
@@ -71,7 +78,7 @@ instance Num Direction where
  
  -- Producto vectorial
 --  (*) :: Direction -> Direction -> Direction
- Direction xa ya za * Direction xb yb zb = Direction (ya*zb-za*yb) (za*xb-xa*zb) (xa*yb-ya*xb)
+ (Direction xa ya za) * (Direction xb yb zb) = Direction (ya*zb-za*yb) (za*xb-xa*zb) (xa*yb-ya*xb)
 
 -- -- -- Producto escalar
 (.*) :: Direction -> Direction -> Float
@@ -83,7 +90,7 @@ escalateDir s (Direction xa ya za) = Direction (s*xa) (s*ya) (s*za)
 
 -- -- -- Escalado de puntos
 escalatePoint :: Float -> Point3D -> Point3D
-escalatePoint s (Point3D xa ya za) = (Point3D (s*xa) (s*ya) (s*za))
+escalatePoint s (Point3D xa ya za) = Point3D (s*xa) (s*ya) (s*za)
 
 -- -- -- Escalado de dirección
 escalateDir' :: Float -> Direction -> Direction
@@ -92,7 +99,6 @@ escalateDir' s (Direction xa ya za) = Direction (s/xa) (s/ya) (s/za)
 -- -- -- Escalado de puntos
 escalatePoint' :: Float -> Point3D -> Point3D
 escalatePoint' s (Point3D xa ya za) = (Point3D (s/xa) (s/ya) (s/za))
-
 
 -- -- Modulo
 modd :: Direction -> Float
@@ -110,16 +116,19 @@ normal (Direction xb yb zb)
 perp :: Direction -> Direction
 perp (Direction xb yb zb) = (Direction yb (-xb) zb)
 
+--Generar Base con 3 Direcciones dadas(No comprueba que sean perpendiculares)
 generateBase :: Direction -> Direction -> Direction -> Base
 generateBase d0 d1 d2 = Base d0 d1 d2
 
-
+--Punto a Vector
 pointToVector :: Point3D -> Vector R
 pointToVector (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z, 1]
 
+--Vector a Punto
 vectorToPoint :: Vector R -> Point3D
 vectorToPoint v = Point3D (realToFrac $ v ! 0) (realToFrac $ v ! 1) (realToFrac $ v ! 2)
 
+--Base + Punto a Matriz
 basePointMatrix :: Base -> Point3D -> Matrix R
 basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) (Point3D p1 p2 p3) =
   (4><4) [realToFrac a0, realToFrac a1, realToFrac a2, realToFrac p1,
@@ -127,18 +136,22 @@ basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2
           realToFrac c0, realToFrac c1, realToFrac c2, realToFrac p3,
           0.0, 0.0, 0.0, 1.0]
 
+--Cambio de Base con punto y matriz en Global, devuelve punto visto en local
 cambioBase :: Point3D -> Base -> Point3D -> Point3D
 cambioBase nuevoOrigen baseACambiar puntoACambiarDeBase = puntoDeBaseCambiada
     where 
         puntoDeBaseCambiada = roundTo5(vectorToPoint (baseNueva #> (pointToVector puntoACambiarDeBase)))
         baseNueva = basePointMatrix baseACambiar nuevoOrigen
 
-
-
+--Cambio de Base con punto y matriz en Local, devuelve punto visto en lglobal
 cambioBase' :: Point3D -> Base -> Point3D -> Point3D
 cambioBase' nuevoOrigen baseACambiar puntoACambiarDeBase = puntoDeBaseCambiada
     where 
         puntoDeBaseCambiada = roundTo5(vectorToPoint vectorDeBaseCambiada)
         vectorDeBaseCambiada = baseNueva #> (pointToVector puntoACambiarDeBase)
         baseNueva =inv (basePointMatrix baseACambiar nuevoOrigen)
+
+-- fullPrMtx :: Matrix R -> Matrix R
+
+
         
