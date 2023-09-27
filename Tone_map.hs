@@ -39,7 +39,7 @@ gammaFunc x = (ecualization' . (elevateRGBPoints x) . ecualization)
 main :: IO ()
 main = do
   (pixels,(w,h)) <- leerPPM "./Images/forest_path.ppm"
-  let modifiedPixels = (parsePixels' . (clamp 1000)) pixels
+  let modifiedPixels = ((parsePixels' (round w)) . (clamp 1000)) pixels
   --putStrLn "Píxeles leídos:"
   --mapM_ print pixels
   putStrLn $ "Ancho (w): " ++ show w
