@@ -52,13 +52,12 @@ pixelReesclate x y puntosRGB = puntosRGBEcualizados where
 parsePixelsRecursive :: Int -> Int -> [RGB] -> [Char] -> [Char]
 parsePixelsRecursive _ _ [] acc = acc -- Base case: empty list, return the accumulator
 parsePixelsRecursive counter x (RGB r g b : rest) acc
-  | counter == 0 = parsePixelsRecursive x x rest (acc ++ "\n" ++ show r ++ " " ++ show g ++ " " ++ show b ++ " ")
-  | otherwise = parsePixelsRecursive (counter - 1) x rest (acc ++ show r ++ " " ++ show g ++ " " ++ show b ++ " ")
-
+  | counter == 0 = parsePixelsRecursive x x rest (acc ++ "\n" ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
+  | otherwise = parsePixelsRecursive (counter - 1) x rest (acc ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
+  
 -- Main parsePixels function
 parsePixels' :: Int -> [RGB] -> [Char]
 parsePixels' x pixels = parsePixelsRecursive x x pixels ""
-
 
 
 -- Function to write a 32-bit BMP file
@@ -113,6 +112,14 @@ intTo4Bytes n = BS.pack [fromIntegral (n .&. 0xFF), fromIntegral ((n `shiftR` 8)
 -- Helper function to convert an Int to a ByteString of 2 bytes
 intTo2Bytes :: Int -> BS.ByteString
 intTo2Bytes n = BS.pack [fromIntegral (n .&. 0xFF), fromIntegral ((n `shiftR` 8) .&. 0xFF)]
+
+-- Function to convert ordered RGB list to ByteString
+pixels2BMP :: [RGB] -> BS.ByteString
+pixels2BMP rgbList = BS.pack $ concatMap rgbToWord8 $ reverse rgbList
+  where
+    -- Helper function to convert RGB to Word8 list
+    rgbToWord8 :: RGB -> [Word8]
+    rgbToWord8 (RGB r g b) = map (fromIntegral.round) [r, g, b, 255]
 
 -- Function to generate custom pixel data for a checkerboard pattern
 generateBMPPixelData :: Int -> Int -> [(Int,Int)] -> BS.ByteString

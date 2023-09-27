@@ -1,8 +1,8 @@
 --module Tone_map where
 import Files
 import Elem3D
-
-
+-- ghc Elem3D.hs Files.hs Tone_map.hs -outputdir ./bin && ./Tone_map
+-- ghc Elem3D.hs Files.hs Tone_map.hs -outputdir ./bin -rtsopts -O2 && ./Tone_map
 singleClamp :: Float -> RGB -> RGB
 singleClamp x (RGB a b c) =
     RGB (min x a) (min x b) (min x c)
@@ -38,10 +38,17 @@ gammaFunc x = (ecualization' . (elevateRGBPoints x) . ecualization)
 
 main :: IO ()
 main = do
-  (pixels,(w,h)) <- leerPPM "./Images/forest_path.ppm"
-  let modifiedPixels = ((parsePixels' (round w)) . (clamp 1000)) pixels
-  --putStrLn "Píxeles leídos:"
-  --mapM_ print pixels
-  putStrLn $ "Ancho (w): " ++ show w
-  putStrLn $ "Alto (h): " ++ show h
-  writePPM "output.ppm" (round w) (round h) modifiedPixels
+    -- let path = "forest_path"; gamma = 4.0
+    
+    let path = "seymour_park"; gamma = 10.0
+
+    -- let path = "mpi_atrium_1"; gamma = 3.0
+
+    -- let path = "nancy_church_3"; gamma = 4.0
+    
+    -- let path = "mpi_office"; gamma = 6.0
+    (pixels,(w,h)) <- leerPPM ("./Images/" ++ path ++ ".ppm")
+    let a = (pixels2BMP.(gammaFunc gamma)) pixels
+    writeBMP  ("./tmp/" ++ path ++".bmp") (round w) (round h) a
+    --let !b = (parsePixels' (round w)) a
+    --writePPM "output.ppm" (round w) (round h) b
