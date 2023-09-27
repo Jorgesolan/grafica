@@ -9,44 +9,50 @@ import System.IO
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float))
 leerPPM archivo = do
-  contenido <- readFile archivo
-  let lineas = lines contenido
-      pixeles' = drop 2 lineas
-      ppMax = maxPPM (head pixeles')
-      size = sizePPM (head (drop 1 pixeles'))
-      pixeles = drop 3 pixeles'
-      pixelesParseados = concatMap ((pixelReesclate ppMax) . parsePixels . words) pixeles
-  return (pixelesParseados, size)
+    contenido <- BS8.readFile archivo
+    let lineas = BS8.lines contenido
+        ppMax = findMaxPPM lineas
+        sizeLine = findSizePPM lineas
+        valueMax = read . BS8.unpack $ lineas !! 4
+        pixelLines = drop 5 lineas
+        pixelesParseados = concatMap ((pixelReesclate ppMax valueMax) .  parsePixels . BS8.words) pixelLines
+    return (pixelesParseados, sizeLine)
 
-sizePPM :: String -> (Float,Float)
-sizePPM linea =
-  case words linea of
-    [x, y] -> (read x, read y)
-    _ -> (0.0, 0.0)
+findMaxPPM :: [BS8.ByteString] -> Float
+findMaxPPM [] = 0.0
+findMaxPPM (linea:resto)
+    | BS8.isPrefixOf (BS8.pack "#MAX=") linea = read (BS8.unpack $ BS8.drop 5 linea)
+    | otherwise = findMaxPPM resto
 
-maxPPM :: String -> Float
-maxPPM ('#':'M':'A':'X':'=':resto) = read resto
-maxPPM _ = 0.0
+findSizePPM :: [BS8.ByteString] -> (Float, Float)
+findSizePPM [] = (0,0)
+findSizePPM (linea:resto)
+    | BS8.isPrefixOf (BS8.pack "#") linea = findSizePPM resto
+    | otherwise = case BS8.words linea of
+        [num1, num2] -> (read $ BS8.unpack num1, read $ BS8.unpack num2)
+        _ -> findSizePPM resto
 
-
-singlepixelReesclate :: Float -> RGB -> RGB
-singlepixelReesclate x (RGB a b c) = RGB (a * x) (b * x) (c * x) 
-
-pixelReesclate :: Float -> [RGB] -> [RGB]
-pixelReesclate x puntosRGB = puntosRGBEcualizados where
-    puntosRGBEcualizados = map (singlepixelReesclate x) puntosRGB
 
 -- Función para analizar una línea de píxeles y convertirla en una lista de RGB
-parsePixels ::  [String] -> [RGB]
+parsePixels :: [BS8.ByteString] -> [RGB]
 parsePixels [] = []
-parsePixels (r:g:b:resto) = RGB (read r) (read g) (read b) : parsePixels resto
+parsePixels (r:g:b:resto) =
+    let rgb = RGB (read $ BS8.unpack r) (read $ BS8.unpack g) (read $ BS8.unpack b)
+    in rgb : parsePixels resto
 parsePixels _ = error "Formato incorrecto"
 
+singlepixelReesclate :: Float -> Float-> RGB -> RGB
+singlepixelReesclate x y (RGB a b c) = RGB (a * x / y) (b * x / y) (c * x / y) 
+
+pixelReesclate :: Float -> Float-> [RGB] -> [RGB]
+pixelReesclate x y puntosRGB = puntosRGBEcualizados where
+    puntosRGBEcualizados = map (singlepixelReesclate x y) puntosRGB
+
 -- Función para convertir una lista de RGB a una lista de cadenas
-parsePixels' :: [RGB] -> String
-parsePixels' pixels = foldr rgbToString "" pixels
+parsePixels' :: [RGB] -> [String]
+parsePixels' pixels = map rgbToString pixels
   where
-    rgbToString (RGB r g b) acc = show r ++ " " ++ show g ++ " " ++ show b ++ " " ++ acc
+    rgbToString (RGB r g b) = show r ++ " " ++ show g ++ " " ++ show b
 
 
 
@@ -80,8 +86,7 @@ writeBMP filename width height customPixelData = do
         , customPixelData  -- White pixel data
         ]
 
--- Function to write a PPM file with custom pixel data in P3 format
-writePPM :: FilePath -> Int -> Int -> String -> IO ()
+writePPM :: FilePath -> Int -> Int -> [String] -> IO ()
 writePPM filename width height customPixelData = do
     let maxColorValue = 255
     let header = unlines
@@ -93,8 +98,7 @@ writePPM filename width height customPixelData = do
             ]
     BS8.writeFile filename $ BS8.unlines
         [ BS8.pack header
-        , BS8.pack customPixelData  -- Pixel data
-        ]
+        ] <> BS8.unlines (map BS8.pack customPixelData)  -- Pixel data
 
 
 -- Helper function to convert an Int to a ByteString of 4 bytes
