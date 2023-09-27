@@ -3,7 +3,9 @@ module Files where
 import qualified Data.ByteString as BS
 import Data.Word (Word8)
 import Data.Bits  ((.&.), shiftR)
--- Function to write a 32-bit BMP file with a white background
+import qualified Data.ByteString.Char8 as BS8
+
+-- Function to write a 32-bit BMP file
 writeBMP :: FilePath -> Int -> Int -> BS.ByteString -> IO ()
 writeBMP filename width height customPixelData = do
     let fileSize = 54 + 4 * width * height
@@ -33,6 +35,22 @@ writeBMP filename width height customPixelData = do
         , customPixelData  -- White pixel data
         ]
 
+-- Function to write a PPM file with
+writePPM :: FilePath -> Int -> Int -> BS8.ByteString -> IO ()
+writePPM filename width height customPixelData = do
+    let maxColorValue = 255
+    let header = BS8.pack $ unlines
+            [ "P3"
+            , "#MAX=18.35"
+            , show width ++ " " ++ show height
+            , show maxColorValue
+            ]
+    BS8.writeFile filename $ BS8.concat
+        [ header
+        , customPixelData  -- Pixel data
+        ]
+
+
 -- Helper function to convert an Int to a ByteString of 4 bytes
 intTo4Bytes :: Int -> BS.ByteString
 intTo4Bytes n = BS.pack [fromIntegral (n .&. 0xFF), fromIntegral ((n `shiftR` 8) .&. 0xFF), fromIntegral ((n `shiftR` 16) .&. 0xFF), fromIntegral ((n `shiftR` 24) .&. 0xFF)]
@@ -53,10 +71,16 @@ generateCustomPixelData width height filledpixels =
         generatePixel col
             | (row, col) `elem` filledpixels = [0, 255, 0, 255]
             | otherwise = [0,0,0,255]
+
 -- main :: IO ()
 -- main = do
 --     let width = 800  -- Width of the image
 --         height = 600 -- Height of the image
---     let customPixelData = generateCustomPixelData width height  -- Replace this with your custom pixel data
+--     let customPixelData = generateCustomPixelData width height [] -- Replace this with your custom pixel data
     
 --     writeBMP "custom_image.bmp" width height customPixelData
+
+
+--     let pixelData = BS8.replicate (width * height * 3) '\255'  -- White pixel data (RGB)
+
+--     writePPM "output.ppm" width height pixelData
