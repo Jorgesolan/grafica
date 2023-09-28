@@ -25,10 +25,21 @@ gammaFunc x = (ecualization' . (elevateRGBPoints x) . ecualization)
 
 main :: IO ()
 main = do
-  (pixels,(w,h,fmx,pmax)) <- leerPPM "./Images/mpi_office.ppm"
-  let modifiedPixels = (parsePixels'' . pixelReesclate (pmax/(fmx/3)) . clamp (fmx/3) ) pixels
-  --putStrLn "Píxeles leídos:"
-  --mapM_ print pixels
-  putStrLn $ "Ancho (w): " ++ show w
-  putStrLn $ "Alto (h): " ++ show h
-  writePPM "output.ppm" (round w) (round h) modifiedPixels
+    -- let path = "forest_path"; gamma = 4.0
+    
+    let path = "seymour_park"; gamma = 10.0
+
+    -- let path = "mpi_atrium_1"; gamma = 3.0
+
+    -- let path = "nancy_church_3"; gamma = 4.0
+
+--      (pixels,(w,h,fmx,pmax)) <- leerPPM "./Images/mpi_office.ppm"
+--   let modifiedPixels = (parsePixels'' . pixelReesclate (pmax/(fmx/3)) . clamp (fmx/3) ) pixels
+  
+    
+    -- let path = "mpi_office"; gamma = 6.0
+    (pixels,(w,h)) <- leerPPM ("./Images/" ++ path ++ ".ppm")
+    let a = (pixels2BMP.(gammaFunc gamma)) pixels
+    writeBMP  ("./tmp/" ++ path ++".bmp") (round w) (round h) a
+    --let !b = (parsePixels' (round w)) a
+    --writePPM "output.ppm" (round w) (round h) b
