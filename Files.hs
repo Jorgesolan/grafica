@@ -48,19 +48,8 @@ pixelReesclate :: Float -> [RGB] -> [RGB]
 pixelReesclate x puntosRGB = puntosRGBEcualizados where
     puntosRGBEcualizados = map (singlepixelReesclate x) puntosRGB
 
--- Define a helper function for recursive parsing
-parsePixelsRecursive :: Int -> Int -> [RGB] -> [Char] -> [Char]
-parsePixelsRecursive _ _ [] acc = acc -- Base case: empty list, return the accumulator
-parsePixelsRecursive counter x (RGB r g b : rest) acc
-  | counter == 0 = parsePixelsRecursive x x rest (acc ++ "\n" ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
-  | otherwise = parsePixelsRecursive (counter - 1) x rest (acc ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
-  
--- Main parsePixels function
-parsePixels' :: Int -> [RGB] -> [Char]
-parsePixels' x pixels = parsePixelsRecursive x x pixels ""
-
-parsePixels'' :: [RGB] -> [String]
-parsePixels'' pixels = map rgbToString pixels
+parsePixels :: [RGB] -> [String]
+parsePixels pixels = map rgbToString pixels
   where
     rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b)
 
