@@ -11,14 +11,11 @@ elevateRGBPoint x (RGB r g b) =
 clamp :: Float -> [RGB] -> [RGB]
 clamp x = map (\(RGB a b c) -> RGB (min x a) (min x b) (min x c))
 
-
 ecualization :: [RGB] -> [RGB]
 ecualization = map (\(RGB a b c) -> RGB (a / 255) (b / 255) (c / 255))
 
-
 ecualization' :: [RGB] -> [RGB]
 ecualization' = map (\(RGB a b c) -> RGB (a * 255) (b * 255) (c * 255))
-
 
 elevateRGBPoints :: Float -> [RGB] -> [RGB]
 elevateRGBPoints x = map (elevateRGBPoint x)
