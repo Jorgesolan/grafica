@@ -2,19 +2,6 @@
 import Files
 import Elem3D
 
-
-singleClamp :: Float -> RGB -> RGB
-singleClamp x (RGB a b c) =
-    RGB (min x a) (min x b) (min x c)
-
-singleEcualization :: RGB -> RGB
-singleEcualization (RGB a b c) =
-    RGB (a / 255) (b / 255) (c / 255)
-
-singleEcualization' :: RGB -> RGB
-singleEcualization' (RGB a b c) =
-    RGB (a * 255) (b * 255) (c * 255)
-
 elevateRGBPoint :: Float -> RGB -> RGB
 elevateRGBPoint x (RGB r g b) =
     RGB (r ** (1.0 / x))
@@ -22,13 +9,16 @@ elevateRGBPoint x (RGB r g b) =
         (b ** (1.0 / x))
 
 clamp :: Float -> [RGB] -> [RGB]
-clamp x = map (singleClamp x)
+clamp x = map (\(RGB a b c) -> RGB (min x a) (min x b) (min x c))
+
 
 ecualization :: [RGB] -> [RGB]
-ecualization = map singleEcualization
+ecualization = map (\(RGB a b c) -> RGB (a / 255) (b / 255) (c / 255))
+
 
 ecualization' :: [RGB] -> [RGB]
-ecualization' = map singleEcualization'
+ecualization' = map (\(RGB a b c) -> RGB (a * 255) (b * 255) (c * 255))
+
 
 elevateRGBPoints :: Float -> [RGB] -> [RGB]
 elevateRGBPoints x = map (elevateRGBPoint x)
@@ -38,8 +28,8 @@ gammaFunc x = (ecualization' . (elevateRGBPoints x) . ecualization)
 
 main :: IO ()
 main = do
-  (pixels,(w,h)) <- leerPPM "./Images/forest_path.ppm"
-  let modifiedPixels = ((parsePixels' (round w)) . (clamp 1000)) pixels
+  (pixels,(w,h,fmx,pmax)) <- leerPPM "./Images/mpi_office.ppm"
+  let modifiedPixels = (parsePixels'' . pixelReesclate (pmax/(fmx/3)) . clamp (fmx/3) ) pixels
   --putStrLn "Píxeles leídos:"
   --mapM_ print pixels
   putStrLn $ "Ancho (w): " ++ show w

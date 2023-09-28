@@ -7,7 +7,7 @@ import qualified Data.ByteString.Char8 as BS8
 import System.IO
 
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
-leerPPM :: FilePath -> IO ([RGB], (Float, Float))
+leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
 leerPPM archivo = do
     contenido <- BS8.readFile archivo
     let lineas = BS8.lines contenido
@@ -15,8 +15,8 @@ leerPPM archivo = do
         sizeLine = findSizePPM lineas
         valueMax = read . BS8.unpack $ lineas !! 4
         pixelLines = drop 5 lineas
-        pixelesParseados = concatMap ((pixelReesclate ppMax valueMax) .  parsePixels . BS8.words) pixelLines
-    return (pixelesParseados, sizeLine)
+        pixelesParseados = concatMap (parsePixels . BS8.words) pixelLines
+    return (pixelesParseados, (fst sizeLine, snd sizeLine, valueMax, ppMax))
 
 findMaxPPM :: [BS8.ByteString] -> Float
 findMaxPPM [] = 0.0
@@ -41,24 +41,28 @@ parsePixels (r:g:b:resto) =
     in rgb : parsePixels resto
 parsePixels _ = error "Formato incorrecto"
 
-singlepixelReesclate :: Float -> Float-> RGB -> RGB
-singlepixelReesclate x y (RGB a b c) = RGB (a * x / y) (b * x / y) (c * x / y) 
+singlepixelReesclate :: Float -> RGB -> RGB
+singlepixelReesclate x (RGB a b c) = RGB (a * x ) (b * x) (c * x) 
 
-pixelReesclate :: Float -> Float-> [RGB] -> [RGB]
-pixelReesclate x y puntosRGB = puntosRGBEcualizados where
-    puntosRGBEcualizados = map (singlepixelReesclate x y) puntosRGB
+pixelReesclate :: Float -> [RGB] -> [RGB]
+pixelReesclate x puntosRGB = puntosRGBEcualizados where
+    puntosRGBEcualizados = map (singlepixelReesclate x) puntosRGB
 
 -- Define a helper function for recursive parsing
 parsePixelsRecursive :: Int -> Int -> [RGB] -> [Char] -> [Char]
 parsePixelsRecursive _ _ [] acc = acc -- Base case: empty list, return the accumulator
 parsePixelsRecursive counter x (RGB r g b : rest) acc
-  | counter == 0 = parsePixelsRecursive x x rest (acc ++ "\n" ++ show r ++ " " ++ show g ++ " " ++ show b ++ " ")
-  | otherwise = parsePixelsRecursive (counter - 1) x rest (acc ++ show r ++ " " ++ show g ++ " " ++ show b ++ " ")
+  | counter == 0 = parsePixelsRecursive x x rest (acc ++ "\n" ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
+  | otherwise = parsePixelsRecursive (counter - 1) x rest (acc ++ show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " ")
 
 -- Main parsePixels function
 parsePixels' :: Int -> [RGB] -> [Char]
 parsePixels' x pixels = parsePixelsRecursive x x pixels ""
 
+parsePixels'' :: [RGB] -> [String]
+parsePixels'' pixels = map rgbToString pixels
+  where
+    rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b)
 
 
 -- Function to write a 32-bit BMP file
@@ -91,20 +95,20 @@ writeBMP filename width height customPixelData = do
         , customPixelData  -- White pixel data
         ]
 
-writePPM :: FilePath -> Int -> Int -> [Char] -> IO ()
+-- Function to write a PPM file with custom pixel data in P3 format
+writePPM :: FilePath -> Int -> Int -> [String] -> IO ()
 writePPM filename width height customPixelData = do
     let maxColorValue = 255
     let header = unlines
             [ "P3"
-            , "#MAX=18.35"
+            , "#MAX=255"
             , "# " ++ filename
             , show width ++ " " ++ show height
             , show maxColorValue
             ]
     BS8.writeFile filename $ BS8.unlines
         [ BS8.pack header
-        , BS8.pack customPixelData  -- Pixel data
-        ] 
+        ] <> BS8.unlines (map BS8.pack customPixelData)  -- Pixel data
 
 -- Helper function to convert an Int to a ByteString of 4 bytes
 intTo4Bytes :: Int -> BS.ByteString
