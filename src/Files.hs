@@ -41,18 +41,11 @@ parsePixels (r:g:b:resto) =
     in rgb : parsePixels resto
 parsePixels _ = error "Formato incorrecto"
 
-singlepixelReesclate :: Float -> RGB -> RGB
-singlepixelReesclate x (RGB a b c) = RGB (a * x ) (b * x) (c * x) 
 
-pixelReesclate :: Float -> [RGB] -> [RGB]
-pixelReesclate x puntosRGB = puntosRGBEcualizados where
-    puntosRGBEcualizados = map (singlepixelReesclate x) puntosRGB
-
-parsePixels :: [RGB] -> [String]
-parsePixels pixels = map rgbToString pixels
+parsePixels' :: [RGB] -> [String]
+parsePixels' pixels = map rgbToString pixels
   where
     rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b)
-
 
 -- Function to write a 32-bit BMP file
 writeBMP :: FilePath -> Int -> Int -> BS.ByteString -> IO ()
@@ -140,13 +133,3 @@ generatePPMPixelData width height filledpixels =
         generatePixel col
             | (col, row) `elem` filledpixels = "0 255 0"
             | otherwise = "0 0 0"
-
---main :: IO ()
---main = do
---   let width = 20  -- Width of the image
---       height = 20 -- Height of the image
---   let customPixelData = generateBMPPixelData width height [(1,10),(2,10),(3,10),(10,10),(5,10),(6,10)] -- Replace this with your custom pixel data
---   let customPixelData2 = generatePPMPixelData width height [(1,10),(2,10),(3,10),(10,10),(5,10),(6,10)] -- Replace this with your custom pixel data
---
---   writeBMP "custom_image.bmp" width height customPixelData
---   writePPM "output.ppm" width height customPixelData2
