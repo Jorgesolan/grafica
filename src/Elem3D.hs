@@ -5,6 +5,7 @@ import System.IO ()
 
 data Point3D = Point3D Float Float Float
 data Direction = Direction Float Float Float
+data Ray = Ray Point3D Direction
 data Base = Base Direction Direction Direction
 data RGB = RGB { red :: Float, green :: Float, blue :: Float } deriving (Show)
 
