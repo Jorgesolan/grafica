@@ -5,7 +5,7 @@ data Esfera = Esfera Point3D Float RGB
 data Plano = Plano Point3D Direction RGB
 
 parametricSphereCollision :: Esfera -> Ray -> (Float,RGB)
-parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- ya preguntaremos
+parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- Esto quizas esta mal :)
   | raiz >= 0 = (findMinPositive(t0, t1), color)
   | otherwise = ((1/0),color)
       where
@@ -16,7 +16,7 @@ parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- ya preguntaremos
             c = (f.*f) - (r**2)
             raiz = sqrt((b**2) - (4*a*c))
             ori = Point3D 0 0 0
-            f =  ori #< p0
+            f =  p1 #< p0
             findMinPositive :: (Float, Float) -> Float
             findMinPositive (x, y) = minimum [a | a <- [x, y], a > 0]
 
