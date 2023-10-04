@@ -1,13 +1,14 @@
 HC    = ghc
 FLAGS = -dynamic -O2 -threaded -Wall -Werror -rtsopts 
 
-APP   	= ./src/simulacion
-SRC0   	= ./src/simulacion.hs
 SRC1 	= ./src/Elem3D.hs
 SRC2  	= ./src/Base.hs
 SRC3  	= ./src/Files.hs
 SRC4 	= ./src/Tone_map.hs
+SRC5	= ./src/Figuras.hs
 
+APP = ./src/simulacion.hs
+APP0 = sim
 APP1 = p1
 APP2 = p2
 SRCP1 = ./practicas/Pract1.hs
@@ -26,6 +27,11 @@ BIN_DIR = ./bin
 # 	$(HC) --make $< -package random -package hmatrix -o $@
 # 	strip $@
 
+sim:
+$(APP0): $(APP) $(SRC1) $(SRC5)
+	$(HC) --make -i$(VPATH) $< -package parallel -o $@ -threaded
+	strip $@
+
 p1:
 $(APP1): $(SRCP1) $(SRC1)
 	$(HC) --make $< -package random -package hmatrix -o $@
@@ -40,4 +46,4 @@ $(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
 clean:
 	-mv $(shell find . -name '*.o') $(BIN_DIR)
 	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP1) $(APP2) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o
+	rm -f $(APP0) $(APP1) $(APP2) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o

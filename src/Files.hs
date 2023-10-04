@@ -78,7 +78,7 @@ writeBMP filename width height customPixelData = do
         ]
 
 -- Function to write a PPM file with custom pixel data in P3 format
-writePPM :: FilePath -> Int -> Int -> [String] -> IO ()
+writePPM :: FilePath -> Int -> Int -> String -> IO ()
 writePPM filename width height customPixelData = do
     let maxColorValue = 255
     let header = unlines
@@ -90,7 +90,8 @@ writePPM filename width height customPixelData = do
             ]
     BS8.writeFile filename $ BS8.unlines
         [ BS8.pack header
-        ] <> BS8.unlines (map BS8.pack customPixelData)  -- Pixel data
+        , BS8.pack customPixelData
+        ]
 
 -- Helper function to convert an Int to a ByteString of 4 bytes
 intTo4Bytes :: Int -> BS.ByteString
