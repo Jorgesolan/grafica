@@ -47,19 +47,21 @@ recenter w h (x, y) = (x+w, y+h)
 --printSolution Nothing = ""
 --printSolution (Just (x1)) = show x
 pix :: Int
-pix = 582
+pix = 1000
 pixF :: Float
-pixF = 582.0
+pixF = 1000.0
 centr = Point3D (pixF/4) (pixF/4) 100
 bola = Esfera centr 32
 camara = Point3D 0 0 0
-rayitos = generateRaysForPixels camara pix pix 200.0
+rayitos = generateRaysForPixels camara pix pix 300.0
 
 main :: IO ()
 main = do
-      let sol = force map (parametricSphereCollision bola) rayitos `using` parListChunk 16 rseq
+      let sol = force map (parametricSphereCollision bola) rayitos `using` parListChunk 32 rseq
       let filteredPositions = filterPositionsOfNotEmpty pix sol
       let pixels = force generateBMPPixelData pix pix filteredPositions
-      print filteredPositions
-      writeBMP "a.bmp" pix pix pixels
+      let ppm = generatePPMPixelData sol
+      writePPM "a.ppm" pix pix ppm
+      -- print filteredPositions
+      -- writeBMP "a.bmp" pix pix pixels
       

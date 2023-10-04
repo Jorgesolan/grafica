@@ -3,9 +3,10 @@ import Elem3D
 import qualified Data.ByteString as BS
 import Data.Word (Word8)
 import Data.Bits  ((.&.), shiftR)
+import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
 import System.IO
-
+import Control.Parallel.Strategies (using, rseq, parListChunk, runEval)
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
 leerPPM archivo = do
@@ -110,9 +111,9 @@ pixels2BMP rgbList = BS.pack $ concatMap rgbToWord8 $ reverse rgbList
     rgbToWord8 (RGB r g b) = map (fromIntegral.round) [r, g, b, 255]
 
 -- Function to generate custom pixel data for a checkerboard pattern
-generateBMPPixelData :: Int -> Int -> [(Int,Int)] -> BS.ByteString
+generateBMPPixelData :: Int -> Int -> [(Int, Int)] -> BS.ByteString
 generateBMPPixelData width height filledpixels =
-    BS.pack $ concatMap generateRow [0 .. height - 1]
+    BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
   where
     generateRow :: Int -> [Word8]
     generateRow row = concatMap generatePixel [0 .. width - 1]
@@ -120,17 +121,11 @@ generateBMPPixelData width height filledpixels =
         generatePixel :: Int -> [Word8]
         generatePixel col
             | (col, row) `elem` filledpixels = [0, 255, 0, 255]
-            | otherwise = [0,0,0,255]
+            | otherwise = [0, 0, 0, 255]
 
 -- Function to generate custom pixel data for a checkerboard pattern as a string
-generatePPMPixelData :: Int -> Int -> [(Int, Int)] -> String
-generatePPMPixelData width height filledpixels =
-    unlines $ map generateRow [0 .. height - 1]
-  where
-    generateRow :: Int -> String
-    generateRow row = unwords $ map generatePixel [0 .. width - 1]
-      where
-        generatePixel :: Int -> String
-        generatePixel col
-            | (col, row) `elem` filledpixels = "0 255 0"
-            | otherwise = "0 0 0"
+generatePPMPixelData :: [Maybe(Float)] -> String
+generatePPMPixelData [] = ""
+generatePPMPixelData (x:xs)
+  | isNothing x = " 0 0 0" ++ generatePPMPixelData xs
+  | otherwise   = " 255 0 0 " ++ generatePPMPixelData xs
