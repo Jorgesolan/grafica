@@ -43,10 +43,12 @@ parsePixels (r:g:b:resto) =
 parsePixels _ = error "Formato incorrecto"
 
 
-parsePixels' :: [RGB] -> [String]
-parsePixels' pixels = map rgbToString pixels
-  where
-    rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b)
+parsePixels' :: [RGB] -> String
+parsePixels' pixels = unwords $ map rgbToString pixels
+
+rgbToString :: RGB -> String
+rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " "
+
 
 -- Function to write a 32-bit BMP file
 writeBMP :: FilePath -> Int -> Int -> BS.ByteString -> IO ()
@@ -124,8 +126,22 @@ generateBMPPixelData width height filledpixels =
             | otherwise = [0, 0, 0, 255]
 
 -- Function to generate custom pixel data for a checkerboard pattern as a string
-generatePPMPixelData :: [Maybe(Float)] -> String
+generatePPMPixelData :: [Maybe(Float)]  -> String
 generatePPMPixelData [] = ""
 generatePPMPixelData (x:xs)
   | isNothing x = " 0 0 0" ++ generatePPMPixelData xs
-  | otherwise   = " 255 0 0 " ++ generatePPMPixelData xs
+  | otherwise   = " 0 0 255 " ++ generatePPMPixelData xs
+
+
+-- Function to generate custom pixel data for a checkerboard pattern
+fromPixToList :: Int -> Int -> [(Int, Int)] -> String
+fromPixToList width height filledpixels =
+  concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
+  where
+    generateRow :: Int -> String
+    generateRow row = concatMap generatePixel [0 .. width - 1]
+      where
+        generatePixel :: Int -> String
+        generatePixel col
+            | (col, row) `elem` filledpixels = " 0 255 0"
+            | otherwise = " 0 0 0"
