@@ -47,10 +47,13 @@ pixF :: Float
 pixF = 1000.0
 centr = Point3D (pixF*3/4) (pixF*3/4) 1000
 centr' = Point3D (pixF/4) (pixF/4) 500
-plano0 = Plano (Point3D 0 0 3000) (Direction 1 0 (0)) (RGB 0 0 255)
+-- triangulo = Triangulo (Point3D (pixF*3/4) (pixF*3/4) 700) (Point3D (pixF/2) (pixF/2) 1600) (Point3D 300 300 1000) (RGB 255 0 255)
+triangulo = Triangulo (Point3D (pixF*2/3) (pixF/3) 700) (Point3D (pixF/3) (pixF/3) 700) (Point3D (pixF/2) (pixF*2/3) 800) (RGB 255 0 255)
+
+plano0 = Plano (Point3D 0 0 3000) (Direction 1 0 0) (RGB 255 0 0)
 plano1 = Plano (Point3D 0 0 3000) (Direction (-1) 0 (0)) (RGB 255 0 0)
-plano2 = Plano (Point3D 0 0 3000) (Direction 1 1 0) (RGB 0 198 0)
-plano3 = Plano (Point3D 0 0 3000) (Direction 0 0 (-1)) (RGB 250 200 100)
+plano2 = Plano (Point3D 0 (-1000) 3000) (Direction 0 1 0) (RGB 0 255 0)
+plano3 = Plano (Point3D 0 0 1000) (Direction 0 0 (-1)) (RGB 255 255 255)
 bola = Esfera centr 200 (RGB 255 0 0)
 bola' = Esfera centr' 50 (RGB 0 0 255)
 camara = Point3D 0 0 (-5000)
@@ -64,15 +67,16 @@ main = do
       let sol1 = force map (parametricPlaneCollision plano1) rayitos `using` parListChunk 32 rseq
       let sol2 = force map (parametricPlaneCollision plano2) rayitos `using` parListChunk 32 rseq
       let sol3 = force map (parametricPlaneCollision plano3) rayitos `using` parListChunk 32 rseq
+      let sol'' = force map (parametricTriangleCollision triangulo) rayitos `using` parListChunk 32 rseq
       --let filteredPositions = force filterPositionsOfNotEmpty pix sol'
       -- let pixels = force generateBMPPixelData pix pix filteredPositions
       -- let ppm = generatePPMPixelData filteredPositions
-      let a = concat $ map rgbToString . listRayToRGB $ [sol, sol', sol3]
-
+      let a = concat $ map rgbToString . listRayToRGB $ [sol, sol',sol'',  sol3]
+      -- let a = concat $ map rgbToString . listRayToRGB $ [sol'', sol3]
       --let ppm = concat (map (rgbToString.(\(x, y) -> findMinTuple x y)) listaIntersecciones)
       -- let ppm' = fromPixToList pix pix (filteredPositions ++ (filterPositionsOfEmpty pix sol))
       writePPM "a.ppm" pix pix a
-      mapM_ (\(floatVal, _) -> print floatVal) sol2
+      -- mapM_ (\(floatVal, _) -> print floatVal) sol2
       -- print filteredPositions
       -- writeBMP "a.bmp" pix pix pixels
       
