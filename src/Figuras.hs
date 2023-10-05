@@ -16,7 +16,6 @@ parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- Esto quizas esta m
             b = 2*(f.*d)
             c = (f.*f) - (r**2)
             raiz = sqrt((b**2) - (4*a*c))
-            ori = Point3D 0 0 0
             f =  p1 #< p0
             findMinPositive :: (Float, Float) -> Float
             findMinPositive (x, y) = minimum [a | a <- [x, y], a > 0]
