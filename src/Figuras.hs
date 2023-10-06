@@ -1,14 +1,15 @@
 module Figuras where
 import Elem3D
 
+data Camara = Camara Point3D Base
 data Esfera = Esfera Point3D Float RGB
 data Plano = Plano Point3D Direction RGB
 data Triangulo = Triangulo Point3D Point3D Point3D RGB
 
-parametricSphereCollision :: Esfera -> Ray -> (Float,RGB)
+parametricSphereCollision :: Esfera -> Ray -> (Float,(RGB,Point3D,Direction))
 parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- Esto quizas esta mal :)
-  | raiz >= 0 = (findMinPositive(t0, t1), color)
-  | otherwise = ((1/0),color)
+  | raiz >= 0 = (mind, (color, collisionPoint, normal))
+  | otherwise = ((1/0),(color,Point3D (1/0) (1/0) (1/0),Direction (1/0) (1/0) (1/0)))
       where
             t0 = (-b+raiz)/(2*a)
             t1 = (-b-raiz)/(2*a)
@@ -19,9 +20,16 @@ parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- Esto quizas esta m
             f =  p1 #< p0
             findMinPositive :: (Float, Float) -> Float
             findMinPositive (x, y) = minimum [a | a <- [x, y], a > 0]
+            mind = findMinPositive(t0, t1)
+            collisionPoint = movePoint (escalateDir mind d) p1
+            normal =  collisionPoint #< p0
 
-parametricPlaneCollision :: Plano -> Ray -> (Float, RGB)
-parametricPlaneCollision (Plano p0 n color) (Ray l0 d m) = ((((p0 #< l0) .* n) / (d .* n)),color)
+parametricPlaneCollision :: Plano -> Ray -> (Float, (RGB, Point3D, Direction))
+parametricPlaneCollision (Plano p0 n color) (Ray p1 d m) = (mind,(color, collisionPoint, normal))
+  where
+    mind = (((p0 #< p1) .* n) / (d .* n))
+    collisionPoint = movePoint (escalateDir mind d) p1
+    normal = n * d
 
 parametricTriangleCollision :: Triangulo -> Ray -> (Float, RGB)
 parametricTriangleCollision (Triangulo v0 v1 v2 color) (Ray l0 d m) =
