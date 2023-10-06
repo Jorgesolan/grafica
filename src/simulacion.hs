@@ -9,8 +9,12 @@ import Control.DeepSeq (force)
 
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray] --Cambiar de tres valores a un solo punto
 generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
-  [Ray p (generateDirection x y focal) 10 | y <- [(-(width / 2)), (width / py) ..((width / 2)-1)], x <- [(-(height / 2)), (height / px)..((height / 2)-1)]]
+  [Ray p (generateDirection x y focal) 10 | y <- [(-py'), (piY-py') ..(py'-piY)], x <- [(-px'), (piX-px') ..(px'-piX)]]
   where
+      piY = py / width
+      piX = px / height
+      px' = px / 2
+      py' = py / 2
       generateDirection :: Float -> Float -> Float -> Direction
       generateDirection width height focal = normal ((Point3D width height focal) #< p)
 
@@ -38,14 +42,14 @@ listRayToRGB luz listaDeListas = map (calcularColor.obtenerRGBMinimo) (transpose
     calcularColor (rgb,collisionPoint,normal) = rgb  --aquí se calcula la luz :D
 
 pix :: Float
-pix = 2000
-pixF :: Float
-pixF = 2000.0
-basCam = Base (Direction 250 0 0) (Direction 0 250 0) (Direction 0 0 1000)
-centr = Point3D (125) (150) 0
+pix = 1080
+piCam :: Float
+piCam = 250
+basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-500))
+centr = Point3D (0) (0) 0
 centr' = Point3D (-50) 200 0
 triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
-luz = Point3D (- pixF) (- pixF) (0)
+luz = Point3D (- pix) (- pix) (0)
 
 plano0 = Plano (Point3D (-200) 0 500) (Direction 1 0 0) (RGB 249 176 84)
 plano1 = Plano (Point3D (200) 0 500) (Direction (1) (0) (0)) (RGB 146 223 222)
@@ -54,28 +58,18 @@ plano3 = Plano (Point3D 0 0 500) (Direction 0 0 (-1)) (RGB 175 170 169)
 plano4 = Plano (Point3D 0 (-250) 500) (Direction 0 (-1) (0)) (RGB 255 0 255)
 bola = Esfera centr 50 (RGB 255 0 0)
 bola' = Esfera centr' 40 (RGB 0 0 255)
-camara = Camara (Point3D (0) (0) (-500)) basCam
+camara = Camara (Point3D (0) (0) (-1000)) basCam
 rayitos = generateRaysForPixels camara pix pix
 
 main :: IO ()
 main = do
-      let sol = force map (parametricSphereCollision bola') rayitos `using` parListChunk 32 rseq
-      -- let sol' = force map (parametricSphereCollision bola) rayitos `using` parListChunk 32 rseq
-      -- let sol0 = force map (parametricPlaneCollision plano0) rayitos `using` parListChunk 32 rseq
-      -- let sol1 = force map (parametricPlaneCollision plano1) rayitos `using` parListChunk 32 rseq
-      -- let sol2 = force map (parametricPlaneCollision plano2) rayitos `using` parListChunk 32 rseq
-      -- let sol3 = force map (parametricPlaneCollision plano3) rayitos `using` parListChunk 32 rseq
-      -- let sol4 = force map (parametricPlaneCollision plano4) rayitos `using` parListChunk 32 rseq
-      -- let sol'' = force map (parametricTriangleCollision triangulo) rayitos `using` parListChunk 32 rseq
-      -- let a = concat $ map rgbToString . listRayToRGB $ [sol, sol',sol0,sol1,sol2, sol3,sol4]
-      -- writePPM "a.ppm" pix pix a
-      print sol
-      let z = concat $ map rgbToString . (listRayToRGB luz) $ [sol]
-      print z
-      -- let a = concat $ map rgbToString . listRayToRGB $ [sol'', sol3]
-      --let ppm = concat (map (rgbToString.(\(x, y) -> findMinTuple x y)) listaIntersecciones)
-      -- let ppm' = fromPixToList pix pix (filteredPositions ++ (filterPositionsOfEmpty pix sol))
-      -- mapM_ (\(floatVal, _) -> print floatVal) sol2
-      -- print filteredPositions
-      -- writeBMP "a.bmp" pix pix pixels
-      
+      let sol = force map (parametricSphereCollision bola) rayitos `using` parListChunk 32 rseq
+      let sol' = force map (parametricSphereCollision bola') rayitos `using` parListChunk 32 rseq
+      let sol0 = force map (parametricPlaneCollision plano0) rayitos `using` parListChunk 32 rseq
+      let sol1 = force map (parametricPlaneCollision plano1) rayitos `using` parListChunk 32 rseq
+      let sol2 = force map (parametricPlaneCollision plano2) rayitos `using` parListChunk 32 rseq
+      let sol3 = force map (parametricPlaneCollision plano3) rayitos `using` parListChunk 32 rseq
+      let sol4 = force map (parametricPlaneCollision plano4) rayitos `using` parListChunk 32 rseq
+      --let sol'' = force map (parametricTriangleCollision triangulo) rayitos `using` parListChunk 32 rseq
+      let a = concat $ map rgbToString . (listRayToRGB luz) $ [sol,sol',sol0,sol1,sol2,sol3,sol4]
+      writePPM "a.ppm" (round pix) (round pix) a
