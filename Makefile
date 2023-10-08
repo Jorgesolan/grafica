@@ -1,5 +1,6 @@
 HC    = ghc
-FLAGS = -dynamic -O2 -threaded -Wall -Werror -rtsopts  
+FLAGS = -dynamic -O2 -threaded 
+#-Wall -Werror -rtsopts 
 
 SRC1 	= ./src/Elem3D.hs
 SRC2  	= ./src/Base.hs
@@ -29,7 +30,7 @@ BIN_DIR = ./bin
 
 sim:
 $(APP0): $(APP) $(SRC1) $(SRC5)
-	$(HC) --make -i$(VPATH) $< -package parallel -o $@ -threaded -DDEBUG -O2
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel -o $@ -threaded
 	strip $@
 
 p1:
