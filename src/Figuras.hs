@@ -5,7 +5,7 @@ data Camara = Camara Point3D Base
 data Esfera = Esfera Point3D Float RGB
 data Plano = Plano Point3D Direction RGB
 data Triangulo = Triangulo Point3D Point3D Point3D RGB
-
+-- data Figura = Esfera | Plano
 parametricSphereCollision :: Esfera -> Ray -> (Float,(RGB,Point3D,Direction))
 parametricSphereCollision (Esfera p0 r color) (Ray p1 d m) -- Esto quizas esta mal :)
   | raiz >= 0 = (mind, (color, collisionPoint, normal))

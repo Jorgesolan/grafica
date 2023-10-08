@@ -126,6 +126,8 @@ perp (Direction xb yb zb) = (Direction yb (-xb) zb)
 generateBase :: Direction -> Direction -> Direction -> Base
 generateBase d0 d1 d2 = Base d0 d1 d2
 
+rgbProd (RGB r g b) n = (RGB (r*n) (g*n) (b*n))
+
 -- --Punto a Vector
 -- pointToVector :: Point3D -> Vector R
 -- pointToVector (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z, 1]
