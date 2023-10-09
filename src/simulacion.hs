@@ -7,6 +7,7 @@ import Control.Parallel.Strategies (using, rseq, parListChunk)
 import Control.DeepSeq (force)
 import Debug.Trace
 import Data.List (any)
+import System.CPUTime
 -- make clean && make sim && ./sim -N && convert a.ppm out.bmp
 
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
@@ -58,9 +59,9 @@ luzXRayo :: [(Float, (RGB, Point3D, Direction))] -> [(Float, (RGB, Point3D, Dire
 luzXRayo = zipWith eligeResultado
   where
   eligeResultado :: (Float, (RGB, Point3D, Direction)) -> (Float, (RGB, Point3D, Direction)) -> RGB
-  eligeResultado (t1, (rgb1, pa, dir1)) (t2,(rgb2, pb, dir2))
+  eligeResultado (_, (rgb1@(RGB r g b), pa, _)) (_,(_, pb, _))
     | (aproxPoint pa pb) = rgb1
-    | otherwise =  RGB 0 0 0
+    | otherwise = (RGB (r/3) (g/3) (b/3))
 
 
 listRay ::  [[(Float, (RGB, Point3D, Direction))]] -> [(Float, (RGB, Point3D, Direction))]
@@ -77,14 +78,14 @@ listRayToRGB luz listaDeListas = map (obtainCol. obtenerRGBMinimo) (transpose li
     obtainCol (rgb,collisionPoint,normal) = rgb
 
 pix :: Float
-pix = 250
+pix = 1000
 piCam :: Float
 piCam = 250
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-500))
 centr = Point3D (0) (0) 0
 centr' = Point3D (-50) 200 0
 triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
-luz = Point3D (0) (0) (-100)
+luz = Point3D (0) (-175) (0)
 
 plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84))
 plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222))
@@ -94,6 +95,7 @@ plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 
 bola =  Sphere (Esfera centr 50 (RGB 255 0 0))
 bola' =  Sphere (Esfera centr' 40 (RGB 0 0 255))
 camara = Camara (Point3D (0) (0) (-1000)) basCam
+
 -- Función para extraer los puntos de las tuplas
 obtenerPuntos :: [(Float, (RGB, Point3D, Direction))] -> [Point3D]
 obtenerPuntos lista = map (\(_, (_, point, _)) -> point) lista
@@ -101,17 +103,18 @@ obtenerPuntos lista = map (\(_, (_, point, _)) -> point) lista
 --figuras = (parametricShapeCollision bola)
 main :: IO ()
 main = do
+      start <- getCPUTime
       let rayitos = generateRaysForPixels camara pix pix `using` parListChunk 32 rseq
-      let sol = parametricShapeCollision [bola,bola',plano0,plano1,plano2,plano3,plano4] rayitos `using` parListChunk 32 rseq
+      let sol = force parametricShapeCollision [bola,bola',plano0,plano1,plano2,plano3,plano4] rayitos `using` parListChunk 32 rseq
       let solo = listRay sol
-      let puntos = obtenerPuntos solo
-      let lusesita = map (\punto -> Ray luz (punto #< luz) 0) puntos
-      let solLus = parametricShapeCollision [bola,bola',plano0,plano1,plano2,plano3,plano4] lusesita `using` parListChunk 32 rseq
-      let solo' = listRay solLus
-      --print $ listaDeListas solo
-      --print $ listaDeListas solo'
-      let sol' = luzXRayo solo solo'
+      let lusesita = force map (\punto -> Ray luz (punto #< luz) 0) $ obtenerPuntos solo 
+      let solLus = force parametricShapeCollision [bola,bola',plano0,plano1,plano2,plano3,plano4] lusesita `using` parListChunk 32 rseq
+      let sol' = luzXRayo (solo) (listRay solLus)
       let a = map rgbToString sol'
+       --print a
       --let a = concat $ map rgbToString $ listRayToRGB luz sol'
       writePPM "a.ppm" (round pix) (round pix) (concat a)
+      end <- getCPUTime
+      let diff = fromIntegral (end - start) / (10^12) :: Double
+      putStrLn $ "Tiempo de procesado de la imagen: " ++ show diff ++ " segundos"
       -- let a = concat $ map rgbToString . (listRayToRGB luz figuras) $ [sol,sol3]

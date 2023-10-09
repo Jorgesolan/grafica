@@ -1,5 +1,6 @@
 module Figuras where
 import Elem3D
+import Debug.Trace
 
 data Camara = Camara Point3D Base
 data Esfera = Esfera Point3D Float RGB
@@ -11,12 +12,12 @@ parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Point3D, Directi
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
     collision :: [Ray] -> Shape -> [(Float, (RGB, Point3D, Direction))]
-    collision rays shape = map (oneCollision shape )rays
+    collision rays shape = map (oneCollision shape) rays
 
     oneCollision :: Shape -> Ray -> (Float, (RGB, Point3D, Direction))
     oneCollision (Sphere (Esfera p0 r color)) (Ray p1 d m)
       | raiz >= 0 = (mind, (color, collisionPoint, normal)) 
-      | otherwise =  ((1/0),(color,Point3D (1/0) (1/0) (1/0),Direction (1/0) (1/0) (1/0)))     
+      | otherwise = ((1/0),(color,Point3D (1/0) (1/0) (1/0),Direction (1/0) (1/0) (1/0)))     
         where
           f = p1 #< p0
           a = d .* d
@@ -27,7 +28,11 @@ parametricShapeCollision shapes rays = map (collision rays) shapes
           t0 = (-b + resul) / (2*a)
           t1 = (-b - resul) / (2*a)
           findMinPositive :: (Float, Float) -> Float
-          findMinPositive (x, y) = minimum [a | a <- [x, y], a > 0]
+          findMinPositive (x, y)
+            | null positiveValues = (1/0)
+            | otherwise           = minimum positiveValues
+            where
+              positiveValues = filter (> 0) [x, y]
           mind = findMinPositive (t0, t1)
           collisionPoint = movePoint (escalateDir mind d) p1
           normal = collisionPoint #< p0

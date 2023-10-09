@@ -19,6 +19,9 @@ instance Show Point3D where
 instance Show Direction where
     show (Direction dx dy dz) = "Direction " ++ show dx ++ " " ++ show dy ++ " " ++ show dz
 
+instance Show Ray where
+    show (Ray p d _) = "Rayo desde " ++ show p ++ " hasta " ++ show d
+
 roundTo :: Int -> Point3D -> Point3D
 roundTo n (Point3D a b c) = Point3D a' b' c'
     where 
