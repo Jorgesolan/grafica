@@ -58,9 +58,9 @@ luzXRayo :: [(Float, (RGB, Point3D, Direction))] -> [(Float, (RGB, Point3D, Dire
 luzXRayo = zipWith eligeResultado
   where
   eligeResultado :: (Float, (RGB, Point3D, Direction)) -> (Float, (RGB, Point3D, Direction)) -> RGB
-  eligeResultado (t1, (rgb1, Point3D xa ya za, dir1)) (t2,(rgb2, Point3D xb yb zb, dir2))
-    | (xa == xb && ya == yb && za == zb) = rgb1
-    | otherwise = RGB 0 0 0
+  eligeResultado (t1, (rgb1, pa, dir1)) (t2,(rgb2, pb, dir2))
+    | (aproxPoint pa pb) = rgb1
+    | otherwise =  RGB 0 0 0
 
 
 listRay ::  [[(Float, (RGB, Point3D, Direction))]] -> [(Float, (RGB, Point3D, Direction))]
@@ -86,18 +86,14 @@ centr' = Point3D (-50) 200 0
 triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
 luz = Point3D (0) (0) (-100)
 
-plano0 = Plane (Plano (Point3D (-200) 0 500) (Direction 1 0 0) (RGB 249 176 84))
-plano1 =  Plane (Plano (Point3D (200) 0 500) (Direction (1) (0) (0)) (RGB 146 223 222))
-plano2 =  Plane (Plano (Point3D 0 (200) 500) (Direction 0 (-1) 0) (RGB 0 255 0))
-plano3 =  Plane (Plano (Point3D 0 0 500) (Direction 0 0 (-1)) (RGB 175 170 169))
-plano4 =  Plane (Plano (Point3D 0 (-250) 500) (Direction 0 (-1) (0)) (RGB 255 0 255))
+plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84))
+plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222))
+plano2 =  Plane (Plano (Point3D 0 (200) 200) (Direction 0 (-1) 0) (RGB 0 255 0))
+plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 175 170 169))
+plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 255))
 bola =  Sphere (Esfera centr 50 (RGB 255 0 0))
 bola' =  Sphere (Esfera centr' 40 (RGB 0 0 255))
 camara = Camara (Point3D (0) (0) (-1000)) basCam
-listaDeListas :: [(Float, (RGB, Point3D, Direction))] -> [Point3D]
-listaDeListas [] = error "La lista de listas está vacía"
-listaDeListas lista = map (\(_, (_, point, _)) -> point) lista
-
 -- Función para extraer los puntos de las tuplas
 obtenerPuntos :: [(Float, (RGB, Point3D, Direction))] -> [Point3D]
 obtenerPuntos lista = map (\(_, (_, point, _)) -> point) lista
@@ -115,7 +111,7 @@ main = do
       --print $ listaDeListas solo
       --print $ listaDeListas solo'
       let sol' = luzXRayo solo solo'
-      let a = concat $ map rgbToString sol'
+      let a = map rgbToString sol'
       --let a = concat $ map rgbToString $ listRayToRGB luz sol'
-      writePPM "a.ppm" (round pix) (round pix) a
+      writePPM "a.ppm" (round pix) (round pix) (concat a)
       -- let a = concat $ map rgbToString . (listRayToRGB luz figuras) $ [sol,sol3]

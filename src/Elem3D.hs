@@ -77,6 +77,13 @@ movePoint' (Direction dx dy dz) (Point3D x y z) = Point3D (x - dx) (y - dy) (z -
 (#<) :: Point3D -> Point3D -> Direction
 (Point3D xb yb zb) #< (Point3D xa ya za) = Direction (xb-xa) (yb-ya) (zb-za)
 
+aproxPoint :: Point3D -> Point3D -> Bool
+aproxPoint (Point3D xb yb zb) (Point3D xa ya za) = a && b && c
+    where 
+        a = abs (xb-xa) < 0.1
+        b = abs (yb-ya) < 0.1   
+        c = abs (zb-za) < 0.1
+
 instance Num Direction where
 -- Suma de direcciones
 --  (+) :: Direction -> Direction -> Direction
