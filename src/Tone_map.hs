@@ -2,12 +2,6 @@ module Tone_map where
 import Files
 import Elem3D
 
-elevateRGBPoint :: Float -> RGB -> RGB
-elevateRGBPoint x (RGB r g b) =
-    RGB (r ** (1.0 / x))
-        (g ** (1.0 / x))
-        (b ** (1.0 / x))
-
 clamp :: Float -> [RGB] -> [RGB]
 clamp x = map (\(RGB a b c) -> RGB (min x a) (min x b) (min x c))
 

@@ -3,21 +3,21 @@ import Elem3D
 import Debug.Trace
 
 data Camara = Camara Point3D Base
-data Esfera = Esfera Point3D Float RGB
-data Plano = Plano Point3D Direction RGB
+data Esfera = Esfera Point3D Float RGB Float
+data Plano = Plano Point3D Direction RGB Float
 data Triangulo = Triangulo Point3D Point3D Point3D RGB
 data Shape = Sphere Esfera | Plane Plano
 
-parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Point3D, Direction))]]
+parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction))]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
-    collision :: [Ray] -> Shape -> [(Float, (RGB, Point3D, Direction))]
+    collision :: [Ray] -> Shape -> [(Float, (RGB, Float, Point3D, Direction))]
     collision rays shape = map (oneCollision shape) rays
 
-    oneCollision :: Shape -> Ray -> (Float, (RGB, Point3D, Direction))
-    oneCollision (Sphere (Esfera p0 r color)) (Ray p1 d m)
-      | raiz >= 0 = (mind, (color, collisionPoint, normal)) 
-      | otherwise = ((1/0),(color,Point3D (1/0) (1/0) (1/0),Direction (1/0) (1/0) (1/0)))     
+    oneCollision :: Shape -> Ray -> (Float, (RGB, Float, Point3D, Direction))
+    oneCollision (Sphere (Esfera p0 r color reflectividad)) (Ray p1 d m)
+      | raiz >= 0 = (mind, (color,reflectividad, collisionPoint, normal)) 
+      | otherwise = ((1/0),(color,reflectividad,Point3D (1/0) (1/0) (1/0),Direction (1/0) (1/0) (1/0)))     
         where
           f = p1 #< p0
           a = d .* d
@@ -38,7 +38,7 @@ parametricShapeCollision shapes rays = map (collision rays) shapes
           normal = collisionPoint #< p0
 
 
-    oneCollision (Plane (Plano p0 n color)) (Ray p1 d m) = (mind,(color, collisionPoint, normal))
+    oneCollision (Plane (Plano p0 n color reflectividad)) (Ray p1 d m) = (mind,(color, reflectividad, collisionPoint, normal))
       where
         mind = (((p0 #< p1) .* n) / (d .* n))
         collisionPoint = movePoint (escalateDir mind d) p1

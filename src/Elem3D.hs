@@ -138,6 +138,18 @@ generateBase d0 d1 d2 = Base d0 d1 d2
 
 rgbProd (RGB r g b) n = (RGB (r*n) (g*n) (b*n))
 
+elevateRGBPoint :: Float -> RGB -> RGB
+elevateRGBPoint x (RGB r g b) =
+    RGB (r ** (1.0 / x))
+        (g ** (1.0 / x))
+        (b ** (1.0 / x))
+
+agregateRGBPoints :: RGB -> RGB -> RGB
+agregateRGBPoints (RGB r' g' b') (RGB r g b) =
+    RGB (r + r')
+        (g + g')
+        (b + b')
+
 -- --Punto a Vector
 -- pointToVector :: Point3D -> Vector R
 -- pointToVector (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z, 1]
