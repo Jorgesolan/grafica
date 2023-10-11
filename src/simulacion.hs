@@ -21,66 +21,35 @@ generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Dir
       generateDirection :: Float -> Float -> Float -> Direction
       generateDirection width height focal = normal ((Point3D width height focal) #< p)
 
--- intToPixCoord :: Int -> [Int] -> [(Int,Int)]
--- intToPixCoord w values = map (\a -> (mod a w, div a w)) values
+obtenerPrimeraColision :: [(Float, (RGB,Float, Point3D, Direction))] -> (Float,(RGB,Float, Point3D, Direction))
+obtenerPrimeraColision = foldl1' (\acc@(minFloat,( _,_, _, _)) (x, (rgb, ref,collisionPoint, normal)) -> if (x < minFloat && x >= 0) then (x, (rgb, ref,collisionPoint, normal)) else acc)
 
--- filterPositionsOfNotEmpty :: Int -> [Maybe a]  -> [(Int,Int)]
--- filterPositionsOfNotEmpty w lista = (intToPixCoord w) . elemIndices True $ boolList
---   where
---     boolList = map isJust lista
-
--- filterPositionsOfEmpty :: Int -> [Float]  -> [(Int,Int)]
--- filterPositionsOfEmpty w lista = intToPixCoord w roundedLista
---   where
---   roundedLista = map round lista
-
--- recenter :: Int -> Int -> (Int, Int) -> (Int, Int)
--- recenter w h (x, y) = (x+w, y+h)
-
-listRayToRGB ::  Point3D -> ([Ray] -> [[(Float,(RGB,Float,Point3D,Direction))]]) -> [[(Float, (RGB,Float, Point3D, Direction))]] -> [RGB]
-listRayToRGB luz figuras listaDeListas = trace (show (length listaDeListas)) $ map (calcularColor.obtenerRGBMinimo) (transpose listaDeListas)
+listRayToRGB ::  Point3D -> Point3D -> ([Ray] -> [[(Float,(RGB,Float,Point3D,Direction))]]) -> [[(Float, (RGB,Float, Point3D, Direction))]] -> [RGB]
+listRayToRGB luz cam figuras listaDeListas = trace (show (length listaDeListas)) $ map (calcularColor.snd.obtenerPrimeraColision) (transpose listaDeListas)
   where
-    obtenerRGBMinimo :: [(Float, (RGB,Float, Point3D, Direction))] -> (RGB,Float, Point3D, Direction)
-    obtenerRGBMinimo = snd . foldl1' (\acc@(minFloat,( _,_, _, _)) (x, (rgb, ref,collisionPoint, normal)) -> if (x < minFloat && x >= 0) then (x, (rgb, ref,collisionPoint, normal)) else acc)
     calcularColor (rgb,ref,collisionPoint,normal) = newRgb  -- Return a default value when there's no collision
       where
+        -- calcular rayo de punto de colisión a luz, su distancia y angulo
         ligthDir = (luz #< collisionPoint)
-        ligthRay =  Ray collisionPoint ligthDir 300
-        
-        -- lanzar rauo desde p colision hasta luz mirando si en medio hay alguna intersec con figura
-        collisions:tail = figuras [ligthRay]
-        aux:tail2 = collisions
-        colisiona = (fst aux) < (1/0)
-
+        ligthRay =  Ray collisionPoint ligthDir dluz
+        dluz = modd ligthDir        
         angle = (normal .* ligthDir) / ((modd normal) * (modd ligthDir))
-        (reflectedPointRGB, _, _, _) =  (obtenerRGBMinimo.head) (transpose (figuras [(Ray collisionPoint normal 2)]))
+        -- lanzarlo y quedarse con las colisiones de todos los objetos, comprobar si hay alguna colisión a menor distancia que la esperada
+        -- en la siguiente linea falta un transpose con toda seguridad!!!!!!!!!!!!!!!!
+        collisions:_ = (figuras [ligthRay])
+        primerImpactoLuz = fst (obtenerPrimeraColision collisions)
+        colisiona = primerImpactoLuz < (dluz)
+
+        -- calcular angulo de reflexión (esta mal ahora mismo es el ángulo a la camara por eso el espejo esta del reves)
+        reflectedDir = (cam #< collisionPoint)
+        -- quedarse con el color del primer impacto del rayo reflectado
+        (reflectedPointRGB, _, _, _) =  (snd.obtenerPrimeraColision.head) (transpose (figuras [(Ray collisionPoint reflectedDir 2)]))
         reflectedRGB = agregateRGBPoints (rgbProd rgb (1 - ref)) (rgbProd reflectedPointRGB ref)
         newRgb = if not colisiona then rgbProd reflectedRGB (1 - (angle / 90.0)) else rgbProd reflectedRGB (1/3)
 
--- luzXRayo :: [(Float, (RGB, Float, Point3D, Direction))] -> [(Float, (RGB, Float, Point3D, Direction))] -> [(Float, (RGB, Float, Point3D, Direction))]
--- luzXRayo = zipWith eligeResultado
---   where
---   eligeResultado :: (Float, (RGB, Float, Point3D, Direction)) -> (Float, (RGB, Float, Point3D, Direction)) -> (Float, (RGB, Float, Point3D, Direction))
---   eligeResultado a@(t, (rgb1@(RGB r g b),ref, pa, d)) (_,(_,_, pb, _))
---     | (aproxPoint pa pb) = a
---     | otherwise = (t,(RGB (r/3) (g/3) (b/3),ref,pa,d))
-
-
--- listRay ::  [[(Float, (RGB,Float, Point3D, Direction))]] -> [(Float, (RGB,Float, Point3D, Direction))]
--- listRay listaDeListas = map (obtenerRGBMinimo) (transpose listaDeListas)
---   where
---     obtenerRGBMinimo :: [(Float, (RGB, Float, Point3D, Direction))] -> (Float, (RGB, Float, Point3D, Direction))
---     obtenerRGBMinimo = foldl1' (\acc@(minFloat,(_, _, _, _)) (x, (rgb,ref, collisionPoint, normal)) -> if (x < minFloat && x >= 0) then (x, (rgb,ref, collisionPoint, normal)) else acc)
-
--- listRayToRGB ::  Point3D -> [[(Float, (RGB,Float, Point3D, Direction))]] -> [RGB]
--- listRayToRGB luz listaDeListas = map (obtainCol. obtenerRGBMinimo) (transpose listaDeListas)
---   where
---     obtenerRGBMinimo :: [(Float, (RGB, Float, Point3D, Direction))] -> (RGB, Float, Point3D, Direction)
---     obtenerRGBMinimo = snd . foldl1' (\acc@(minFloat,(_, _, _, _)) (x, (rgb,ref, collisionPoint, normal)) -> if (x < minFloat && x >= 0) then (x, (rgb,ref, collisionPoint, normal)) else acc)
---     obtainCol (rgb,ref,collisionPoint,normal) = rgb
 
 pix :: Float
-pix = 1000
+pix = 1400
 piCam :: Float
 piCam = 250
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-500))
@@ -89,15 +58,15 @@ centr' = Point3D (-50) 200 0
 centr'' = Point3D (100) (200) (-20)
 triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
 luz = Point3D (100) (-175) (-20)
-
+cam' =  Point3D (0) (0) (-1000)
 plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84) 0)
 plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222) 0)
 plano2 =  Plane (Plano (Point3D 0 (200) 200) (Direction 0 (-1) 0) (RGB 0 255 0) 0)
 plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 175 170 169) 0)
 plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 255) 0)
-bola =  Sphere (Esfera centr 50 (RGB 255 0 0) 1)
+bola =  Sphere (Esfera centr 50 (RGB 255 0 0) 0)
 bola' =  Sphere (Esfera centr' 40 (RGB 0 0 255) 0)
-bola'' =  Sphere (Esfera centr'' 50 (RGB 155 0 155) 1)
+bola'' =  Sphere (Esfera centr'' 50 (RGB 155 0 155) 0.95)
 bolaLus = Sphere (Esfera luz 10 (RGB 255 255 255) 0)
 camara = Camara (Point3D (0) (0) (-1000)) basCam
 
@@ -113,7 +82,7 @@ main = do
 
       let rayitos = generateRaysForPixels camara pix pix `using` parListChunk 32 rseq
       let sol = force figuras rayitos `using` parListChunk 32 rseq
-      let a = concat $ map rgbToString . (listRayToRGB luz (figuras)) $ sol
+      let a = concat $ map rgbToString . (listRayToRGB luz cam' (figuras)) $ sol
       -- let solBolaLus =  force parametricShapeCollision [bolaLus] rayitos
       -- let solo = listRay sol
       -- let lusesita = force map (\punto -> Ray luz (punto #< luz) 0) $ obtenerPuntos solo 

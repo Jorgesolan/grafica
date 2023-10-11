@@ -150,6 +150,10 @@ agregateRGBPoints (RGB r' g' b') (RGB r g b) =
         (g + g')
         (b + b')
 
+comparateRGB :: RGB -> RGB -> Bool
+comparateRGB (RGB r' g' b') (RGB r g b) = (r == r') && (g == g') && (b == b')
+
+
 -- --Punto a Vector
 -- pointToVector :: Point3D -> Vector R
 -- pointToVector (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z, 1]
