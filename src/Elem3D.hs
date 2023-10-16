@@ -92,6 +92,9 @@ instance Num Direction where
 --  (+) :: Direction -> Direction -> Direction
  (Direction x1 y1 z1) + (Direction x2 y2 z2) = Direction (x1 + x2) (y1 + y2) (z1 + z2)
  
+  --  (-) :: Direction -> Direction -> Direction
+ (Direction x1 y1 z1) - (Direction x2 y2 z2) = Direction (x1 - x2) (y1 - y2) (z1 - z2)
+ 
  -- Producto vectorial
 --  (*) :: Direction -> Direction -> Direction
  (Direction xa ya za) * (Direction xb yb zb) = Direction (ya*zb-za*yb) (za*xb-xa*zb) (xa*yb-ya*xb)
@@ -114,7 +117,7 @@ escalateDir' s (Direction xa ya za) = Direction (s/xa) (s/ya) (s/za)
 
 -- -- -- Escalado de puntos
 escalatePoint' :: Float -> Point3D -> Point3D
-escalatePoint' s (Point3D xa ya za) = (Point3D (s/xa) (s/ya) (s/za))
+escalatePoint' s (Point3D xa ya za) = Point3D (s/xa) (s/ya) (s/za)
 
 -- -- Modulo
 modd :: Direction -> Float
