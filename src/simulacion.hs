@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 import Elem3D
 import Files
 import Figuras
@@ -5,10 +6,10 @@ import Data.List
 import Data.Ord
 import Data.Maybe
 import Control.Parallel.Strategies (using, rseq, parListChunk)
-{-# LANGUAGE BangPatterns #-}
 import Debug.Trace
 import Data.List (any)
 import System.CPUTime
+import qualified Data.Vector as V
 -- make clean && make sim && ./sim -N && convert a.ppm out.bmp
 
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
@@ -76,11 +77,11 @@ listRayToRGB luz cam figuras listaDeColisiones = b
 
 
 pix :: Float
-pix = 1250
+pix = 2048
 piCam :: Float
 piCam = 250
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-500))
-centr = Point3D (0) (0) 0
+centr = Point3D (0) (100) 0
 centr' = Point3D (-50) 200 0
 centr'' = Point3D (100) (200) (-20)
 triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
@@ -89,26 +90,32 @@ cam' =  Point3D (0) (0) (-1000)
 plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84) 0 0)
 plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222) 0 1)
 plano2 =  Plane (Plano (Point3D 0 (200) 200) (Direction 0 (-1) 0) (RGB 0 255 0) 0 2)
-plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 175 170 169) 0 3)
+plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 255 255 255) 0 3)
 plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 255) 0 4)
+plano5 =  Plane (Plano (Point3D 0 0 (-1001)) (Direction 0 0 (1)) (RGB 255 255 0) 0 3)
 bola =  Sphere (Esfera centr 50 (RGB 255 0 0) 1 5)
 bola' =  Sphere (Esfera centr' 40 (RGB 0 0 255) 0 6)
 bola'' =  Sphere (Esfera centr'' 50 (RGB 155 0 155) 1 7)
+tri1 = Triangle (Triangulo (Point3D 0 100 50) (Point3D 100 100 50) (Point3D 100 0 100) (RGB 60 80 100) 0 8)
 bolaLus = Sphere (Esfera luz 10 (RGB 255 255 255) 0 8)
 camara = Camara (Point3D (0) (0) (-1000)) basCam
 
 
-figuras = [bola,bola',bola'',plano0,plano1,plano2,plano3,plano4]
+figuras = [bola,bola',bola'',plano0,plano1,plano2,plano3,plano4,plano5, tri1]
 
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 main :: IO ()
 main = do
 
+      let objFilePath = "cubo.obj"  -- Replace with the path to your .obj file
+      (vertices, triangles) <- loadObjFile objFilePath
+      let customTriangles = convertToCustomFormat (vertices, triangles)
+      let figuras' = figuras ++ customTriangles
       start <- getCPUTime
 
-      let rayitos = generateRaysForPixels camara pix pix-- `using` parListChunk 16 rseq
-      let !sol = parametricShapeCollision figuras rayitos-- `using` parListChunk 16 rseq
-      let a = concat $ map rgbToString . (listRayToRGB luz cam' figuras) $ sol
+      let rayitos = generateRaysForPixels camara pix pix --`using` parListChunk 128 rseq
+      let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
+      let a = concat $ map rgbToString . (listRayToRGB luz cam' figuras') $ sol
       -- let solBolaLus =  force parametricShapeCollision [bolaLus] rayitos
       -- let solo = listRay sol
       -- let lusesita = force map (\punto -> Ray luz (punto #< luz) 0) $ obtenerPuntos solo 
