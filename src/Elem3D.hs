@@ -139,7 +139,7 @@ perp (Direction xb yb zb) = (Direction yb (-xb) zb)
 generateBase :: Direction -> Direction -> Direction -> Base
 generateBase d0 d1 d2 = Base d0 d1 d2
 
-rgbProd (RGB r g b) n = (RGB (r*n) (g*n) (b*n))
+rgbProd n (RGB r g b) = (RGB (r*n) (g*n) (b*n))
 
 elevateRGBPoint :: Float -> RGB -> RGB
 elevateRGBPoint x (RGB r g b) =
