@@ -77,15 +77,18 @@ listRayToRGB luz cam figuras listaDeColisiones = b
 
 
 pix :: Float
-pix = 2048
-piCam :: Float
-piCam = 250
-basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-500))
+pix = 1920
+piy :: Float
+piy = 1920
+piCamX :: Float
+piCamX = 250
+piCamY :: Float
+piCamY = 250
+basCam = Base (Direction piCamX 0 0) (Direction 0 piCamY 0) (Direction 0 0 (-500))
 centr = Point3D (0) (100) 0
 centr' = Point3D (-50) 200 0
 centr'' = Point3D (100) (200) (-20)
-triangulo = Triangulo (Point3D (5) (25) 70) (Point3D (15) (5) 70) (Point3D (5) (5) 70) (RGB 255 0 255)
-luz = Point3D (150) (0) (0)
+luz = Point3D (150) (0) (-20)
 cam' =  Point3D (0) (0) (-1000)
 plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84) 0 0)
 plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222) 0 1)
@@ -94,26 +97,31 @@ plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 255 255 255) 
 plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 255) 0 4)
 plano5 =  Plane (Plano (Point3D 0 0 (-1001)) (Direction 0 0 (1)) (RGB 255 255 0) 0 3)
 bola =  Sphere (Esfera centr 50 (RGB 255 0 0) 1 5)
-bola' =  Sphere (Esfera centr' 40 (RGB 0 0 255) 0 6)
+bola' =  Sphere (Esfera centr' 40 (RGB 255 255 0) 0 6)
 bola'' =  Sphere (Esfera centr'' 50 (RGB 155 0 155) 1 7)
-tri1 = Triangle (Triangulo (Point3D 0 100 50) (Point3D 100 100 50) (Point3D 100 0 100) (RGB 60 80 100) 0 8)
-bolaLus = Sphere (Esfera luz 10 (RGB 255 255 255) 0 8)
+-- tri1 = Triangle (Triangulo (Point3D 0 100 50) (Point3D 100 100 50) (Point3D 100 0 100) (RGB 60 80 100) 0 8)
+-- bolaLus = Sphere (Esfera luz 10 (RGB 255 255 255) 0 8)
 camara = Camara (Point3D (0) (0) (-1000)) basCam
 
 
-figuras = [bola,bola',bola'',plano0,plano1,plano2,plano3,plano4,plano5, tri1]
+figuras = [bola,bola',bola'',plano0,plano1,plano2,plano3,plano4,plano5]
 
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 main :: IO ()
 main = do
-
-      let objFilePath = "cubo.obj"  -- Replace with the path to your .obj file
+      start <- getCPUTime 
+      let objFilePath = "diamante.obj"  -- Replace with the path to your .obj file
       (vertices, triangles) <- loadObjFile objFilePath
-      let customTriangles = convertToCustomFormat (vertices, triangles)
-      let figuras' = figuras ++ customTriangles
-      start <- getCPUTime
+      let !vertices' = map (rotatePoint 'Y' (0).movePoint (Direction (-50) (-25) 0).escalatePoint (25)) vertices
+      let !customTriangles = convertToCustomFormat (vertices', triangles)
 
-      let rayitos = generateRaysForPixels camara pix pix --`using` parListChunk 128 rseq
+      let objFilePath1 = "cubo.obj"  -- Replace with the path to your .obj file
+      (vertices1, triangles1) <- loadObjFile objFilePath1
+      let !vertices1' = map (rotatePoint 'X' (0).movePoint (Direction (-50) (0) 0).escalatePoint (25)) vertices1
+      let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
+      let !figuras' = figuras ++ customTriangles ++ customTriangles1
+
+      let rayitos = generateRaysForPixels camara pix piy --`using` parListChunk 128 rseq
       let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
       let a = concat $ map rgbToString . (listRayToRGB luz cam' figuras') $ sol
       -- let solBolaLus =  force parametricShapeCollision [bolaLus] rayitos
@@ -125,7 +133,7 @@ main = do
       -- let a = map rgbToString $ map (\(_,(rgb,_,_,_)) -> rgb) sol''
       -- writePPM "a.ppm" (round pix) (round pix) (concat a)
       
-      writePPM "a.ppm" (round pix) (round pix) a
+      writePPM "a.ppm" (round pix) (round piy) a
       
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Double
