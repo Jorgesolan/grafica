@@ -48,7 +48,7 @@ mediaRGB lista n = (medRGB (1/n)) (foldr sumRGB (head lista) (tail lista))
 mediaDeRayos :: [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
 mediaDeRayos = map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
 
-listRayToRGB :: [Point3D] -> Point3D -> [Shape] -> [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [RGB]
+listRayToRGB :: [Point3D] -> Point3D -> [Shape] -> [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
 listRayToRGB luces cam figuras listaDeColisiones = b
   where
     !parametricfiguras = parametricShapeCollision figuras
@@ -64,7 +64,7 @@ listRayToRGB luces cam figuras listaDeColisiones = b
     
     !mediaLuzxRayo = mediaDeRayos luzXRayo
 
-    !b = map (\(_, (rgb, _, _, _, _)) -> rgb) $ map (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
+    !b = map (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
       where
         oneEspejo :: Point3D -> [Shape] -> (Float, (RGB, Float, Point3D, Direction, Int)) -> (Float, (RGB, Float, Point3D, Direction, Int))
         oneEspejo cam shapes esp@(f, (rgb, ref, p, d, id))
@@ -91,9 +91,9 @@ listRayToRGB luces cam figuras listaDeColisiones = b
 
 
 pix :: Float
-pix = 1920
+pix = 4096
 piy :: Float
-piy = 1920
+piy = 4096
 piCamX :: Float
 piCamX = 250
 piCamY :: Float
@@ -109,18 +109,28 @@ cam' =  Point3D (0) (0) (-1000)
 plano0 = Plane (Plano (Point3D (-200) 0 200) (Direction 1 0 0) (RGB 249 176 84) 0 0)
 plano1 =  Plane (Plano (Point3D (200) 0 200) (Direction (1) (0) (0)) (RGB 146 223 222) 0 1)
 plano2 =  Plane (Plano (Point3D 0 (200) 200) (Direction 0 (-1) 0) (RGB 0 255 0) 0 2)
-plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 255 255 255) 0 3)
+plano3 =  Plane (Plano (Point3D 0 0 200) (Direction 0 0 (-1)) (RGB 171 118 24) 0 3)
 plano4 =  Plane (Plano (Point3D 0 (-250) 200) (Direction 0 (-1) (0)) (RGB 255 0 255) 0 4)
 plano5 =  Plane (Plano (Point3D 0 0 (-1001)) (Direction 0 0 (1)) (RGB 255 255 0) 0 3)
 bola =  Sphere (Esfera centr 50 (RGB 255 0 0) 1 5)
 bola'' =  Sphere (Esfera centr'' 50 (RGB 155 0 155) 1 7)
 -- tri1 = Triangle (Triangulo (Point3D 0 100 50) (Point3D 100 100 50) (Point3D 100 0 100) (RGB 60 80 100) 0 8)
--- bolaLus = Sphere (Esfera luz 10 (RGB 255 255 255) 0 8)
+bolaLus = Sphere (Esfera luz 10 (RGB 255 0 255) 0 8)
 camara = Camara (Point3D (0) (0) (-1000)) basCam
 
+generarBolaLuz :: Point3D -> Shape
+generarBolaLuz p = Sphere (Esfera p 10 (RGB 255 255 255) 0 8)
+
+partirEnCuatro :: [a] -> Maybe ([a], [a], [a], [a])
+partirEnCuatro lista
+  | length lista `mod` 4 == 0 = Just (take n lista, take n (drop n lista), take n (drop (2 * n) lista), drop (3 * n) lista)
+  | otherwise = Nothing
+  where
+    n = length lista `div` 4
 
 figuras = [bola,bola'',plano0,plano1,plano2,plano3,plano4,plano5]
 luces = [luz,luz',luz'']
+bolasLuz = map generarBolaLuz luces
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 main :: IO ()
 main = do
@@ -138,17 +148,19 @@ main = do
 
       let rayitos = generateRaysForPixels camara pix piy --`using` parListChunk 128 rseq
       let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
-      let a = concat $ map rgbToString . (listRayToRGB luces cam' figuras') $ sol
-      -- let solBolaLus =  force parametricShapeCollision [bolaLus] rayitos
-      -- let solo = listRay sol
-      -- let lusesita = force map (\punto -> Ray luz (punto #< luz) 0) $ obtenerPuntos solo 
-      -- let solLus = force parametricShapeCollision [bola,bola',plano0,plano1,plano2,plano3,plano4] lusesita `using` parListChunk 32 rseq
-      -- let sol' = luzXRayo (solo) (listRay solLus)
-      -- let sol'' = listRay [sol',(concat solBolaLus)]
-      -- let a = map rgbToString $ map (\(_,(rgb,_,_,_)) -> rgb) sol''
-      -- writePPM "a.ppm" (round pix) (round pix) (concat a)
+      let !a = (listRayToRGB luces cam' figuras') $ sol
+      let !representacionLuces = parametricShapeCollision bolasLuz rayitos
+      let !fin = concat $ map rgbToString . map (\(_, (rgb, _, _, _, _)) -> rgb) $ listRay [a,(listRay representacionLuces)]
+      --     case partirEnCuatro fin of
+      -- Just (parte1, parte2, parte3, parte4) -> do
+      --   writeToList "parte1.ppm" parte1
+      --   writeToList "parte2.ppm" parte2
+      --   writeToList "parte3.ppm" parte3
+      --   writeToList "parte4.ppm" parte4
+      -- Nothing ->
+      --   putStrLn "La longitud de la lista es menor a 4."
       
-      writePPM "a.ppm" (round pix) (round piy) a
+      writePPM "a.ppm" (round pix) (round piy) fin
       
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Double
