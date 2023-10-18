@@ -5,22 +5,49 @@ import Figuras
 import Data.List
 import Data.Ord
 import Data.Maybe
-import Control.Parallel.Strategies (using, parMap, rseq, rdeepseq, parListChunk)
+import Control.Parallel.Strategies
 import Debug.Trace
 import Data.List (any)
+import System.Random
 import System.CPUTime
 import qualified Data.Vector as V
--- make clean && make sim && ./sim -N && convert a.ppm out.bmp
+import Control.Concurrent
+import System.IO.Unsafe (unsafePerformIO)
+-- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
+-- make clean && make sim && ./sim  +RTS -N -l -RTS && convert a.ppm out.bmp
+
+-- Define a function to apply in parallel
+applyFunction :: (a -> b) -> a -> MVar b -> IO ()
+applyFunction func item resultVar = do
+    let result = func item
+    putMVar resultVar result
+
+-- Apply a function to a list of items in parallel
+parallelMap :: (a -> b) -> [a] -> IO [b]
+parallelMap func items = do
+    !resultVars <- mapM (const newEmptyMVar) items
+    let applyFunctionWithIndex i = applyFunction func (items !! i) (resultVars !! i)
+    _ <- mapM (\i -> forkIO (applyFunctionWithIndex i)) [0..length items - 1]
+    !results <- mapM takeMVar resultVars
+    return results
+
+parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
+parametricShapeCollision shapes rays = map (collision rays) shapes
+  where
+    collision rays shape = map (oneCollision shape) rays
 
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
 generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
-  [Ray p (generateDirection x y focal) 10 | y <- [(-py'), (piY-py') ..(py'-piY)], x <- [(-px'), (piX-px') ..(px'-piX)]]
+  [Ray p (generateDirection x y focal) 10 | y <- (zipWith (+) randomY [(-py'), (piY-py') ..(py'-piY)]), x <- (zipWith (+) randomX [(-px'), (piX-px') ..(px'-piX)])]
   where
       !piY = py / height
       !piX = px / width
       px' = px / 2
       py' = py / 2
       generateDirection width height focal = normal ((Point3D width height focal) #< p)
+      gen = mkStdGen 42
+      randomY = take (round(height)) $ randomRs (0.0, (piY-py')) gen :: [Float]
+      randomX = take (round(width)) $ randomRs (0.0, (piY-py')) gen :: [Float]
 
 obtenerPrimeraColision :: [(Float, (RGB,Float, Point3D, Direction, Int))] -> (Float,(RGB,Float, Point3D, Direction,Int))
 obtenerPrimeraColision = minimumBy (comparing fst) . filter (\(x, _) -> x >= 0)
@@ -45,39 +72,41 @@ mediaRGB lista n = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
     medRGB n (f, (RGB r g b, fl, p, d, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, id))
 
 mediaDeRayos :: [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
-mediaDeRayos =  parMap rdeepseq (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
+mediaDeRayos =  map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
 
 listRayToRGB :: [Point3D] -> Point3D -> [Shape] -> [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
 listRayToRGB luces cam figuras listaDeColisiones = b
   where
     !parametricfiguras = parametricShapeCollision figuras
-    
-    !ligthRays = [[Ray luz (punto #< luz) 0 | punto <- obtenerPuntos (listRay listaDeColisiones)] | luz <- luces]
-    
-    !collisions = parMap rdeepseq parametricfiguras ligthRays
-    
-    !luzXRayo = [zipWith eligeResultado (listRay listaDeColisiones) (listRay collision) | collision <- collisions]
+    !rayosColisiones = listRay listaDeColisiones
+
+    !ligthRays = [[Ray luz (punto #< luz) 0 | punto <- obtenerPuntos rayosColisiones] | luz <- luces]
+    !collisions = unsafePerformIO $ parallelMap parametricfiguras ligthRays
+    --  traceEventIO "Buscar Luz" $
+    !luzXRayo = [zipWith eligeResultado rayosColisiones (listRay collision) | collision <- collisions]
       where
         eligeResultado a@(t, ((RGB r0 g0 b0), ra, pa, d, id)) (_, ((RGB r1 g1 b1), _, pb, _, _))
           | aproxPoint pa pb = a
           | otherwise = (t, (RGB 0 0 0, ra, pa, d, id))
     
-    !mediaLuzxRayo = mediaDeRayos luzXRayo
-
-    !b = parMap rdeepseq (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
+    !mediaLuzxRayo = mediaDeRayos luzXRayo 
+    -- traceEventIO "Media Luz"
+    !b = map (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
       where
        oneEspejo cam shapes esp@(f, (rgb, ref, p, d, id))
           | ref == 0 = esp
           | otherwise = let
               otherShapes = filter (\shape -> not (id == getShapeID shape)) shapes
-              !cortes = parMap rdeepseq (\shape -> oneCollision shape (Ray p (calcularDirESpejo (p #< cam) d) 0)) otherShapes
+              cortes = map (\shape -> oneCollision shape (Ray p (calcularDirESpejo (p #< cam) d) 0)) otherShapes
               rgbRefle = (\(_, (rgb, _, _, _, _)) -> rgb) $ obtenerPrimeraColision cortes
-              newRgb = agregateRGBPoints (rgbProd (1 - ref) rgb ) (rgbProd ref rgbRefle)
+              !newRgb = if (ref < 0.5) then rgb else rgbRefle
             in (f, (newRgb, ref, p, d, id))
-              
+    -- traceEventIO "Fin Func"
+    -- `using` parList rseq
+    -- parMap rdeepseq
 
 pix :: Float
-pix = 1000
+pix = 2048
 piCam :: Float
 piCam = 25
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
@@ -104,7 +133,7 @@ generarBolaLuz :: Point3D -> Shape
 generarBolaLuz p = Sphere (Esfera p 1 (RGB 255 255 255) 0 8)
 
 figuras = [bola,plano0,plano1,plano2,plano3,plano4]
-luces = [luz]
+luces = [luz,luz',luz'']
 bolasLuz = map generarBolaLuz luces
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 main :: IO ()
@@ -124,17 +153,11 @@ main = do
 
       let rayitos = generateRaysForPixels camara pix pix --`using` parListChunk 128 rseq
       let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
-      let !a = (listRayToRGB luces cam' figuras') $ sol
+      traceEventIO "Principio func Luz"
+      let !a = listRayToRGB luces cam' figuras' sol
+      traceEventIO "Fin de so"
       let !representacionLuces = parametricShapeCollision bolasLuz rayitos
       let !fin = concat $ map rgbToString . map (\(_, (rgb, _, _, _, _)) -> rgb) $ listRay [a,(listRay representacionLuces)]
-      --     case partirEnCuatro fin of
-      -- Just (parte1, parte2, parte3, parte4) -> do
-      --   writeToList "parte1.ppm" parte1
-      --   writeToList "parte2.ppm" parte2
-      --   writeToList "parte3.ppm" parte3
-      --   writeToList "parte4.ppm" parte4
-      -- Nothing ->
-      --   putStrLn "La longitud de la lista es menor a 4."
       
       writePPM "a.ppm" (round pix) (round pix) fin
       

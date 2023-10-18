@@ -30,7 +30,7 @@ BIN_DIR = ./bin
 
 sim:
 $(APP0): $(APP) $(SRC1) $(SRC5)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel -package split -package vector -o $@ -threaded 
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel  -package random -package split -package vector -o $@ 
 	strip $@
 
 p1:

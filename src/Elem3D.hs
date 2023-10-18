@@ -9,15 +9,15 @@ data Ray = Ray Point3D Direction Float
 data Base = Base Direction Direction Direction
 data RGB = RGB { red :: Float, green :: Float, blue :: Float } deriving (Show)
 
-instance NFData RGB where
-    rnf (RGB r g b) = rnf r `seq` rnf g `seq` rnf b
-instance NFData Point3D where
-    rnf (Point3D x y z) = rnf x `seq` rnf y `seq` rnf z
-instance NFData Direction where
-    rnf (Direction x y z) = rnf x `seq` rnf y `seq` rnf z
+-- instance NFData RGB where
+--     rnf (RGB r g b) = rnf r `seq` rnf g `seq` rnf b
+-- instance NFData Point3D where
+--     rnf (Point3D x y z) = rnf x `seq` rnf y `seq` rnf z
+-- instance NFData Direction where
+--     rnf (Direction x y z) = rnf x `seq` rnf y `seq` rnf z
 
-instance NFData Ray where
-    rnf (Ray p d f) = rnf p `seq` rnf d `seq` rnf f
+-- instance NFData Ray where
+--     rnf (Ray p d f) = rnf p `seq` rnf d `seq` rnf f
 
 
 instance Show Base where

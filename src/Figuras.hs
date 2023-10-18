@@ -10,10 +10,10 @@ data Plano = Plano Point3D Direction RGB Float Int
 data Triangulo = Triangulo Point3D Point3D Point3D RGB Float Int
 data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo
 
-parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
-parametricShapeCollision shapes rays = map (collision rays) shapes
-  where
-    collision rays shape = map (oneCollision shape) rays
+-- parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
+-- parametricShapeCollision shapes rays = map (collision rays) shapes
+--   where
+--     collision rays shape = map (oneCollision shape) rays
 
 oneCollision :: Shape -> Ray -> (Float, (RGB, Float, Point3D, Direction, Int))
 oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d m)
