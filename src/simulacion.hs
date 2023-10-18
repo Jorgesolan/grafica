@@ -13,6 +13,7 @@ import System.CPUTime
 import qualified Data.Vector as V
 import Control.Concurrent
 import System.IO.Unsafe (unsafePerformIO)
+import Control.Parallel
 -- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
 -- make clean && make sim && ./sim  +RTS -N -l -RTS && convert a.ppm out.bmp
 
@@ -31,6 +32,15 @@ parallelMap func items = do
     !results <- mapM takeMVar resultVars
     return results
 
+parProc :: (a -> b) -> [a] -> [b]
+parProc _ [] = []
+parProc f [x] = [f x]
+parProc f (x:xs) = par n1 (n2 `pseq` (n1 : n2))
+  where
+    n1 = f x
+    n2 = parProc f xs
+
+
 parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
@@ -38,7 +48,7 @@ parametricShapeCollision shapes rays = map (collision rays) shapes
 
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
 generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
-  [Ray p (generateDirection x y focal) 10 | y <- (zipWith (+) randomY [(-py'), (piY-py') ..(py'-piY)]), x <- (zipWith (+) randomX [(-px'), (piX-px') ..(px'-piX)])]
+  [Ray p (generateDirection x y focal) 10 | y <- ({- zipWith (+) randomY -} [(-py'), (piY-py') ..(py'-piY)]), x <- ({- zipWith (+) randomX -} [(-px'), (piX-px') ..(px'-piX)])]
   where
       !piY = py / height
       !piX = px / width
@@ -81,15 +91,18 @@ listRayToRGB luces cam figuras listaDeColisiones = b
     !rayosColisiones = listRay listaDeColisiones
 
     !ligthRays = [[Ray luz (punto #< luz) 0 | punto <- obtenerPuntos rayosColisiones] | luz <- luces]
-    !collisions = unsafePerformIO $ parallelMap parametricfiguras ligthRays
+    -- !collisions = unsafePerformIO $ parallelMap parametricfiguras ligthRays
+    !collisions = map parametricfiguras ligthRays
+    
     --  traceEventIO "Buscar Luz" $
+
+
     !luzXRayo = [zipWith eligeResultado rayosColisiones (listRay collision) | collision <- collisions]
       where
         eligeResultado a@(t, ((RGB r0 g0 b0), ra, pa, d, id)) (_, ((RGB r1 g1 b1), _, pb, _, _))
           | aproxPoint pa pb = a
           | otherwise = (t, (RGB 0 0 0, ra, pa, d, id))
-    
-    !mediaLuzxRayo = mediaDeRayos luzXRayo 
+
     -- traceEventIO "Media Luz"
     !b = map (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
       where
@@ -101,12 +114,13 @@ listRayToRGB luces cam figuras listaDeColisiones = b
               rgbRefle = (\(_, (rgb, _, _, _, _)) -> rgb) $ obtenerPrimeraColision cortes
               !newRgb = if (ref < 0.5) then rgb else rgbRefle
             in (f, (newRgb, ref, p, d, id))
+            
     -- traceEventIO "Fin Func"
     -- `using` parList rseq
     -- parMap rdeepseq
 
 pix :: Float
-pix = 2048
+pix = 4096
 piCam :: Float
 piCam = 25
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
@@ -132,7 +146,7 @@ camara = Camara (cam') basCam
 generarBolaLuz :: Point3D -> Shape
 generarBolaLuz p = Sphere (Esfera p 1 (RGB 255 255 255) 0 8)
 
-figuras = [bola,plano0,plano1,plano2,plano3,plano4]
+figuras = [bola,bola'',plano0,plano1,plano2,plano3,plano4]
 luces = [luz,luz',luz'']
 bolasLuz = map generarBolaLuz luces
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
@@ -149,7 +163,7 @@ main = do
       (vertices1, triangles1) <- loadObjFile objFilePath1
       let !vertices1' = map (rotatePoint 'X' (0).movePoint (Direction (-5) (0) 0).escalatePoint (2.5)) vertices1
       let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
-      let !figuras' = figuras  -- ++ customTriangles ++ customTriangles1
+      let !figuras' = figuras ++ customTriangles ++ customTriangles1
 
       let rayitos = generateRaysForPixels camara pix pix --`using` parListChunk 128 rseq
       let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq

@@ -47,4 +47,4 @@ $(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
 clean:
 	-mv $(shell find . -name '*.o') $(BIN_DIR)
 	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP0) $(APP1) $(APP2) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o
+	rm -f $(APP0) $(APP1) $(APP2) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog
