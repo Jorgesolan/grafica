@@ -1,5 +1,5 @@
 module Elem3D where
-
+import Control.DeepSeq
 import System.IO ()
 -- import Numeric.LinearAlgebra
 
@@ -8,6 +8,16 @@ data Direction = Direction Float Float Float
 data Ray = Ray Point3D Direction Float
 data Base = Base Direction Direction Direction
 data RGB = RGB { red :: Float, green :: Float, blue :: Float } deriving (Show)
+
+instance NFData RGB where
+    rnf (RGB r g b) = rnf r `seq` rnf g `seq` rnf b
+instance NFData Point3D where
+    rnf (Point3D x y z) = rnf x `seq` rnf y `seq` rnf z
+instance NFData Direction where
+    rnf (Direction x y z) = rnf x `seq` rnf y `seq` rnf z
+
+instance NFData Ray where
+    rnf (Ray p d f) = rnf p `seq` rnf d `seq` rnf f
 
 
 instance Show Base where
@@ -71,7 +81,10 @@ movePoint (Direction dx dy dz) (Point3D x y z) = Point3D (x + dx) (y + dy) (z + 
 
 movePoint' :: Direction -> Point3D -> Point3D
 movePoint' (Direction dx dy dz) (Point3D x y z) = Point3D (x - dx) (y - dy) (z - dz)
- 
+
+distPoint :: Point3D -> Point3D -> Float
+distPoint (Point3D x1 y1 z1) (Point3D x2 y2 z2) = sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+
 -- -- Resta de puntos -> Dirección del primero al segundo
 (#) :: Point3D -> Point3D -> Point3D
 (Point3D xb yb zb) # (Point3D xa ya za) = Point3D (xb-xa) (yb-ya) (zb-za)

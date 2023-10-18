@@ -3,6 +3,7 @@ import Elem3D
 import Debug.Trace
 import Text.Printf (printf)
 import Data.Maybe (mapMaybe)
+import Control.Monad (guard)
 data Camara = Camara Point3D Base
 data Esfera = Esfera Point3D Float RGB Float Int
 data Plano = Plano Point3D Direction RGB Float Int
@@ -12,31 +13,32 @@ data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo
 parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
-    collision :: [Ray] -> Shape -> [(Float, (RGB, Float, Point3D, Direction,Int))]
     collision rays shape = map (oneCollision shape) rays
 
-oneCollision :: Shape -> Ray -> (Float, (RGB, Float, Point3D, Direction,Int))
+oneCollision :: Shape -> Ray -> (Float, (RGB, Float, Point3D, Direction, Int))
 oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d m)
-  | raiz >= 0 = (mind, (color, reflec, collisionPoint, vectorNormal, id))
-  | otherwise = (1/0, (color, reflec, Point3D (1/0) (1/0) (1/0), Direction (1/0) (1/0) (1/0), id))
-    where
-      f = p1 #< p0
-      a = d .* d
-      b = 2 * (f .* d)
-      c = f .* f - r ** 2
-      raiz = b ** 2 - 4 * a * c
-      resul = sqrt raiz
-      t0 = (-b + resul) / (2 * a)
-      t1 = (-b - resul) / (2 * a)
-      findMinPositive :: (Float, Float) -> Float
-      findMinPositive (x, y)
-        | x > 0 && y > 0 = min x y
-        | x > 0           = x
-        | y > 0           = y
-        | otherwise       = 1/0
-      mind = findMinPositive (t0, t1)
-      collisionPoint = movePoint (escalateDir mind d) p1
-      vectorNormal = normal $ collisionPoint #< p0
+  | raiz >= 0  = (mind, (color, reflec, collisionPoint, vectorNormal, id))
+  | otherwise  = (1/0, (color, reflec, Point3D (1/0) (1/0) (1/0), Direction (1/0) (1/0) (1/0), id))
+  where
+    f = p1 #< p0
+    a = d .* d
+    b = 2 * (f .* d)
+    c = f .* f - r ** 2
+    raiz = b ** 2 - 4 * a * c
+    resul = sqrt raiz
+    t0 = (-b + resul) / (2 * a)
+    t1 = (-b - resul) / (2 * a)
+
+    findMinPositive :: Float -> Float -> Float
+    findMinPositive x y
+      | x > 0 && y > 0 = min x y
+      | x > 0          = x
+      | y > 0          = y
+      | otherwise      = 1/0
+
+    mind = findMinPositive t0 t1
+    collisionPoint = movePoint (escalateDir mind d) p1
+    vectorNormal = normal $ collisionPoint #< p0
 
 oneCollision (Plane (Plano p0 n color reflec id)) (Ray p1 d m) = (mind, (color, reflec, collisionPoint, vectorNormal, id))
   where

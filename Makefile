@@ -1,5 +1,5 @@
 HC    = ghc
-FLAGS = -dynamic -O2 -threaded 
+FLAGS = -dynamic -O2 -threaded  -eventlog -rtsopts
 #-Wall -Werror -rtsopts 
 
 SRC1 	= ./src/Elem3D.hs
@@ -30,7 +30,7 @@ BIN_DIR = ./bin
 
 sim:
 $(APP0): $(APP) $(SRC1) $(SRC5)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel -package split  -package vector -o $@ -threaded
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel -package split -package vector -o $@ -threaded 
 	strip $@
 
 p1:
