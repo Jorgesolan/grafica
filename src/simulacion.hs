@@ -9,17 +9,16 @@ import System.IO.Unsafe (unsafePerformIO)
 import Debug.Trace
 import Data.List (any)
 import System.CPUTime
-
--- import Control.Parallel.Strategies
--- import System.Random
--- import qualified Data.Vector as V
--- import Control.Concurrent
--- import Control.Parallel
-
 import System.Environment (getArgs)
 import Data.Maybe (listToMaybe)
 import Control.Monad (when)
 import System.Exit (exitFailure)
+import System.Random
+
+-- import Control.Parallel.Strategies
+-- import qualified Data.Vector as V
+-- import Control.Concurrent
+-- import Control.Parallel
 
 -- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
 -- make clean && make sim && ./sim  +RTS -N -l -RTS && convert output.ppm out.bmp
@@ -47,21 +46,44 @@ import System.Exit (exitFailure)
 --     n1 = f x
 --     n2 = parProc f xs
 
-generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> [Ray]
-generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
-  [Ray p (generateDirection x y focal) 10 | y <- selectedYValues, x <- ([(-px'), (piX-px') ..(px'-piX)])]
+build :: ((a -> [a] -> [a]) -> [a] -> [a]) -> [a]
+build g = g (:) []
+
+chunksOf :: Int -> [e] -> [[e]]
+chunksOf i ls = map (take i) (build (splitter ls))
   where
-    !piY = py / height
-    !piX = px / width
-    px' = px / 2
-    py' = py / 2
-    !yValues = [(-py'), (piY-py') .. (py'-piY)]
-    yCount = length yValues
-    yStep = yCount `div` maxN
-    startIdx = (n - 1) * yStep
-    endIdx = n * yStep
-    !selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
-    generateDirection width height focal = normal ((Point3D width height focal) #< p)
+    splitter :: [e] -> ([e] -> a -> a) -> a -> a
+    splitter [] _ n = n
+    splitter l c n = l `c` splitter (drop i l) c n
+
+tuplasAleatorias :: [(Float, Float)] -> Float  -> [(Float, Float)]
+tuplasAleatorias inputTuplas salto = tuplasConRandoms
+  where
+    randomNumbers = take (length inputTuplas * 2) $ randomRs (0.0, salto) (mkStdGen 42) :: [Float]
+    -- randomNumbers = take (length inputTuplas * 2) [(-20000) ..(20000)] :: [Float]
+    tuplasConRandoms = [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
+    halfLen = length randomNumbers `div` 2
+
+generarTuplas :: [Float] -> [Float] -> [(Float, Float)]
+generarTuplas xs ys = [(x, y) | y <- ys, x <- xs]
+
+generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> Float  -> [Ray]
+generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j =
+  map (\(x, y) -> Ray p (generateDirection x y focal) 10) tuplasRandom
+  where
+      piY = py / height
+      piX = px / width
+      px' = px / 2
+      py' = py / 2
+      !yValues = [(-py'), (piY-py') .. (py'-piY)]
+      yCount = length yValues
+      yStep = yCount `div` maxN
+      startIdx = (n - 1) * yStep
+      endIdx = n * yStep
+      !selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
+      generateDirection width height focal = normal ((Point3D width height focal) #< p)
+      !tuplas = generarTuplas  (concatMap (replicate (round j))[(-px'), (piX-px') ..(px'-piX)])  selectedYValues
+      !tuplasRandom = tuplasAleatorias tuplas piY
 
 {-# INLINE obtenerPrimeraColision #-}
 obtenerPrimeraColision :: [(Float, (Obj))] -> (Float,(Obj))
@@ -84,13 +106,13 @@ listRay = map obtenerPrimeraColision . transpose
 calcularDirESpejo :: Direction -> Direction -> Direction
 calcularDirESpejo d normal = d - (escalateDir (2 * (d .* normal)) normal)
 
--- sumRGB :: (Float, (Obj)) -> (Float, (Obj)) -> (Float, (Obj))
--- sumRGB (f, (RGB r g b, fl, p, d, lum, id)) (_, (RGB r' g' b', _, _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, lum, id))
+sumRGB :: (Float, (Obj)) -> (Float, (Obj)) -> (Float, (Obj))
+sumRGB (f, (RGB r g b, fl, p, d, lum, id)) (_, (RGB r' g' b', _, _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, lum, id))
 
--- mediaRGB :: [(Float, (Obj))] -> Float -> (Float, (Obj))
--- mediaRGB lista n = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
---   where
---     medRGB n (f, (RGB r g b, fl, p, d, lum, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, lum, id))
+mediaRGB :: Float -> [(Float, (Obj))] -> (Float, (Obj))
+mediaRGB n lista = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
+  where
+    medRGB n (f, (RGB r g b, fl, p, d, lum, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, lum, id))
 
 -- mediaDeRayos :: [[(Float, (Obj))]] -> [(Float, (Obj))]
 -- mediaDeRayos =  map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
@@ -114,11 +136,16 @@ searchLight obj@(rgb, _, pFig, normal, lum, id) ray@(Ray pRay dir n) figuras
     rgbMedio (RGB r0 b0 g0) (RGB r1 b1 g1) = RGB ((r0 + r1) / 2) ((b0 + b1) / 2) ((g0 + g1) / 2)
     fldsmdfr (_, f, p, d, l, id') r = (r, f, p, d, l, id')
 
-pathTracer :: Point3D -> [Shape] -> [[(Float, (Obj))]] -> [RGB]
-pathTracer cam figuras listaDeColisiones = b
+{-# INLINE antialiasing #-}
+antialiasing :: [(Float, (Obj))] -> Float-> [(Float, (Obj))]
+antialiasing rayos n =  map (mediaRGB (n)) (chunksOf (round (n)) rayos)
+
+
+pathTracer :: Point3D -> [Shape] -> [[(Float, (Obj))]] -> Float -> [RGB]
+pathTracer cam figuras listaDeColisiones n = b
   where
-    !rayosColisiones = listRay listaDeColisiones
-    
+    !rayosColisiones = antialiasing (listRay listaDeColisiones) n
+    -- !rayosColisiones = (listRay listaDeColisiones)
 
     !b = map (search cam figuras) rayosColisiones
       where
@@ -140,10 +167,12 @@ pathTracer cam figuras listaDeColisiones = b
     -- parMap rdeepseq
 
 pix :: Float
-pix = 2080
-maxN = 1
+pix = 4096
+maxN = 32
 piCam :: Float
 piCam = 25
+nRay :: Float
+nRay = 64
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
 centr = Point3D (0) (10) 0
 centr' = Point3D (-5) 20 0
@@ -192,10 +221,10 @@ main = do
             let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
             let !figuras' = figuras -- ++ customTriangles ++ customTriangles1
 
-            let rayitos = generateRaysForPixels maxN n camara pix pix --`using` parListChunk 128 rseq
+            let rayitos = generateRaysForPixels maxN n camara pix pix nRay --`using` parListChunk 128 rseq
             let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
             traceEventIO "Principio func Luz"
-            let !a = pathTracer cam' figuras' sol
+            let !a = pathTracer cam' figuras' sol nRay
             traceEventIO "Fin de so"
             let !fin = concat $ map rgbToString a
             
