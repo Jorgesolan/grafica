@@ -5,14 +5,15 @@ import Figuras
 import Data.List
 import Data.Ord
 import Data.Maybe
--- import Control.Parallel.Strategies
+import System.IO.Unsafe (unsafePerformIO)
 import Debug.Trace
 import Data.List (any)
--- import System.Random
 import System.CPUTime
+
+-- import Control.Parallel.Strategies
+-- import System.Random
 -- import qualified Data.Vector as V
 -- import Control.Concurrent
-import System.IO.Unsafe (unsafePerformIO)
 -- import Control.Parallel
 
 import System.Environment (getArgs)
@@ -54,34 +55,15 @@ generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py 
     !piX = px / width
     px' = px / 2
     py' = py / 2
-    yValues = [(-py'), (piY-py') .. (py'-piY)]
+    !yValues = [(-py'), (piY-py') .. (py'-piY)]
     yCount = length yValues
     yStep = yCount `div` maxN
     startIdx = (n - 1) * yStep
     endIdx = n * yStep
-    selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
+    !selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
     generateDirection width height focal = normal ((Point3D width height focal) #< p)
 
-
--- generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> [Ray]
--- generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
---   [Ray p (generateDirection x y focal) 10 | y <- ({- zipWith (+) randomY -} [(-py'), (piY-py') ..(py'-piY)]), x <- ({- zipWith (+) randomX -} [(-px'), (piX-px') ..(px'-piX)])]
---   where
---       !piY = py / height
---       !piX = px / width
---       px' = px / 2
---       py' = py / 2
---       generateDirection width height focal = normal ((Point3D width height focal) #< p)
-
-      -- no hace falta
-      -- gen = mkStdGen 42
-      -- randomY = take (round(height)) $ randomRs (0.0, (piY-py')) gen :: [Float]
-      -- randomX = take (round(width)) $ randomRs (0.0, (piY-py')) gen :: [Float]
-
-
--- obtenerPrimeraColision :: [(Float, (Obj))] -> (Float,(Obj))
--- obtenerPrimeraColision = minimumBy (comparing fst) . filter (\(x, _) -> x >= 0)
-
+{-# INLINE obtenerPrimeraColision #-}
 obtenerPrimeraColision :: [(Float, (Obj))] -> (Float,(Obj))
 obtenerPrimeraColision xs = 
   case filter (\(x, _) -> x >= 0) xs of
@@ -89,53 +71,48 @@ obtenerPrimeraColision xs =
         filteredList -> (minimumBy (comparing fst) filteredList)
 
 -- dada una lista de colisiones devuelve la lista de puntos
+{-# INLINE obtenerPuntos #-}
 obtenerPuntos :: [(Float, (Obj))] -> [Point3D]
 obtenerPuntos lista = map (\(_, (_, _,point, _,_,_)) -> point) lista
 
 -- dada la matriz de [figuras,colisiond e cada rayo] devuelve la lista de la primera colisión de cada rayo
+{-# INLINE listRay #-}
 listRay :: [[(Float, (Obj))]] -> [(Float, (Obj))]
 listRay = map obtenerPrimeraColision . transpose
 
+{-# INLINE calcularDirESpejo #-}
 calcularDirESpejo :: Direction -> Direction -> Direction
 calcularDirESpejo d normal = d - (escalateDir (2 * (d .* normal)) normal)
 
-sumRGB :: (Float, (Obj)) -> (Float, (Obj)) -> (Float, (Obj))
-sumRGB (f, (RGB r g b, fl, p, d, lum, id)) (_, (RGB r' g' b', _, _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, lum, id))
+-- sumRGB :: (Float, (Obj)) -> (Float, (Obj)) -> (Float, (Obj))
+-- sumRGB (f, (RGB r g b, fl, p, d, lum, id)) (_, (RGB r' g' b', _, _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, lum, id))
 
-mediaRGB :: [(Float, (Obj))] -> Float -> (Float, (Obj))
-mediaRGB lista n = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
-  where
-    medRGB n (f, (RGB r g b, fl, p, d, lum, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, lum, id))
+-- mediaRGB :: [(Float, (Obj))] -> Float -> (Float, (Obj))
+-- mediaRGB lista n = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
+--   where
+--     medRGB n (f, (RGB r g b, fl, p, d, lum, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, lum, id))
 
-mediaDeRayos :: [[(Float, (Obj))]] -> [(Float, (Obj))]
-mediaDeRayos =  map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
-
+-- mediaDeRayos :: [[(Float, (Obj))]] -> [(Float, (Obj))]
+-- mediaDeRayos =  map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
 
 searchLight :: Obj -> Ray -> [Shape] -> RGB
-searchLight obj@(rgb,_,pFig,normal,lum,id) ray@(Ray pRay dir n) figuras 
-  | meta ray figuras = rgb 
-  | id == 8 = rgb
-  | n == 0 = {-rgbMedio (rgb) (rgbonk) -} RGB 0 0 0
+searchLight obj@(rgb, _, pFig, normal, lum, id) ray@(Ray pRay dir n) figuras
+  | meta ray figuras || id == 8 = rgb
+  | n == 0 = RGB 0 0 0
   | otherwise = searchLight bank ray' figuras
   where
-    !figuras' = filter (\shape -> not (id == getShapeID shape)) figuras
-    !bonk = snd . obtenerPrimeraColision $ map (\shape -> oneCollision shape ray') figuras'
-    fldsmdfr (_,f,p,d,l,id) r = (r,f,p,d,l,id)
-    bank = fldsmdfr bonk (rgbMedio ((\(rgb, _, _, _, _, _) -> rgb) bonk) rgb)
-    -- d = (\(_, (_, _, _, dir, _, _)) -> dir) bonk
-    -- p' = (\(_, (_, _, point, _, _, _)) -> point) bonk
-    -- rgbonk = (\(_, (rgb, _, _, _, _, _)) -> rgb) bonk
-    -- idbonk = (\(_, (_, _, _, _, _, id)) -> id) bonk
-    -- !rgb' = rgbMedio (rgb) (rgbonk)
-    !ray' = Ray pFig (calcularDirESpejo (pFig #< pRay) (normal)) (n-1)
-    meta ray figuras = lum > 0
-      where
-        (_, (_, _, _, _, lum, _)) = obtenerPrimeraColision $ map (\shape -> oneCollision shape ray) figuras
-        --NO lanzar rayo de rebote en busca de la luz contra el objeto del que parte dicho rqayo!!!!
-    rgbMedio (RGB r0 b0 g0) (RGB r1 b1 g1) = RGB ((r0 + r1)/2) ((b0 + b1)/2) ((g0 + g1)/2)
-    -- Primera vez ya sabes el objeto que chocas, tienes su punto colision, 
-    -- lanzas de ahi el rayo a su dir espejo y obtienes el objeto q chocas, repites
+    figuras' = filter (\shape -> id /= getShapeID shape) figuras
+    !bonk = snd $ obtenerPrimeraColision $ map (\shape -> oneCollision shape ray') figuras'
+    rgbonk = (\ (rgb, _, _, _, _, _) -> rgb) bonk
+    !bank = fldsmdfr bonk $ rgbMedio rgbonk rgb
+    ray' = Ray pFig (calcularDirESpejo (pFig #< pRay) normal) (n - 1)
 
+    meta ray' figuras' = lum > 0
+      where
+        (_, (_, _, _, _, lum', _)) = obtenerPrimeraColision $ map (\shape -> oneCollision shape ray') figuras'
+
+    rgbMedio (RGB r0 b0 g0) (RGB r1 b1 g1) = RGB ((r0 + r1) / 2) ((b0 + b1) / 2) ((g0 + g1) / 2)
+    fldsmdfr (_, f, p, d, l, id') r = (r, f, p, d, l, id')
 
 pathTracer :: Point3D -> [Shape] -> [[(Float, (Obj))]] -> [RGB]
 pathTracer cam figuras listaDeColisiones = b
@@ -145,10 +122,7 @@ pathTracer cam figuras listaDeColisiones = b
 
     !b = map (search cam figuras) rayosColisiones
       where
-        search cam shapes esp@(f, obj@(_, _, p, _, _, _)) = result
-          where
-            !newRgb = searchLight obj (Ray cam (p #< cam) 10) shapes
-            result = newRgb
+        search cam shapes esp@(f, obj@(_, _, p, _, _, _)) = searchLight obj (Ray cam (p #< cam) 10) shapes
 
     -- !b = map (\(_, (rgb, _,_, _,_,_)) -> rgb) $ map (oneEspejo cam figuras) rayosColisiones
     --   where
@@ -166,8 +140,8 @@ pathTracer cam figuras listaDeColisiones = b
     -- parMap rdeepseq
 
 pix :: Float
-pix = 4096
-maxN = 32
+pix = 2080
+maxN = 1
 piCam :: Float
 piCam = 25
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))

@@ -48,6 +48,7 @@ parsePixels _ = error "Formato incorrecto"
 parsePixels' :: [RGB] -> String
 parsePixels' pixels = unwords $ map rgbToString pixels
 
+{-# INLINE rgbToString #-}
 rgbToString :: RGB -> String
 rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " "
 
