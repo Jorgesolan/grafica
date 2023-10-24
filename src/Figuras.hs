@@ -5,20 +5,22 @@ import Text.Printf (printf)
 import Data.Maybe (mapMaybe)
 import Control.Monad (guard)
 data Camara = Camara Point3D Base
-data Esfera = Esfera Point3D Float RGB Float Int
-data Plano = Plano Point3D Direction RGB Float Int
-data Triangulo = Triangulo Point3D Point3D Point3D RGB Float Int
+data Esfera = Esfera Point3D Float RGB Float Float Int
+data Plano = Plano Point3D Direction RGB Float Float Int
+data Triangulo = Triangulo Point3D Point3D Point3D RGB Float Float Int
 data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo
 
--- parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
--- parametricShapeCollision shapes rays = map (collision rays) shapes
---   where
---     collision rays shape = map (oneCollision shape) rays
+type Obj = (RGB, Float, Point3D, Direction, Float, Int)
 
-oneCollision :: Shape -> Ray -> (Float, (RGB, Float, Point3D, Direction, Int))
-oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d m)
-  | raiz >= 0  = (mind, (color, reflec, collisionPoint, vectorNormal, id))
-  | otherwise  = (1/0, (color, reflec, Point3D (1/0) (1/0) (1/0), Direction (1/0) (1/0) (1/0), id))
+parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (Obj))]]
+parametricShapeCollision shapes rays = map (collision rays) shapes
+  where
+    collision rays shape = map (oneCollision shape) rays
+
+oneCollision :: Shape -> Ray -> (Float, (Obj))
+oneCollision (Sphere (Esfera p0 r color reflec lum id)) (Ray p1 d m)
+  | raiz >= 0  = (mind, (color, reflec, collisionPoint, vectorNormal, lum, id))
+  | otherwise  = ((-1), (color, reflec, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), lum, id))
   where
     f = p1 #< p0
     a = d .* d
@@ -34,31 +36,31 @@ oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d m)
       | x > 0 && y > 0 = min x y
       | x > 0          = x
       | y > 0          = y
-      | otherwise      = 1/0
+      | otherwise      = -1
 
     mind = findMinPositive t0 t1
     collisionPoint = movePoint (escalateDir mind d) p1
     vectorNormal = normal $ collisionPoint #< p0
 
-oneCollision (Plane (Plano p0 n color reflec id)) (Ray p1 d m) = (mind, (color, reflec, collisionPoint, vectorNormal, id))
+oneCollision (Plane (Plano p0 n color reflec lum id)) (Ray p1 d m) = (mind, (color, reflec, collisionPoint, vectorNormal, lum, id))
   where
     mind = ((p0 #< p1) .* n) / (d .* n)
     collisionPoint = movePoint (escalateDir mind d) p1
     vectorNormal = normal $ n * d
 
-oneCollision (Triangle (Triangulo p1 p2 p3 color reflec id)) (Ray rayOrigin rayDir m) =
+oneCollision (Triangle (Triangulo p1 p2 p3 color reflec lum id)) (Ray rayOrigin rayDir m) =
     case rayTriangleIntersection rayOrigin rayDir p1 p2 p3 of
         Just (t, intersectionPoint) ->
             let normalVec = normal $ (p2 #< p1) * (p3 #< p1)
-            in (t, (color, reflec, intersectionPoint, normalVec, id))
-        Nothing -> (1/0, (color, 0.0, Point3D (1/0) (1/0) (1/0), Direction (1/0) (1/0) (1/0), 0))
+            in (t, (color, reflec, intersectionPoint, normalVec, lum, id))
+        Nothing -> ((-1), (color, 0.0, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), 0, 0))
 
 getShapeID :: Shape -> Int
-getShapeID (Sphere (Esfera _ _ _ _ id)) = id
+getShapeID (Sphere (Esfera _ _ _ _ _ id)) = id
 
-getShapeID (Plane (Plano _ _ _ _ id)) = id
+getShapeID (Plane (Plano _ _ _ _ _ id)) = id
 
-getShapeID (Triangle (Triangulo _ _ _ _ _ id)) = id
+getShapeID (Triangle (Triangulo _ _ _ _ _ _ id)) = id
 
 rayTriangleIntersection :: Point3D -> Direction -> Point3D -> Point3D -> Point3D -> Maybe (Float, Point3D)
 rayTriangleIntersection orig dir v1 v2 v3 = do
@@ -66,7 +68,7 @@ rayTriangleIntersection orig dir v1 v2 v3 = do
         e2 = v3 #< v1
         h = dir * e2
         a = e1 .* h
-    if a > (-1e-6) && a < 1e-6
+    if abs a < 1e-6
         then Nothing
         else do
             let f = 1.0 / a
@@ -124,7 +126,7 @@ triangleToTriangulo :: ([Point3D], TrianglePos) -> Shape
 triangleToTriangulo (vertices, TrianglePos v1 v2 v3) =
     Triangle(Triangulo
         (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
-        (RGB 0 0 255) 0 0
+        (RGB 0 0 255) 0 0 0
     )
 -- Convert loaded vertices and triangles to custom format
 convertToCustomFormat :: ([Point3D], [TrianglePos]) -> [Shape]
