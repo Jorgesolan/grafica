@@ -166,8 +166,8 @@ pathTracer cam figuras listaDeColisiones = b
     -- parMap rdeepseq
 
 pix :: Float
-pix = 1500
-maxN = 4
+pix = 4096
+maxN = 32
 piCam :: Float
 piCam = 25
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
