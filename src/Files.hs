@@ -6,7 +6,7 @@ import Data.Bits  ((.&.), shiftR)
 import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
 import System.IO
-import Control.Parallel.Strategies (using, rseq, parListChunk, runEval)
+-- import Control.Parallel.Strategies (using, rseq, parListChunk, runEval)
 import Debug.Trace
 
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
@@ -117,7 +117,8 @@ pixels2BMP rgbList = BS.pack $ concatMap rgbToWord8 $ reverse rgbList
 -- Function to generate custom pixel data for a checkerboard pattern
 generateBMPPixelData :: Int -> Int -> [(Int, Int)] -> BS.ByteString
 generateBMPPixelData width height filledpixels =
-    BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
+    -- BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
+    BS.pack $ concat $ map generateRow [0 .. height - 1]
   where
     generateRow :: Int -> [Word8]
     generateRow row = concatMap generatePixel [0 .. width - 1]
@@ -138,7 +139,9 @@ generatePPMPixelData (x:xs)
 -- Function to generate custom pixel data for a checkerboard pattern
 fromPixToList :: Int -> Int -> [(Int, Int)] -> String
 fromPixToList width height filledpixels =
-  concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
+  -- concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
+  concat $ map generateRow [0 .. height - 1]
+  
   where
     generateRow :: Int -> String
     generateRow row = concatMap generatePixel [0 .. width - 1]

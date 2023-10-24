@@ -5,54 +5,78 @@ import Figuras
 import Data.List
 import Data.Ord
 import Data.Maybe
-import Control.Parallel.Strategies
+-- import Control.Parallel.Strategies
 import Debug.Trace
 import Data.List (any)
-import System.Random
+-- import System.Random
 import System.CPUTime
-import qualified Data.Vector as V
-import Control.Concurrent
+-- import qualified Data.Vector as V
+-- import Control.Concurrent
 import System.IO.Unsafe (unsafePerformIO)
-import Control.Parallel
+-- import Control.Parallel
+
+import System.Environment (getArgs)
+import Data.Maybe (listToMaybe)
+import Control.Monad (when)
+import System.Exit (exitFailure)
+
 -- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
--- make clean && make sim && ./sim  +RTS -N -l -RTS && convert a.ppm out.bmp
+-- make clean && make sim && ./sim  +RTS -N -l -RTS && convert output.ppm out.bmp
 
--- Define a function to apply in parallel
-applyFunction :: (a -> b) -> a -> MVar b -> IO ()
-applyFunction func item resultVar = do
-    let result = func item
-    putMVar resultVar result
+-- -- Define a function to apply in parallel
+-- applyFunction :: (a -> b) -> a -> MVar b -> IO ()
+-- applyFunction func item resultVar = do
+--     let result = func item
+--     putMVar resultVar result
 
--- Apply a function to a list of items in parallel
-parallelMap :: (a -> b) -> [a] -> IO [b]
-parallelMap func items = do
-    !resultVars <- mapM (const newEmptyMVar) items
-    let applyFunctionWithIndex i = applyFunction func (items !! i) (resultVars !! i)
-    _ <- mapM (\i -> forkIO (applyFunctionWithIndex i)) [0..length items - 1]
-    !results <- mapM takeMVar resultVars
-    return results
+-- -- Apply a function to a list of items in parallel
+-- parallelMap :: (a -> b) -> [a] -> IO [b]
+-- parallelMap func items = do
+--     !resultVars <- mapM (const newEmptyMVar) items
+--     let applyFunctionWithIndex i = applyFunction func (items !! i) (resultVars !! i)
+--     _ <- mapM (\i -> forkIO (applyFunctionWithIndex i)) [0..length items - 1]
+--     !results <- mapM takeMVar resultVars
+--     return results
 
-parProc :: (a -> b) -> [a] -> [b]
-parProc _ [] = []
-parProc f [x] = [f x]
-parProc f (x:xs) = par n1 (n2 `pseq` (n1 : n2))
+-- parProc :: (a -> b) -> [a] -> [b]
+-- parProc _ [] = []
+-- parProc f [x] = [f x]
+-- parProc f (x:xs) = par n1 (n2 `pseq` (n1 : n2))
+--   where
+--     n1 = f x
+--     n2 = parProc f xs
+
+generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> [Ray]
+generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
+  [Ray p (generateDirection x y focal) 10 | y <- selectedYValues, x <- ([(-px'), (piX-px') ..(px'-piX)])]
   where
-    n1 = f x
-    n2 = parProc f xs
+    !piY = py / height
+    !piX = px / width
+    px' = px / 2
+    py' = py / 2
+    yValues = [(-py'), (piY-py') .. (py'-piY)]
+    yCount = length yValues
+    yStep = yCount `div` maxN
+    startIdx = (n - 1) * yStep
+    endIdx = n * yStep
+    selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
+    generateDirection width height focal = normal ((Point3D width height focal) #< p)
 
 
-generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
-generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
-  [Ray p (generateDirection x y focal) 10 | y <- ({- zipWith (+) randomY -} [(-py'), (piY-py') ..(py'-piY)]), x <- ({- zipWith (+) randomX -} [(-px'), (piX-px') ..(px'-piX)])]
-  where
-      !piY = py / height
-      !piX = px / width
-      px' = px / 2
-      py' = py / 2
-      generateDirection width height focal = normal ((Point3D width height focal) #< p)
-      gen = mkStdGen 42
-      randomY = take (round(height)) $ randomRs (0.0, (piY-py')) gen :: [Float]
-      randomX = take (round(width)) $ randomRs (0.0, (piY-py')) gen :: [Float]
+-- generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> [Ray]
+-- generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
+--   [Ray p (generateDirection x y focal) 10 | y <- ({- zipWith (+) randomY -} [(-py'), (piY-py') ..(py'-piY)]), x <- ({- zipWith (+) randomX -} [(-px'), (piX-px') ..(px'-piX)])]
+--   where
+--       !piY = py / height
+--       !piX = px / width
+--       px' = px / 2
+--       py' = py / 2
+--       generateDirection width height focal = normal ((Point3D width height focal) #< p)
+
+      -- no hace falta
+      -- gen = mkStdGen 42
+      -- randomY = take (round(height)) $ randomRs (0.0, (piY-py')) gen :: [Float]
+      -- randomX = take (round(width)) $ randomRs (0.0, (piY-py')) gen :: [Float]
 
 
 -- obtenerPrimeraColision :: [(Float, (Obj))] -> (Float,(Obj))
@@ -142,7 +166,8 @@ pathTracer cam figuras listaDeColisiones = b
     -- parMap rdeepseq
 
 pix :: Float
-pix = 800
+pix = 1500
+maxN = 4
 piCam :: Float
 piCam = 25
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
@@ -168,32 +193,45 @@ camara = Camara (cam') basCam
 figuras = [bola,bola'',plano0,plano1,plano2,plano3,plano4,area]
 luces = [luz,luz',luz'']
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
+
 main :: IO ()
 main = do
-      traceEventIO "START"
-      start <- getCPUTime 
-      let objFilePath = "diamante.obj"  -- Replace with the path to your .obj file
-      (vertices, triangles) <- loadObjFile objFilePath
-      let !vertices' = map (rotatePoint 'Y' (0).movePoint (Direction (-5) (-2.5) 0).escalatePoint (2.5)) vertices
-      let !customTriangles = convertToCustomFormat (vertices', triangles)
 
-      let objFilePath1 = "cubo.obj"  -- Replace with the path to your .obj file
-      (vertices1, triangles1) <- loadObjFile objFilePath1
-      let !vertices1' = map (rotatePoint 'X' (0).movePoint (Direction (-5) (0) 0).escalatePoint (2.5)) vertices1
-      let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
-      let !figuras' = figuras -- ++ customTriangles ++ customTriangles1
+      args <- getArgs
+      case listToMaybe args of
+        Just nStr -> do
+            let n = read nStr :: Int
+            -- The rest of your program here, using the 'n' value as needed.
+            -- For example, you can pass 'n' to the 'generateRaysForPixels' function.
+            putStrLn $ "The value of 'n' is: " ++ show n
+            -- Your other code here.
+            traceEventIO "START"
+            start <- getCPUTime 
+            let objFilePath = "diamante.obj"  -- Replace with the path to your .obj file
+            (vertices, triangles) <- loadObjFile objFilePath
+            let !vertices' = map (rotatePoint 'Y' (0).movePoint (Direction (-5) (-2.5) 0).escalatePoint (2.5)) vertices
+            let !customTriangles = convertToCustomFormat (vertices', triangles)
 
-      let rayitos = generateRaysForPixels camara pix pix --`using` parListChunk 128 rseq
-      let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
-      traceEventIO "Principio func Luz"
-      let !a = pathTracer cam' figuras' sol
-      traceEventIO "Fin de so"
-      let !fin = concat $ map rgbToString a
-      
-      writePPM "a.ppm" (round pix) (round pix) fin
-      
-      end <- getCPUTime
-      let diff = fromIntegral (end - start) / (10^12) :: Double
-      putStrLn $ "Tiempo de procesado de la imagen: " ++ show diff ++ " segundos"
+            let objFilePath1 = "cubo.obj"  -- Replace with the path to your .obj file
+            (vertices1, triangles1) <- loadObjFile objFilePath1
+            let !vertices1' = map (rotatePoint 'X' (0).movePoint (Direction (-5) (0) 0).escalatePoint (2.5)) vertices1
+            let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
+            let !figuras' = figuras -- ++ customTriangles ++ customTriangles1
 
-      traceEventIO "END"
+            let rayitos = generateRaysForPixels maxN n camara pix pix --`using` parListChunk 128 rseq
+            let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
+            traceEventIO "Principio func Luz"
+            let !a = pathTracer cam' figuras' sol
+            traceEventIO "Fin de so"
+            let !fin = concat $ map rgbToString a
+            
+            writePPM ("a" ++ (show n) ++ ".ppm") (round pix) (round pix) fin
+            
+            end <- getCPUTime
+            let diff = fromIntegral (end - start) / (10^12) :: Double
+            putStrLn $ "Tiempo de procesado de la imagen: " ++ show diff ++ " segundos"
+
+            traceEventIO "END"
+        Nothing -> do
+            putStrLn "Please provide an integer as the first argument."
+            exitFailure
