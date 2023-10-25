@@ -50,7 +50,7 @@ oneCollision (Plane (Plano p0 n color reflec lum id)) (Ray p1 d m) = (mind, (col
   where
     mind = ((p0 #< p1) .* n) / (d .* n)
     collisionPoint = movePoint (escalateDir mind d) p1
-    vectorNormal = normal $ n * d
+    vectorNormal = normal n
 
 oneCollision (Triangle (Triangulo p1 p2 p3 color reflec lum id)) (Ray rayOrigin rayDir m) =
     case rayTriangleIntersection rayOrigin rayDir p1 p2 p3 of

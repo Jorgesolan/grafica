@@ -9,7 +9,8 @@ SRC4 	= ./src/Tone_map.hs
 SRC5	= ./src/Figuras.hs
 
 APP = ./src/simulacion.hs
-APP0 = sim
+APPP = ./src/simOld.hs
+APP0 = simOld
 APP3 = production
 APP1 = p1
 APP2 = p2
@@ -29,16 +30,17 @@ BIN_DIR = ./bin
 # 	$(HC) --make $< -package random -package hmatrix -o $@
 # 	strip $@
 
-sim:
-$(APP0): $(APP) $(SRC1) $(SRC5)
+simOld:
+$(APP0): $(APPP) $(SRC1) $(SRC5)
 	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel  -package random -package split -package vector -o $@ 
 	strip $@
+	mv $(APP0) ./tmp
 
 production:
 $(APP3): $(APP) $(SRC1) $(SRC5)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -o $@ && mv $(APP3) ./tmp
-#	strip $@
-
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -o $@
+	strip $@
+	mv $(APP3) ./tmp
 
 p1:
 $(APP1): $(SRCP1) $(SRC1)
@@ -54,4 +56,4 @@ $(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
 clean:
 	-mv $(shell find . -name '*.o') $(BIN_DIR)
 	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip
+	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip $(APP0)

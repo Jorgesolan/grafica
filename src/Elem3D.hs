@@ -177,6 +177,12 @@ agregateRGBPoints (RGB r' g' b') (RGB r g b) =
         (g + g')
         (b + b')
 
+prodRGB :: Float -> RGB -> RGB
+prodRGB f (RGB r g b) =
+    RGB (r * f)
+        (g * f)
+        (b * f)
+
 {-# INLINE comparateRGB #-}
 comparateRGB :: RGB -> RGB -> Bool
 comparateRGB (RGB r' g' b') (RGB r g b) = (r == r') && (g == g') && (b == b')

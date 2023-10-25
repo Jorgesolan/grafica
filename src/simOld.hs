@@ -1,6 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 import Elem3D
 import Files
+import Tone_map
 import Figuras
 import Data.List
 import Data.Ord
@@ -40,12 +41,6 @@ parProc f (x:xs) = par n1 (n2 `pseq` (n1 : n2))
     n1 = f x
     n2 = parProc f xs
 
-
-parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (RGB, Float, Point3D, Direction,Int))]]
-parametricShapeCollision shapes rays = map (collision rays) shapes
-  where
-    collision rays shape = map (oneCollision shape) rays
-
 generateRaysForPixels :: Camara -> Float -> Float -> [Ray]
 generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height =
   [Ray p (generateDirection x y focal) 10 | y <- ({- zipWith (+) randomY -} [(-py'), (piY-py') ..(py'-piY)]), x <- ({- zipWith (+) randomX -} [(-px'), (piX-px') ..(px'-piX)])]
@@ -59,33 +54,42 @@ generateRaysForPixels (Camara p (Base (Direction px _ _) (Direction _ py _) (Dir
       randomY = take (round(height)) $ randomRs (0.0, (piY-py')) gen :: [Float]
       randomX = take (round(width)) $ randomRs (0.0, (piY-py')) gen :: [Float]
 
-obtenerPrimeraColision :: [(Float, (RGB,Float, Point3D, Direction, Int))] -> (Float,(RGB,Float, Point3D, Direction,Int))
+obtenerPrimeraColision :: [(Float, (Obj))] -> (Float,(Obj))
 obtenerPrimeraColision = minimumBy (comparing fst) . filter (\(x, _) -> x >= 0)
 
 -- dada una lista de colisiones devuelve la lista de puntos
-obtenerPuntos :: [(Float, (RGB,Float, Point3D, Direction, Int))] -> [Point3D]
-obtenerPuntos lista = map (\(_, (_, _,point, _,_)) -> point) lista
+obtenerPuntos :: [(Float, (Obj))] -> [Point3D]
+obtenerPuntos lista = map (\(_, (_, _,point, _,_,_)) -> point) lista
 
 -- dada la matriz de [figuras,colisiond e cada rayo] devuelve la lista de la primera colisión de cada rayo
-listRay :: [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
+listRay :: [[(Float, (Obj))]] -> [(Float, (Obj))]
 listRay = map obtenerPrimeraColision . transpose
 
 calcularDirESpejo :: Direction -> Direction -> Direction
 calcularDirESpejo d normal = d - (escalateDir (2 * (d .* normal)) normal)
 
-sumRGB :: (Float, (RGB, Float, Point3D, Direction, Int)) -> (Float, (RGB, Float, Point3D, Direction, Int)) -> (Float, (RGB, Float, Point3D, Direction, Int))
-sumRGB (f, (RGB r g b, fl, p, d, id)) (_, (RGB r' g' b', _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, id))
+{-# INLINE sumRGB #-}
+sumRGB :: (Float, (Obj)) -> (Float, (Obj)) -> (Float, (Obj))
+sumRGB (f, (RGB r g b, fl, p, d,flo, id)) (_, (RGB r' g' b', _, _, _, _, _)) = (f, (RGB (r + r') (g + g') (b + b'), fl, p, d, flo,id))
 
-mediaRGB :: [(Float, (RGB, Float, Point3D, Direction, Int))] -> Float -> (Float, (RGB, Float, Point3D, Direction, Int))
+{-# INLINE mediaRGB #-}
+mediaRGB :: [(Float, (Obj))] -> Float -> (Float, (Obj))
 mediaRGB lista n = medRGB (1/n) $ foldr sumRGB (head lista) (tail lista)
   where
-    medRGB n (f, (RGB r g b, fl, p, d, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d, id))
+    medRGB n (f, (RGB r g b, fl, p, d,flo, id)) = (f, (RGB ( r * n) ( g * n) ( b * n), fl, p, d,flo, id))
 
-mediaDeRayos :: [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
+mediaDeRayos :: [[(Float, (Obj))]] -> [(Float, (Obj))]
 mediaDeRayos =  map (\rayos -> mediaRGB rayos (fromIntegral(length rayos))) . transpose
 
-listRayToRGB :: [Point3D] -> Point3D -> [Shape] -> [[(Float, (RGB, Float, Point3D, Direction, Int))]] -> [(Float, (RGB, Float, Point3D, Direction, Int))]
-listRayToRGB luces cam figuras listaDeColisiones = b
+calcColor :: (Float, (Obj)) -> [Point3D] -> (Float, (Obj))
+calcColor obj [] = obj
+calcColor obj (x:xs) = (a,(newRGB,a1,p,norm,a2,a3))
+  where
+    (a, (rgb@(RGB r g b), a1, p,norm,a2,a3)) = obj
+    newRGB = prodRGB ((5.0 / ((modd (p #< x) + 1.0)**2)) * (20 / pi) *(abs ((normal norm) .* (normal (p #< x))))) rgb
+    
+listRayToRGB :: [Point3D] -> Point3D -> [Shape] -> [[(Float, (Obj))]] -> [(Float, (Obj))]
+listRayToRGB luces cam figuras listaDeColisiones = mediaDeRayos luzXRayo
   where
     !parametricfiguras = parametricShapeCollision figuras
     !rayosColisiones = listRay listaDeColisiones
@@ -93,62 +97,41 @@ listRayToRGB luces cam figuras listaDeColisiones = b
     !ligthRays = [[Ray luz (punto #< luz) 0 | punto <- obtenerPuntos rayosColisiones] | luz <- luces]
     -- !collisions = unsafePerformIO $ parallelMap parametricfiguras ligthRays
     !collisions = map parametricfiguras ligthRays
-    
-    --  traceEventIO "Buscar Luz" $
-
 
     !luzXRayo = [zipWith eligeResultado rayosColisiones (listRay collision) | collision <- collisions]
       where
-        eligeResultado a@(t, ((RGB r0 g0 b0), ra, pa, d, id)) (_, ((RGB r1 g1 b1), _, pb, _, _))
-          | aproxPoint pa pb = a
-          | otherwise = (t, (RGB 0 0 0, ra, pa, d, id))
+        eligeResultado a@(t, ((RGB r0 g0 b0), ra, pa, d,f, id)) (_, ((RGB r1 g1 b1), _, pb, _,_, _))
+          | aproxPoint pa pb = calcColor a luces
+          | otherwise = (t, (RGB 0 0 0, ra, pa, d,f, id))
 
-    -- traceEventIO "Media Luz"
-    !b = map (oneEspejo cam figuras) (mediaDeRayos luzXRayo)
-      where
-       oneEspejo cam shapes esp@(f, (rgb, ref, p, d, id))
-          | ref == 0 = esp
-          | otherwise = let
-              otherShapes = filter (\shape -> not (id == getShapeID shape)) shapes
-              cortes = map (\shape -> oneCollision shape (Ray p (calcularDirESpejo (p #< cam) d) 0)) otherShapes
-              rgbRefle = (\(_, (rgb, _, _, _, _)) -> rgb) $ obtenerPrimeraColision cortes
-              !newRgb = if (ref < 0.5) then rgb else rgbRefle
-            in (f, (newRgb, ref, p, d, id))
-            
-    -- traceEventIO "Fin Func"
-    -- `using` parList rseq
-    -- parMap rdeepseq
 
 pix :: Float
-pix = 4096
+pix = 1080
 piCam :: Float
 piCam = 25
+gamma = 2.4
+fmx = 255
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
 centr = Point3D (0) (10) 0
 centr' = Point3D (-5) 20 0
 centr'' = Point3D (10) (20) (-2)
-luz = Point3D (15) (0) (-2)
+luz = Point3D (0) (-20) (0)
 luz' = Point3D (0) (-15) (-2)
 luz'' = Point3D (10) (14) (-2)
 cam' =  Point3D (0) (0) (-100)
-plano0 = Plane (Plano (Point3D (-20) 0 20) (Direction 1 0 0) (RGB 249 176 84) 0 0)
-plano1 =  Plane (Plano (Point3D (20) 0 20) (Direction (1) (0) (0)) (RGB 146 223 222) 0 1)
-plano2 =  Plane (Plano (Point3D 0 (20) 20) (Direction 0 (-1) 0) (RGB 0 255 0) 0 2)
-plano3 =  Plane (Plano (Point3D 0 0 20) (Direction 0 0 (-1)) (RGB 171 118 24) 0 3)
-plano4 =  Plane (Plano (Point3D 0 (-25) 20) (Direction 0 (-1) (0)) (RGB 255 0 255) 0 4)
-plano5 =  Plane (Plano (Point3D 0 0 (-101)) (Direction 0 0 (1)) (RGB 255 255 0) 0 3)
-bola =  Sphere (Esfera centr 5 (RGB 255 0 0) 0 5)
-bola'' =  Sphere (Esfera centr'' 5 (RGB 155 0 155) 1 7)
+plano0 = Plane (Plano (Point3D (-20) 0 20) (Direction 1 0 0) (RGB 249 176 84) 0 0 0)
+plano1 =  Plane (Plano (Point3D (20) 0 20) (Direction (1) (0) (0)) (RGB 146 223 222) 0 0 1)
+plano2 =  Plane (Plano (Point3D 0 (20) 20) (Direction 0 (-1) 0) (RGB 0 255 0) 0 0 2)
+plano3 =  Plane (Plano (Point3D 0 0 20) (Direction 0 0 (-1)) (RGB 171 118 24) 0 0 3)
+plano4 =  Plane (Plano (Point3D 0 (-25) 20) (Direction 0 (-1) (0)) (RGB 255 0 255) 0 0 4)
+plano5 =  Plane (Plano (Point3D 0 0 (-101)) (Direction 0 0 (1)) (RGB 255 255 0) 0 0 3)
+bola =  Sphere (Esfera centr 5 (RGB 255 0 0) 0 0 5)
+bola'' =  Sphere (Esfera centr'' 5 (RGB 155 0 155) 1 0 7)
 -- tri1 = Triangle (Triangulo (Point3D 0 100 50) (Point3D 100 100 50) (Point3D 100 0 100) (RGB 60 80 100) 0 8)
-bolaLus = Sphere (Esfera luz 1 (RGB 255 0 255) 0 8)
 camara = Camara (cam') basCam
 
-generarBolaLuz :: Point3D -> Shape
-generarBolaLuz p = Sphere (Esfera p 1 (RGB 255 255 255) 0 8)
-
 figuras = [bola,bola'',plano0,plano1,plano2,plano3,plano4]
-luces = [luz,luz',luz'']
-bolasLuz = map generarBolaLuz luces
+luces = [luz]
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 main :: IO ()
 main = do
@@ -170,9 +153,8 @@ main = do
       traceEventIO "Principio func Luz"
       let !a = listRayToRGB luces cam' figuras' sol
       traceEventIO "Fin de so"
-      let !representacionLuces = parametricShapeCollision bolasLuz rayitos
-      let !fin = concat $ map rgbToString . map (\(_, (rgb, _, _, _, _)) -> rgb) $ listRay [a,(listRay representacionLuces)]
-      
+      let !fin = concat $ map rgbToString . (gammaFunc fmx gamma) . map (\(_, (rgb, _, _, _,_, _)) -> rgb) $ a
+      -- let fin' = (gammaFunc fmx gamma) fin
       writePPM "a.ppm" (round pix) (round pix) fin
       
       end <- getCPUTime
