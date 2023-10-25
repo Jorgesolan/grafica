@@ -45,7 +45,7 @@ import System.Random
 --   where
 --     n1 = f x
 --     n2 = parProc f xs
-
+{-# INLINE build #-}
 build :: ((a -> [a] -> [a]) -> [a] -> [a]) -> [a]
 build g = g (:) []
 
@@ -59,11 +59,12 @@ chunksOf i ls = map (take i) (build (splitter ls))
 tuplasAleatorias :: [(Float, Float)] -> Float  -> [(Float, Float)]
 tuplasAleatorias inputTuplas salto = tuplasConRandoms
   where
-    randomNumbers = take (length inputTuplas * 2) $ randomRs (0.0, salto) (mkStdGen 42) :: [Float]
+    !randomNumbers = take (length inputTuplas * 2) $ randomRs (0.0, salto) (mkStdGen 42) :: [Float]
     -- randomNumbers = take (length inputTuplas * 2) [(-20000) ..(20000)] :: [Float]
-    tuplasConRandoms = [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
+    !tuplasConRandoms = [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
     halfLen = length randomNumbers `div` 2
 
+{-# INLINE generarTuplas #-}
 generarTuplas :: [Float] -> [Float] -> [(Float, Float)]
 generarTuplas xs ys = [(x, y) | y <- ys, x <- xs]
 
