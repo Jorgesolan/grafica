@@ -145,7 +145,8 @@ antialiasing rayos n =  map (mediaRGB (n)) (chunksOf (round (n)) rayos)
 pathTracer :: Point3D -> [Shape] -> [[(Float, (Obj))]] -> Float -> [RGB]
 pathTracer cam figuras listaDeColisiones n = b
   where
-    !rayosColisiones = antialiasing (listRay listaDeColisiones) n
+    !rayosParser = map (\colision -> antialiasing colision n) listaDeColisiones
+    !rayosColisiones = listRay rayosParser
     -- !rayosColisiones = (listRay listaDeColisiones)
 
     !b = map (search cam figuras) rayosColisiones
@@ -168,12 +169,15 @@ pathTracer cam figuras listaDeColisiones n = b
     -- parMap rdeepseq
 
 pix :: Float
-pix = 4096
-maxN = 32
+pix = 1080
+maxN = 1
+etapas = 1
+nRay :: Float
+nRay = 20
+
+
 piCam :: Float
 piCam = 25
-nRay :: Float
-nRay = 64
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
 centr = Point3D (0) (10) 0
 centr' = Point3D (-5) 20 0
@@ -222,7 +226,7 @@ main = do
             let !customTriangles1 = convertToCustomFormat (vertices1', triangles1)
             let !figuras' = figuras -- ++ customTriangles ++ customTriangles1
 
-            let rayitos = generateRaysForPixels maxN n camara pix pix nRay --`using` parListChunk 128 rseq
+            let rayitos = generateRaysForPixels (maxN*etapas) n camara pix pix nRay --`using` parListChunk 128 rseq
             let !sol = parametricShapeCollision figuras' rayitos --`using` parListChunk 128 rseq
             traceEventIO "Principio func Luz"
             let !a = pathTracer cam' figuras' sol nRay

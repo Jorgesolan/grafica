@@ -37,7 +37,7 @@ $(APP0): $(APP) $(SRC1) $(SRC5)
 production:
 $(APP3): $(APP) $(SRC1) $(SRC5)
 	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -o $@ && mv $(APP3) ./tmp
-	strip $@
+#	strip $@
 
 
 p1:
@@ -54,4 +54,4 @@ $(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
 clean:
 	-mv $(shell find . -name '*.o') $(BIN_DIR)
 	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/*.zip ./tmp/*.bmp *.ppm *.bmp *.zip
+	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip
