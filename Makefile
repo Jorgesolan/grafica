@@ -32,7 +32,7 @@ BIN_DIR = ./bin
 
 simOld:
 $(APP0): $(APPP) $(SRC1) $(SRC5)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel  -package random -package split -package vector -o $@ 
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel  -package random -package split -package vector -package hmatrix -o $@ 
 	strip $@
 	mv $(APP0) ./tmp
 
@@ -56,4 +56,4 @@ $(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
 clean:
 	-mv $(shell find . -name '*.o') $(BIN_DIR)
 	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip $(APP0)
+	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./*.eventlog ./tmp/$(APP3) ./tmp/$(APP0) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip $(APP0)

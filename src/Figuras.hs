@@ -48,7 +48,7 @@ oneCollision (Sphere (Esfera p0 r color reflec lum id)) (Ray p1 d m) =
 
 oneCollision (Plane (Plano p0 n color reflec lum id)) (Ray p1 d m) = (mind, (color, reflec, collisionPoint, vectorNormal, lum, id))
   where
-    mind = ((p0 #< p1) .* n) / (d .* n)
+    mind = ((p0 #< p1) .* vectorNormal) / (d .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind d) p1
     vectorNormal = normal n
 

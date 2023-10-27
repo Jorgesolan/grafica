@@ -8,6 +8,7 @@ data Direction = Direction !Float !Float !Float
 data Ray = Ray !Point3D !Direction Float
 data Base = Base Direction Direction Direction
 data RGB = RGB { red :: !Float, green :: !Float, blue :: !Float } deriving (Show)
+data Luz = Luz !Point3D !RGB !Float
 
 -- instance NFData RGB where
 --     rnf (RGB r g b) = rnf r `seq` rnf g `seq` rnf b
@@ -37,7 +38,6 @@ roundTo n (Point3D a b c) = Point3D a' b' c'
         a' = (fromInteger $ round $ a * (10^n)) / (10.0^^n)::Float
         b' = (fromInteger $ round $ b * (10^n)) / (10.0^^n)::Float
         c' = (fromInteger $ round $ c * (10^n)) / (10.0^^n)::Float
-
 
 
 -- ************************************************
@@ -96,6 +96,7 @@ distPoint (Point3D x1 y1 z1) (Point3D x2 y2 z2) = sqrt((x2-x1)**2 + (y2-y1)**2 +
 (#<) :: Point3D -> Point3D -> Direction
 (Point3D xb yb zb) #< (Point3D xa ya za) = Direction (xb-xa) (yb-ya) (zb-za)
 
+{-# INLINE aproxPoint #-}
 aproxPoint :: Point3D -> Point3D -> Bool
 aproxPoint (Point3D xb yb zb) (Point3D xa ya za) = a && b && c
     where
@@ -165,23 +166,26 @@ perp (Direction xb yb zb) = (Direction yb (-xb) zb)
 generateBase :: Direction -> Direction -> Direction -> Base
 generateBase d0 d1 d2 = Base d0 d1 d2
 
+{-# INLINE elevateRGBPoint #-}
 elevateRGBPoint :: Float -> RGB -> RGB
 elevateRGBPoint x (RGB r g b) =
     RGB (r ** (1.0 / x))
         (g ** (1.0 / x))
         (b ** (1.0 / x))
 
-agregateRGBPoints :: RGB -> RGB -> RGB
-agregateRGBPoints (RGB r' g' b') (RGB r g b) =
+{-# INLINE sumRGBPoints #-}
+sumRGBPoints :: RGB -> RGB -> RGB
+sumRGBPoints (RGB r' g' b') (RGB r g b) =
     RGB (r + r')
         (g + g')
         (b + b')
 
-prodRGB :: Float -> RGB -> RGB
-prodRGB f (RGB r g b) =
-    RGB (r * f)
-        (g * f)
-        (b * f)
+{-# INLINE prodRGB #-}
+prodRGB :: Float -> RGB -> RGB -> RGB
+prodRGB f (RGB r0 g0 b0) (RGB r g b) =
+    RGB (r * f * (r0/255))
+        (g * f * (g0/255))
+        (b * f * (b0/255))
 
 {-# INLINE comparateRGB #-}
 comparateRGB :: RGB -> RGB -> Bool

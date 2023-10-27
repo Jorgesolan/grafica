@@ -182,8 +182,8 @@ basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 (-50))
 centr = Point3D (0) (10) 0
 centr' = Point3D (-5) 20 0
 centr'' = Point3D (10) (20) (-2)
-luz = Point3D (15) (0) (-2)
-luz' = Point3D (0) (-15) (-2)
+luz = Point3D (15) (15) (-2)
+luz' = Point3D (15) (0) (-2)
 luz'' = Point3D (10) (14) (-2)
 cam' =  Point3D (0) (0) (-100)
 plano0 = Plane (Plano (Point3D (-20) 0 0) (Direction 1 0 0) (RGB 249 176 84) 0 0 0)
@@ -199,7 +199,7 @@ area = Sphere (Esfera (Point3D 0 0 0) 100 (RGB 255 255 255) 0 1 8)
 camara = Camara (cam') basCam
 
 figuras = [bola,bola'',plano0,plano1,plano2,plano3,plano4,area]
-luces = [luz,luz',luz'']
+luces = [luz]
 -- figurasSinPlanos = (parametricShapeCollision [bola,bola',bola''])
 
 main :: IO ()
