@@ -1,27 +1,31 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE MultiWayIf #-}
+
 module Figuras where
 import Elem3D
 import Debug.Trace
-import Text.Printf (printf)
+
 import Data.Maybe (mapMaybe)
 import Control.Monad (guard)
+
 data Camara = Camara !Point3D !Base
 data Esfera = Esfera !Point3D !Float !RGB !Float !Float !Int
 data Plano = Plano !Point3D !Direction !RGB !Float !Float !Int
 data Triangulo = Triangulo !Point3D !Point3D !Point3D !RGB !Float !Float !Int
-data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo
+data Rosquilla = Rosquilla !Point3D !Direction !Float  !Float !RGB !Float !Float !Int
+
+data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Donut Rosquilla
 
 type Obj = (RGB, Float, Point3D, Direction, Float, Int)
 
 {-# INLINE parametricShapeCollision #-}
-parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, (Obj))]]
+parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, Obj)]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
     collision rays shape = map (oneCollision shape) rays
 
-oneCollision :: Shape -> Ray -> (Float, (Obj))
+oneCollision :: Shape -> Ray -> (Float, Obj)
 oneCollision (Sphere (Esfera p0 r color reflec lum id)) (Ray p1 d m) = 
     let f = p1 #< p0
         a = d .* d
@@ -38,7 +42,7 @@ oneCollision (Sphere (Esfera p0 r color reflec lum id)) (Ray p1 d m) =
         if  | raiz > 0 ->
                 let !t0 = (-b + sqrt raiz) / (2.0 * a)
                     !t1 = (-b - sqrt raiz) / (2.0 * a)
-                    mind = findMinPositive t0 t1
+                    !mind = findMinPositive t0 t1
                     collisionPoint = movePoint (escalateDir mind d) p1
                     vectorNormal = normal $ collisionPoint #< p0
                 in if t0 > 0 || t1 > 0
@@ -51,6 +55,54 @@ oneCollision (Plane (Plano p0 n color reflec lum id)) (Ray p1 d m) = (mind, (col
     mind = ((p0 #< p1) .* vectorNormal) / (d .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind d) p1
     vectorNormal = normal n
+
+-- oneCollision (Donut (Rosquilla p0 d r1 r2 color reflec lum id)) (Ray p1 d1 m) = 
+--     let dp = p1 #< p0
+--         a = d1 .* d1
+--         b = 2.0 * (dp .* d1)
+--         c = (dp .* dp) - r1 * r1 - r2 * r2
+--         discriminant = b * b - 4 * a * c
+--     in
+--     if discriminant > 0 then
+--         let t0 = (-b + sqrt discriminant) / (2.0 * a)
+--             t1 = (-b - sqrt discriminant) / (2.0 * a)
+--             t = min t0 t1 -- Choose the smaller positive root
+--             collisionPoint = movePoint (escalateDir t d1) p1
+--             torusNormal = normalize $ dp #- (dp .* d1) .* d1 -- Calculate torus normal
+--         in
+--         if t > 0 then
+--             (t, (color, reflec, collisionPoint, torusNormal, lum, id))
+--         else
+--             (-1, (color, reflec, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), lum, id))
+--     else
+--         (-1, (color, reflec, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), lum, id))
+
+
+oneCollision (Donut (Rosquilla p0 d r1 r2 color reflec lum id)) (Ray p1 d1 m) = 
+    let f = p1 #< p0
+        a = d1 .* d1
+        b = 2.0 * (f .* d1)
+        c = f .* f - r2 * r2 - r1 * r1
+        raiz = b * b - 4*a*c
+        findMinPositive :: Float -> Float -> Float
+        findMinPositive x y
+            | x > 0 && y > 0 = min x y
+            | x > 0          = x
+            | y > 0          = y
+            | otherwise      = -1      
+    in
+        if  | raiz > 0 ->
+                let !t0 = (-b + sqrt raiz) / (2.0 * a)
+                    !t1 = (-b - sqrt raiz) / (2.0 * a)
+                    mind = findMinPositive t0 t1
+                    collisionPoint = movePoint (escalateDir mind d1) p1
+                    vectorNormal = normal $ collisionPoint #< p0
+                in if t0 > 0 || t1 > 0
+                    then (mind, (color, reflec, collisionPoint, vectorNormal, lum, id))
+                    else ((-1), (color, reflec, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), lum, id))
+            | otherwise -> ((-1), (color, reflec, Point3D (-1) (-1) (-1), Direction (-1) (-1) (-1), lum, id)) 
+
+
 
 oneCollision (Triangle (Triangulo p1 p2 p3 color reflec lum id)) (Ray rayOrigin rayDir m) =
     case rayTriangleIntersection rayOrigin rayDir p1 p2 p3 of
@@ -65,7 +117,7 @@ getShapeID (Sphere (Esfera _ _ _ _ _ id)) = id
 getShapeID (Plane (Plano _ _ _ _ _ id)) = id
 
 getShapeID (Triangle (Triangulo _ _ _ _ _ _ id)) = id
-
+getShapeID (Donut (Rosquilla _ _ _ _ _ _ _ id)) = id
 rayTriangleIntersection :: Point3D -> Direction -> Point3D -> Point3D -> Point3D -> Maybe (Float, Point3D)
 rayTriangleIntersection orig dir v1 v2 v3 = do
     let e1 = v2 #< v1
@@ -140,3 +192,90 @@ convertToCustomFormat :: ([Point3D], [TrianglePos]) -> [Shape]
 convertToCustomFormat (vertices, triangles) = map (triangleToTriangulo.resolveVertices) triangles
   where
     resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
+
+
+
+-- -- Helper function to solve a quartic equation and return its roots as a list
+-- solveQuartic :: Float -> Float -> Float -> Float -> Float -> [Float]
+-- solveQuartic a4 a3 a2 a1 a0
+--     | a4 == 0 = solveCubic a3 a2 a1 a0
+--     | otherwise =
+--         let a3' = a3 / a4
+--             a2' = a2 / a4
+--             a1' = a1 / a4
+--             a0' = a0 / a4
+--             a2Squared = a2' * a2'
+--             a1Cubed = a1' * a1' * a1'
+--             q = (3.0 * a1' - a2Squared) / 9.0
+--             r = (9.0 * a1' * a2' - 27.0 * a0' - 2.0 * a2Squared * a2Squared) / 54.0
+--             discriminant = q * q * q + r * r
+--         in
+--             if discriminant >= 0
+--             then
+--                 let s = cbrt (r + sqrt discriminant)
+--                     t = cbrt (r - sqrt discriminant)
+--                     root1 = -a2' / 3.0 - (s + t) - q / (3.0 * (s * t))
+--                     root2 = -a2' / 3.0 + 0.5 * (s + t) - q / (3.0 * s * t)
+--                     root3 = -a2' / 3.0 + 0.5 * (s + t) - q / (3.0 * s * t)
+--                 in [root1, root2, root3]
+--             else
+--                 let theta = acos (r / sqrt (-q * q * q))
+--                     sqrtQ = sqrt (-q)
+--                     twoSqrtQ = 2.0 * sqrtQ
+--                     root1 = twoSqrtQ * cos (theta / 3.0) - a2' / 3.0
+--                     root2 = twoSqrtQ * cos ((theta + 2 * pi) / 3.0) - a2' / 3.0
+--                     root3 = twoSqrtQ * cos ((theta + 4 * pi) / 3.0) - a2' / 3.0
+--                 in [root1, root2, root3]
+
+-- -- Helper function to find the smallest positive root from a list of roots
+-- findSmallestPositiveRoot :: [Float] -> Float
+-- findSmallestPositiveRoot roots = minimum [root | root <- roots, root > 0.0]
+-- findSmallestPositiveRoot [] = -1
+
+-- -- Helper function to calculate the cube root
+-- cbrt :: Float -> Float
+-- cbrt x = if x < 0.0 then -((-x) ** (1.0 / 3.0)) else x ** (1.0 / 3.0)
+
+-- -- Helper function to solve a cubic equation and return its roots as a list
+-- solveCubic :: Float -> Float -> Float -> Float -> [Float]
+-- solveCubic a3 a2 a1 a0
+--     | a3 == 0 = solveQuadratic a2 a1 a0
+--     | otherwise =
+--         let a2' = a2 / a3
+--             a1' = a1 / a3
+--             a0' = a0 / a3
+--             q = (3.0 * a1' - a2' * a2') / 9.0
+--             r = (9.0 * a1' * a2' - 27.0 * a0' - 2.0 * a2' * a2' * a2') / 54.0
+--             discriminant = q * q * q + r * r
+--         in
+--             if discriminant >= 0
+--             then
+--                 let s = cbrt (r + sqrt discriminant)
+--                     t = cbrt (r - sqrt discriminant)
+--                     root1 = -a2 / 3.0 - (s + t) + q / (3.0 * s * t)
+--                     root2 = -a2 / 3.0 + 0.5 * (s + t) - q / (3.0 * s * t)
+--                     root3 = -a2 / 3.0 + 0.5 * (s + t) - q / (3.0 * s * t)
+--                 in [root1, root2, root3]
+--             else
+--                 let theta = acos (r / sqrt (-q * q * q))
+--                     sqrtQ = sqrt (-q)
+--                     twoSqrtQ = 2.0 * sqrtQ
+--                     root1 = twoSqrtQ * cos (theta / 3.0) - a2 / 3.0
+--                     root2 = twoSqrtQ * cos ((theta + 2 * pi) / 3.0) - a2 / 3.0
+--                     root3 = twoSqrtQ * cos ((theta + 4 * pi) / 3.0) - a2 / 3.0
+--                 in [root1, root2, root3]
+
+-- -- Helper function to solve a quadratic equation and return its roots as a list
+-- solveQuadratic :: Float -> Float -> Float -> [Float]
+-- solveQuadratic a2 a1 a0
+--     | a2 == 0 = if a1 == 0 then [] else [-a0 / a1]
+--     | otherwise =
+--         let discriminant = a1 * a1 - 4 * a2 * a0
+--         in
+--             if discriminant < 0
+--             then []
+--             else
+--                 let sqrtDiscriminant = sqrt discriminant
+--                     root1 = (-a1 + sqrtDiscriminant) / (2 * a2)
+--                     root2 = (-a1 - sqrtDiscriminant) / (2 * a2)
+--                 in [root1, root2]

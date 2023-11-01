@@ -22,6 +22,7 @@ import System.Random
 
 -- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
 -- make clean && make sim && ./sim  +RTS -N -l -RTS && convert output.ppm out.bmp
+-- make clean && make simOld && cd ./tmp && ./run.sh && cd ..
 
 -- -- Define a function to apply in parallel
 -- applyFunction :: (a -> b) -> a -> MVar b -> IO ()

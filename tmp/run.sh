@@ -1,6 +1,6 @@
 #!/bin/bash
-N=1
-etapas=1  # You can change this value to the desired number of iterations per barrier
+N=8
+etapas=4  # You can change this value to the desired number of iterations per barrier
 pids=()
 
 # Calculate the number of iterations per barrier

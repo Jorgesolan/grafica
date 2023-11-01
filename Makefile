@@ -32,7 +32,7 @@ BIN_DIR = ./bin
 
 simOld:
 $(APP0): $(APPP) $(SRC1) $(SRC5)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package parallel  -package random -package split -package vector -package hmatrix -o $@ 
+	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -package hmatrix -o $@ 
 	strip $@
 	mv $(APP0) ./tmp
 

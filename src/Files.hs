@@ -1,13 +1,13 @@
 module Files where
 import Elem3D
+
 import qualified Data.ByteString as BS
 import Data.Word (Word8)
 import Data.Bits  ((.&.), shiftR)
 import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
 import System.IO
--- import Control.Parallel.Strategies (using, rseq, parListChunk, runEval)
-import Debug.Trace
+
 
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
