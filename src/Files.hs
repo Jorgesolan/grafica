@@ -6,8 +6,6 @@ import Data.Word (Word8)
 import Data.Bits  ((.&.), shiftR)
 import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
-import System.IO
-
 
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))

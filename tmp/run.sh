@@ -1,6 +1,6 @@
 #!/bin/bash
 N=8
-etapas=4  # You can change this value to the desired number of iterations per barrier
+etapas=1  # You can change this value to the desired number of iterations per barrier
 pids=()
 
 # Calculate the number of iterations per barrier
@@ -10,9 +10,9 @@ for ((etapa = 0; etapa < etapas; etapa++)); do
   for ((i = etapa * N + 1; i <= (etapa + 1) * N; i++)); do
     echo "lanzando proc ${i}"
     if ((i == (etapa + 1) * N)); then
-      ./production ${i}
+      ./simulacion +RTS -l -s -RTS ${i}
     else
-      ./production ${i} &
+      ./simulacion +RTS -l -s -RTS ${i} &
       pids+=($!)
     fi
   done

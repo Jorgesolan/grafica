@@ -2,14 +2,15 @@
 module Elem3D where
 
 import System.IO ()
-import Numeric.LinearAlgebra
+import Numeric.LinearAlgebra (Vector, Matrix, fromList, inv, (!), (><), R, (#>))
 
 data Point3D = Point3D !Float !Float !Float
 data Direction = Direction !Float !Float !Float
-data Ray = Ray !Point3D !Direction !Float
+data Ray = Ray !Point3D !Direction
 data Base = Base !Direction !Direction !Direction
-data RGB = RGB { red :: !Float, green :: !Float, blue :: !Float } deriving (Show)
+data RGB = RGB !Float !Float !Float
 data Luz = Luz !Point3D !RGB !Float
+data Foton = Foton !Point3D Float Float
 
 -- instance NFData RGB where
 --     rnf (RGB r g b) = rnf r `seq` rnf g `seq` rnf b
@@ -19,7 +20,6 @@ data Luz = Luz !Point3D !RGB !Float
 --     rnf (Direction x y z) = rnf x `seq` rnf y `seq` rnf z
 -- instance NFData Ray where
 --     rnf (Ray p d f) = rnf p `seq` rnf d `seq` rnf f
-
 
 instance Show Base where
     show (Base (Direction dx0 dy0 dz0) (Direction dx1 dy1 dz1) (Direction dx2 dy2 dz2)) = "Base:\n| " ++ show dx0 ++" " ++show dy0 ++" "++ show dz0 ++ " |\n" ++ "| " ++ show dx1 ++" " ++show dy1 ++" "++ show dz1 ++ " |\n"++ "| " ++ show dx2 ++" " ++show dy2 ++" "++ show dz2 ++ "| "
@@ -31,8 +31,16 @@ instance Show Direction where
     show (Direction dx dy dz) = "Direction " ++ show dx ++ " " ++ show dy ++ " " ++ show dz
 
 instance Show Ray where
-    show (Ray p d _) = "Rayo desde " ++ show p ++ " hasta " ++ show d
+    show (Ray p d) = "Rayo hasta "  ++ show d
 
+instance Show RGB where
+    show (RGB r g b) = "R "  ++ show r ++ " G "  ++ show g ++ " B "  ++ show b
+
+{-# INLINE obtenerRayo #-}
+obtenerRayo :: Ray -> Direction
+obtenerRayo (Ray _ dir) = dir
+
+{-# INLINE roundTo #-}
 roundTo :: Int -> Point3D -> Point3D
 roundTo n (Point3D a b c) = Point3D a' b' c'
     where
@@ -40,7 +48,6 @@ roundTo n (Point3D a b c) = Point3D a' b' c'
         !b' = (fromInteger $ round $ b * (10^n)) / (10.0^^n) :: Float
         !c' = (fromInteger $ round $ c * (10^n)) / (10.0^^n) :: Float
 
-roundTo5 = roundTo 5
 -- ************************************************
 -- Angulos y transformaciones
 {-# INLINE radToDeg #-}
@@ -76,13 +83,13 @@ rotatePoint' axis radiant  (Point3D x y z)
  | axis == 'Z' = Point3D (c*x + s*y) (-s*x + c*y) z
  | otherwise = Point3D 0 0 0
     where 
-        !radiant' = 2*pi - radiant
-        !c = cos radiant
-        !s = sin radiant
+        radiant' = 2*pi - radiant
+        c = cos radiant
+        s = sin radiant
 
 {-# INLINE movePoint #-}
 movePoint :: Direction -> Point3D -> Point3D
-movePoint (Direction dx dy dz) (Point3D x y z) = Point3D (x + dx) (y + dy) (z + dz)
+movePoint (Direction !dx !dy !dz) (Point3D !x !y !z) = Point3D (x + dx) (y + dy) (z + dz)
 
 {-# INLINE movePoint' #-}
 movePoint' :: Direction -> Point3D -> Point3D
@@ -95,16 +102,16 @@ distPoint (Point3D x1 y1 z1) (Point3D x2 y2 z2) = sqrt $ (x2-x1)**2 + (y2-y1)**2
 -- -- Resta de puntos -> Dirección del primero al segundo
 {-# INLINE (#) #-}
 (#) :: Point3D -> Point3D -> Point3D
-(Point3D xb yb zb) # (Point3D xa ya za) = Point3D (xb-xa) (yb-ya) (zb-za)
+(Point3D !xb !yb !zb) # (Point3D !xa !ya !za) = Point3D (xb-xa) (yb-ya) (zb-za)
 
 -- -- Direccion entre puntos -> Dirección del primero al segundo
 {-# INLINE (#<) #-}
 (#<) :: Point3D -> Point3D -> Direction
-(Point3D xb yb zb) #< (Point3D xa ya za) = Direction (xb-xa) (yb-ya) (zb-za)
+(Point3D !xb !yb !zb) #< (Point3D !xa !ya !za) = Direction (xb-xa) (yb-ya) (zb-za)
 
 {-# INLINE aproxPoint #-}
 aproxPoint :: Point3D -> Point3D -> Bool
-aproxPoint (Point3D xb yb zb) (Point3D xa ya za) = a && b && c
+aproxPoint (Point3D !xb !yb zb) (Point3D !xa !ya !za) = a && b && c
     where
         !a = abs (xb-xa) < 0.1
         !b = abs (yb-ya) < 0.1
@@ -124,14 +131,14 @@ instance Num Direction where
  {-# INLINE (*) #-}
  (Direction xa ya za) * (Direction xb yb zb) = Direction x y z
      where
-        !x = ya * zb - za * yb
-        !y = za * xb - xa * zb
-        !z = xa * yb - ya * xb
+        x = ya * zb - za * yb
+        y = za * xb - xa * zb
+        z = xa * yb - ya * xb
 
 -- -- -- Producto escalar
 {-# INLINE (.*) #-}
 (.*) :: Direction -> Direction -> Float
-(Direction xb yb zb) .* (Direction xa ya za)  = (xb*xa + yb*ya + zb*za)
+(Direction xb yb zb) .* (Direction xa ya za)  = xb*xa + yb*ya + zb*za
 
 -- -- -- Escalado de dirección
 {-# INLINE escalateDir #-}
@@ -156,17 +163,12 @@ escalatePoint' s (Point3D xa ya za) = Point3D (s/xa) (s/ya) (s/za)
 -- -- Modulo
 {-# INLINE modd #-}
 modd :: Direction -> Float
-modd (Direction x y z) = sqrt((x*x + y*y + z*z))
+modd (Direction !x !y !z) = sqrt(x*x + y*y + z*z)
 
 -- Normalización
 {-# INLINE normal #-}
 normal :: Direction -> Direction
-normal  d@(Direction x y z) = let !invLen = 1.0 / sqrt (x*x + y*y + z*z) in Direction (x*invLen) (y*invLen) (z*invLen)
-
--- Vector Perpendicular a otro
-{-# INLINE perp #-}
-perp :: Direction -> Direction
-perp (Direction xb yb zb) = (Direction yb (-xb) zb)
+normal (Direction !x !y !z) = let !invLen = 1.0 / sqrt (x*x + y*y + z*z) in Direction (x*invLen) (y*invLen) (z*invLen)
 
 --Generar Base con 3 Direcciones dadas(No comprueba que sean perpendiculares)
 {-# INLINE generateBase #-}
@@ -180,21 +182,41 @@ elevateRGBPoint x (RGB r g b) =
         (g ** (1.0 / x))
         (b ** (1.0 / x))
 
-{-# INLINE sumRGBPoints #-}
-sumRGBPoints :: RGB -> RGB -> RGB
-sumRGBPoints (RGB r' g' b') (RGB r g b) =
-    RGB (r + r')
-        (g + g')
-        (b + b')
+instance Num RGB where
+
+ {-# INLINE (+) #-}
+ (RGB r1 g1 b1) + (RGB r2 g2 b2) = RGB (r1 + r2) (g1 + g2) (b1 + b2)
+
+ {-# INLINE (-) #-}
+ (RGB r1 g1 b1) - (RGB r2 g2 b2) = RGB (r1 - r2) (g1 - g2) (b1 - b2)
+
+ {-# INLINE (*) #-}
+ (RGB r1 g1 b1) * (RGB r2 g2 b2) = RGB (r1 * r2) (g1 * g2) (b1 * b2)
+
+{-# INLINE (./) #-} 
+(./) :: RGB -> RGB -> RGB
+(RGB r1 g1 b1) ./ (RGB r2 g2 b2) = RGB (r1 / r2) (g1 / g2) (b1 / b2)
+
+{-# INLINE modRGB #-}
+modRGB :: RGB -> Float -> RGB
+modRGB (RGB r g b) f =
+    RGB (r * f)
+        (g * f)
+        (b * f)
+
+{-# INLINE divRGB #-}
+divRGB :: RGB -> Float -> RGB
+divRGB (RGB r g b) f =
+    RGB (r / f)
+        (g / f)
+        (b / f)
+{-# INLINE scale #-}
+scale :: RGB -> RGB
+scale x = x ./ (RGB 255 255 255)
 
 {-# INLINE prodRGB #-}
-prodRGB :: Float -> RGB -> RGB -> RGB
-prodRGB f (RGB r0 g0 b0) (RGB r g b) =
-    RGB (r * f * scale r0)
-        (g * f * scale g0)
-        (b * f * scale b0)
-    where
-        scale x = x / 255.0
+prodRGB ::  RGB -> RGB -> Float -> RGB
+prodRGB r0 r1 f = modRGB ((scale r0) * r1) f 
 
 {-# INLINE comparateRGB #-}
 comparateRGB :: RGB -> RGB -> Bool
@@ -211,34 +233,26 @@ vectorToPoint :: Vector R -> Point3D
 vectorToPoint v = Point3D (realToFrac $ v ! 0) (realToFrac $ v ! 1) (realToFrac $ v ! 2)
 
 --Base + Punto a Matriz
-basePointMatrix :: Base -> Point3D -> Matrix R
-basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) (Point3D p1 p2 p3) =
-  (4><4) [realToFrac a0, realToFrac a1, realToFrac a2, realToFrac p1,
-          realToFrac b0, realToFrac b1, realToFrac b2, realToFrac p2,
-          realToFrac c0, realToFrac c1, realToFrac c2, realToFrac p3,
-          0.0, 0.0, 0.0, 1.0]
+basePointMatrix :: Base -> Matrix R
+basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) =
+  (3><3) [realToFrac a0, realToFrac a1, realToFrac a2,
+          realToFrac b0, realToFrac b1, realToFrac b2,
+          realToFrac c0, realToFrac c1, realToFrac c2]
 
 --Cambio de Base con punto y matriz en Global, devuelve punto visto en local
 cambioBase :: Point3D -> Base -> Point3D -> Point3D
-cambioBase nuevoOrigen baseACambiar puntoACambiarDeBase = puntoDeBaseCambiada
+cambioBase nuevoOrigen baseACambiar puntoACambiarDeBase = movePoint (nuevoOrigen #< Point3D 0 0 0) puntoDeBaseCambiada
     where
-        puntoDeBaseCambiada = roundTo5(vectorToPoint (baseNueva #> (pointToVector puntoACambiarDeBase)))
-        baseNueva = basePointMatrix baseACambiar nuevoOrigen
+        puntoDeBaseCambiada = roundTo 5 $ vectorToPoint (baseNueva #> (pointToVector' puntoACambiarDeBase))
+        baseNueva = basePointMatrix baseACambiar
 
 --Cambio de Base con punto y matriz en Local, devuelve punto visto en global
 cambioBase' :: Point3D -> Base -> Point3D -> Point3D
 cambioBase' nuevoOrigen baseACambiar puntoACambiarDeBase = movePoint (nuevoOrigen #< Point3D 0 0 0) puntoDeBaseCambiada
     where
-        puntoDeBaseCambiada = roundTo5(vectorToPoint vectorDeBaseCambiada)
+        puntoDeBaseCambiada = roundTo 5 $ vectorToPoint vectorDeBaseCambiada
         vectorDeBaseCambiada = baseNueva #> (pointToVector' puntoACambiarDeBase)
-        baseNueva =inv (basePointMatrix' baseACambiar)
-
---Base + Punto a Matriz
-basePointMatrix' :: Base -> Matrix R
-basePointMatrix' (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) =
-  (3><3) [realToFrac a0, realToFrac a1, realToFrac a2,
-          realToFrac b0, realToFrac b1, realToFrac b2,
-          realToFrac c0, realToFrac c1, realToFrac c2]
+        baseNueva = inv (basePointMatrix baseACambiar)
 
 --Punto a Vector
 pointToVector' :: Point3D -> Vector R
