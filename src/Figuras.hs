@@ -18,25 +18,25 @@ data Triangulo = Triangulo Point3D Point3D Point3D RGB (Float, Float, Float) Int
 data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo 
 -- data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Donut Rosquilla
 
-data Obj = Obj RGB Point3D Direction (Float, Float, Float) Int deriving Show
+data Obj = Obj RGB Direction Point3D Direction (Float, Float, Float) Int deriving Show
 
 {-# INLINE obtenerPunto #-}
 obtenerPunto :: Obj -> Point3D
-obtenerPunto (Obj _ point _ _ _) = point
+obtenerPunto (Obj _ _ point _ _ _) = point
 
 {-# INLINE parametricShapeCollision #-}
 parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, Obj)]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
   where
-    collision rays shape = map (oneCollision shape) rays
+    collision rays shape = map (\(ray)-> oneCollision ray shape) rays
 
-oneCollision :: Shape -> Ray -> (Float, Obj)
-oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d) = 
+oneCollision :: Ray -> Shape -> (Float, Obj)
+oneCollision (Ray p1 d) (Sphere (Esfera p0 r color reflec id)) = 
     let f = p1 #< p0
         a = d .* d
         b = 2.0 * (f .* d)
         c = f .* f - r * r
-        raiz = b * b - 4*a*c
+        raiz = b * b - 4.0*a*c
         findMinPositive :: Float -> Float -> Float
         findMinPositive x y
             | x > 0 && y > 0 = min x y
@@ -51,11 +51,11 @@ oneCollision (Sphere (Esfera p0 r color reflec id)) (Ray p1 d) =
                     collisionPoint = movePoint (escalateDir mind d) p1
                     vectorNormal = normal $ collisionPoint #< p0
                 in if t0 > 0 || t1 > 0
-                    then (mind, (Obj color collisionPoint vectorNormal reflec id))
-                    else ((-1), (Obj color (Point3D (-1) (-1) (-1)) (Direction (-1) (-1) (-1)) reflec id))
-            | otherwise -> ((-1), (Obj color (Point3D (-1) (-1) (-1)) (Direction (-1) (-1) (-1)) reflec id)) 
+                    then (mind, (Obj color d collisionPoint vectorNormal reflec id))
+                    else ((-1), (Obj color d (Point3D (0) (0) (0)) (Direction (0) (0) (0)) reflec id))
+            | otherwise -> ((-1), (Obj color d (Point3D (0) (0) (0)) (Direction (0) (0) (0)) reflec id)) 
 
-oneCollision (Plane (Plano p0 n color reflec id)) (Ray p1 d) = (mind, (Obj color collisionPoint vectorNormal reflec id))
+oneCollision (Ray p1 d) (Plane (Plano p0 n color reflec id)) = (mind, (Obj color d collisionPoint vectorNormal reflec id))
   where
     mind = ((p0 #< p1) .* vectorNormal) / (d .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind d) p1
@@ -109,12 +109,12 @@ oneCollision (Plane (Plano p0 n color reflec id)) (Ray p1 d) = (mind, (Obj color
 
 
 
-oneCollision (Triangle (Triangulo p1 p2 p3 color reflec id)) (Ray rayOrigin rayDir) =
+oneCollision (Ray rayOrigin rayDir) (Triangle (Triangulo p1 p2 p3 color reflec id)) =
     case rayTriangleIntersection rayOrigin rayDir p1 p2 p3 of
         Just (t, intersectionPoint) ->
             let normalVec = normal $ (p2 #< p1) * (p3 #< p1)
-            in (t, (Obj color intersectionPoint normalVec reflec id))
-        Nothing -> ((-1), (Obj color (Point3D (-1) (-1) (-1)) (Direction (-1) (-1) (-1)) reflec id))
+            in (t, (Obj color rayDir intersectionPoint normalVec reflec id))
+        Nothing -> ((-1), (Obj color rayDir (Point3D (0) (0) (0)) (Direction (0) (0) (0)) reflec id))
 
 getShapeID :: Shape -> Int
 getShapeID (Sphere (Esfera _ _ _ _  id)) = id

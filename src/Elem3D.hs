@@ -2,13 +2,15 @@
 module Elem3D where
 
 import System.IO ()
-import Numeric.LinearAlgebra (Vector, Matrix, fromList, inv, (!), (><), R, (#>))
+import Data.List (transpose)
+import Debug.Trace (trace)
+-- import Numeric.LinearAlgebra (Vector, Matrix, fromList, inv, (!), (><), R, (#>))
 
-data Point3D = Point3D !Float !Float !Float
+data Point3D = Point3D !Float !Float !Float deriving (Eq)
 data Direction = Direction !Float !Float !Float
 data Ray = Ray !Point3D !Direction
 data Base = Base !Direction !Direction !Direction
-data RGB = RGB !Float !Float !Float
+data RGB = RGB !Float !Float !Float deriving (Eq)
 data Luz = Luz !Point3D !RGB !Float
 data Foton = Foton !Point3D Float Float
 
@@ -223,27 +225,27 @@ comparateRGB :: RGB -> RGB -> Bool
 comparateRGB (RGB r' g' b') (RGB r g b) = r == r' && g == g' && b == b'
 
 
---Punto a Vector
-pointToVector :: Point3D -> Vector R
-pointToVector (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z, 1]
+-- Punto a Vector
+pointToVector :: Point3D -> [Float]
+pointToVector (Point3D x y z) = [x, y, z]
 
+-- Vector a Punto
+vectorToPoint :: [Float] -> Point3D
+vectorToPoint [x, y, z] = Point3D x y z
 
---Vector a Punto
-vectorToPoint :: Vector R -> Point3D
-vectorToPoint v = Point3D (realToFrac $ v ! 0) (realToFrac $ v ! 1) (realToFrac $ v ! 2)
-
---Base + Punto a Matriz
-basePointMatrix :: Base -> Matrix R
+-- Base + Punto a Matriz
+basePointMatrix :: Base -> [[Float]]
 basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) =
-  (3><3) [realToFrac a0, realToFrac a1, realToFrac a2,
-          realToFrac b0, realToFrac b1, realToFrac b2,
-          realToFrac c0, realToFrac c1, realToFrac c2]
+  [[a0, a1, a2],
+   [b0, b1, b2],
+   [c0, c1, c2]]
 
 --Cambio de Base con punto y matriz en Global, devuelve punto visto en local
 cambioBase :: Point3D -> Base -> Point3D -> Point3D
-cambioBase nuevoOrigen baseACambiar puntoACambiarDeBase = movePoint (nuevoOrigen #< Point3D 0 0 0) puntoDeBaseCambiada
+cambioBase nuevoOrigen baseACambiar puntoACambiarDeBase = movePoint (nuevoOrigen #< Point3D 0 0 0) puntoDeBaseCambiada 
     where
-        puntoDeBaseCambiada = roundTo 5 $ vectorToPoint (baseNueva #> (pointToVector' puntoACambiarDeBase))
+        puntoDeBaseCambiada = roundTo 5 $ vectorToPoint vectorDeBaseCambiada
+        vectorDeBaseCambiada = matrixVectorProduct baseNueva (pointToVector puntoACambiarDeBase)
         baseNueva = basePointMatrix baseACambiar
 
 --Cambio de Base con punto y matriz en Local, devuelve punto visto en global
@@ -251,11 +253,22 @@ cambioBase' :: Point3D -> Base -> Point3D -> Point3D
 cambioBase' nuevoOrigen baseACambiar puntoACambiarDeBase = movePoint (nuevoOrigen #< Point3D 0 0 0) puntoDeBaseCambiada
     where
         puntoDeBaseCambiada = roundTo 5 $ vectorToPoint vectorDeBaseCambiada
-        vectorDeBaseCambiada = baseNueva #> (pointToVector' puntoACambiarDeBase)
-        baseNueva = inv (basePointMatrix baseACambiar)
+        vectorDeBaseCambiada = matrixVectorProduct (transposeMatrix baseNueva) (pointToVector puntoACambiarDeBase)
+        baseNueva = invertMatrix (basePointMatrix baseACambiar)
 
---Punto a Vector
-pointToVector' :: Point3D -> Vector R
-pointToVector' (Point3D x y z) = fromList [realToFrac x, realToFrac y, realToFrac z]
+-- Producto de matriz por vector
+matrixVectorProduct :: [[Float]] -> [Float] -> [Float]
+matrixVectorProduct mat vec =
+  [sum $ zipWith (*) row vec | row <- mat]
 
--- fullPrMtx :: Matrix R -> Matrix R
+-- Función de transposición de una matriz
+transposeMatrix :: [[a]] -> [[a]]
+transposeMatrix ([]:_) = []
+transposeMatrix x = (map head x) : transposeMatrix (map tail x)
+
+invertMatrix :: [[Float]] -> [[Float]]
+invertMatrix [[a, b, c], [d, e, f], [g, h, i]] =
+  let det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g)
+  in [[(e * i - f * h) / det, (c * h - b * i) / det, (b * f - c * e) / det],
+      [(f * g - d * i) / det, (a * i - c * g) / det, (c * d - a * f) / det],
+      [(d * h - e * g) / det, (g * b - a * h) / det, (a * e - b * d) / det]]
