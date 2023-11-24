@@ -7,6 +7,15 @@ import Data.Bits  ((.&.), shiftR)
 import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
 
+import Data.Binary
+import qualified Data.ByteString.Lazy as B
+
+writeObject :: Binary a => FilePath -> a -> IO ()
+writeObject path obj = B.writeFile path (encode obj)
+
+readObject :: Binary a => FilePath -> IO a
+readObject path = decodeFile path
+
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
 leerPPM archivo = do
@@ -149,3 +158,4 @@ fromPixToList width height filledpixels =
         generatePixel col
             | (col, row) `elem` filledpixels = " 0 255 0"
             | otherwise = " 0 0 0"
+

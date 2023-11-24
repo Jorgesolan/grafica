@@ -10,9 +10,9 @@ for ((etapa = 0; etapa < etapas; etapa++)); do
   for ((i = etapa * N + 1; i <= (etapa + 1) * N; i++)); do
     echo "lanzando proc ${i}"
     if ((i == (etapa + 1) * N)); then
-      ./simulacion +RTS -l -s -RTS ${i}
+      ./simulacion ${i}
     else
-      ./simulacion +RTS -l -s -RTS ${i} &
+      ./simulacion ${i} &
       pids+=($!)
     fi
   done

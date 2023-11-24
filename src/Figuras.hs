@@ -24,6 +24,15 @@ data Obj = Obj RGB Direction Point3D Direction (Float, Float, Float) Int derivin
 obtenerPunto :: Obj -> Point3D
 obtenerPunto (Obj _ _ point _ _ _) = point
 
+addFig :: Shape -> [Shape] -> [Shape]
+addFig (Plane (Plano p0 n color reflec _)) shapes = (Plane (Plano p0 n color reflec (length shapes))):shapes
+addFig (Sphere (Esfera p0 r color reflec _)) shapes = (Sphere (Esfera p0 r color reflec (length shapes))):shapes
+addFig (Triangle (Triangulo p1 p2 p3 color reflec _)) shapes = (Triangle (Triangulo p1 p2 p3 color reflec (length shapes))):shapes
+
+addFigMult :: [Shape] -> [Shape] -> [Shape]
+addFigMult [] shapes = shapes
+addFigMult (x:xs) shapes = addFigMult xs $ addFig x shapes
+
 {-# INLINE parametricShapeCollision #-}
 parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, Obj)]]
 parametricShapeCollision shapes rays = map (collision rays) shapes
@@ -59,7 +68,7 @@ oneCollision (Ray p1 d) (Plane (Plano p0 n color reflec id)) = (mind, (Obj color
   where
     mind = ((p0 #< p1) .* vectorNormal) / (d .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind d) p1
-    vectorNormal = normal n
+    vectorNormal = if (d.*n)>0 then normal (escalateDir (-1) n) else normal n
 
 -- oneCollision (Donut (Rosquilla p0 d r1 r2 color reflec lum id)) (Ray p1 d1 m) = 
 --     let dp = p1 #< p0
