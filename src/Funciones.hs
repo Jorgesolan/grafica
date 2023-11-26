@@ -141,12 +141,12 @@ calcularDirEspejo !d !normal = d - (escalateDir (2.0 * (d .* normal)) normal)
 
 {-# INLINE calcularDirCristal #-}
 calcularDirCristal :: Direction -> Direction -> Float -> Float -> Direction
-calcularDirCristal !d !norm n1 n2 = if sinT2 > 1 then d else d''
+calcularDirCristal !d !norm n1 n2 = if sinT2 > 1 then d else d'
  where
     n = n1 / n2
     cosI = -(d .* norm)
     !sinT2 = n * n * (1 - cosI * cosI)
-    d'' = normal $ escalateDir n d + escalateDir (n * cosI - sqrt (1 - sinT2)) norm
+    d' = normal $ escalateDir n d + escalateDir (n * cosI - sqrt (1 - sinT2)) norm
 
 --------------------------
 -- FUNCIONES AUXILIARES --

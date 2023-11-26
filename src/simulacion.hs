@@ -44,7 +44,7 @@ listRayPhoton :: KdTree Float Foton -> Point3D -> [Shape] -> [Ray] -> Int -> [RG
 listRayPhoton kdt cam figuras rayos nRay = luzFinal
   where
     rayColisions = listRay $ map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    nPhotons = 10
+    nPhotons = 80
     luzFinal = map (photonMap kdt nPhotons figuras) rayColisions 
 
 listaRaySupreme :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> [RGB]
@@ -67,7 +67,7 @@ intMx = 1.0
 
 basCam = Base (Direction piCam 0 0) (Direction 0 piCam 0) (Direction 0 0 25)
 centr = Point3D (-10) (-10) (-4)
-centr' = Point3D 13 (-15) (-2)
+centr' = Point3D 13 (-13) (-2)
 luz = Luz (Point3D (0) 15 (0)) (RGB 255 255 255) intMx
 luz' = Luz (Point3D (0) 0 (50)) (RGB 255 255 255) 0.70
 luz'' = Point3D 10 14 (-2)
@@ -78,8 +78,8 @@ plano2 =  Plane (Plano (Point3D 0 25 0) (Direction 0 1 0) (RGB 150 150 150) (1, 
 plano3 =  Plane (Plano (Point3D 0 0 (-25)) (Direction 0 0 1) (RGB 150 150 150) (1, 0, 0) 0) -- Fondo
 plano4 =  Plane (Plano (Point3D 0 (-20) 0) (Direction 0 1 0) (RGB 150 150 150) (1, 0, 0) 0) -- Suelo
 plano5 =  Plane (Plano (Point3D 0 0 (50.5)) (Direction 0 0 1) (RGB 0 0 0) (1, 0, 0) 0) -- Detras Camara
-bola =  Sphere (Esfera centr 6 (RGB 255 10 10) (1, 0, 0) 0)
-bola' =  Sphere (Esfera centr' 5 (RGB 10 150 240) (1, 0, 0) 0)
+bola =  Sphere (Esfera centr 6 (RGB 255 10 10) (0, 0, 1) 0)
+bola' =  Sphere (Esfera centr' 6 (RGB 10 150 240) (0, 1.54, 0) 0)
 bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 0, 0) 0)
 --bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 1.5, 0) 0)
 

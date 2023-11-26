@@ -24,7 +24,7 @@ import System.Exit (exitFailure)
 
 -- Hacer funcion para a un nuevo objeto, meterle el RGB
 
-intMx = 1000.0
+intMx = 10000.0
 n=20000
 
 centr = Point3D (-10) (-10) (-4)
@@ -39,8 +39,8 @@ plano2 =  Plane (Plano (Point3D 0 25 0) (Direction 0 1 0) (RGB 150 150 150) (1, 
 plano3 =  Plane (Plano (Point3D 0 0 (-25)) (Direction 0 0 1) (RGB 150 150 150) (1, 0, 0) 0) -- Fondo
 plano4 =  Plane (Plano (Point3D 0 (-20) 0) (Direction 0 1 0) (RGB 150 150 150) (1, 0, 0) 0) -- Suelo
 plano5 =  Plane (Plano (Point3D 0 0 (50.5)) (Direction 0 0 1) (RGB 0 0 0) (1, 0, 0) 0) -- Detras Camara
-bola =  Sphere (Esfera centr 6 (RGB 255 10 10) (1, 0, 0) 0)
-bola' =  Sphere (Esfera centr' 5 (RGB 10 150 240) (1, 0, 0) 0)
+bola =  Sphere (Esfera centr 6 (RGB 255 10 10) (0, 0, 1) 0)
+bola' =  Sphere (Esfera centr' 5 (RGB 10 150 240) (0, 1.5, 0) 0)
 bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 0, 0) 0)
 --bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 1.5, 0) 0)
 
