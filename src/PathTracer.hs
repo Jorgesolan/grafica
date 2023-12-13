@@ -1,14 +1,15 @@
 {-# LANGUAGE BangPatterns #-}
 module PathTracer where
 
-import Elem3D 
-import Figuras
+import Elem3D ( Luz(..), RGB(..), divRGB, scale ) 
+import Figuras ( Obj(..), Shape, getShapeID )
 import System.Random (StdGen, split)
-import Funciones 
-import Debug.Trace (trace)
+import Funciones
+    ( objAleatorio, objEspejo, objCristal, formula, colision, brdf ) 
+-- import Debug.Trace (trace)
 
 pathTracer :: Float -> [Luz] -> [Shape] -> Float -> Float -> Obj -> StdGen -> RGB
-pathTracer rFl luz !figuras !n nMx obj@(Obj _ _ _ _ _ id) gen
+pathTracer rFl luz !figuras !n nMx obj@(Obj _ _ _ _ _ _ id) gen
   | nMx == 0 = colorDirecto * RGB 255 255 255 -- Solo luz directa
   | otherwise = (colorDirecto + colorIndirecto) * RGB 255 255 255 -- Luz directa + indirecta
   where
@@ -23,7 +24,7 @@ luzDirecta rFl obj luces figuras peso = case luces of
 
 
 luzMono :: Float -> Obj -> Luz -> [Shape] -> Bool -> RGB
-luzMono rFl obj@(Obj rgb w0 p norm (kd,kr,ke) id) (Luz pointLuz rgbLuz intLuz) figuras peso 
+luzMono rFl obj@(Obj rgb w0 p norm (kd,kr,ke) kr' id) (Luz pointLuz rgbLuz intLuz) figuras peso 
   | ke > 0 = luzMono rFl objEsp (Luz pointLuz rgbLuz intLuz) figuras True
   | kr > 0 = luzMono rFlNew objCr (Luz pointLuz rgbLuz intLuz) figuras True --Al hacer la colision, si es un obj de cristal el siguiente obj, seguir mirando en esa dir
   | otherwise = colorDirecto
@@ -35,7 +36,7 @@ luzMono rFl obj@(Obj rgb w0 p norm (kd,kr,ke) id) (Luz pointLuz rgbLuz intLuz) f
     (objCr, rFlNew) = objCristal figuras' w0 norm rFl kr p --ke por poner algo, ya se cambiara por la relfexion del obj
 
 luzIndirecta :: Float -> Obj -> [Luz] -> [Shape] -> StdGen -> Float -> Float -> RGB
-luzIndirecta rFl obj@(Obj _ w0 p norm (kd,kr,ke) id) luz figuras gen n nMx 
+luzIndirecta rFl obj@(Obj _ w0 p norm (kd,kr,ke) kr' id) luz figuras gen n nMx 
   | kr > 0 = luzIndirecta rFlNew objCr luz figuras genxt n nMx -- Rayo reflejado
   | ke > 0 = luzIndirecta rFl objEsp luz figuras genxt n nMx
   | nMx == n = rgbNew colorDirecto $ brdf obj 
@@ -46,8 +47,8 @@ luzIndirecta rFl obj@(Obj _ w0 p norm (kd,kr,ke) id) luz figuras gen n nMx
     colorIndirecto = luzIndirecta rFl nxtObj luz figuras genxt (n+1) nMx
     (gen',gen'') = split gen
     (genR, genxt) = split gen'
-    p' = (\(Obj _ _ point _ _ _) -> point) nxtObj
-    norm' = (\(Obj _ _ _ normalObj _ _) -> normalObj) nxtObj
+    p' = (\(Obj _ _ point _ _ _  _) -> point) nxtObj
+    norm' = (\(Obj _ _ _ normalObj _ _ _) -> normalObj) nxtObj
 
     figuras' = filter (\shape -> id /= getShapeID shape) figuras
     nxtObj = objAleatorio figuras' obj gen gen'' -- Siguiente objeto que choca, q no sea el mismo

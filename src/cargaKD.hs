@@ -1,15 +1,28 @@
-{-# LANGUAGE BangPatterns #-}
-import Elem3D 
+import Elem3D
+    ( Luz(Luz), 
+    RGB(RGB), 
+    Direction(Direction), 
+    Point3D(Point3D), 
+    escalatePoint, 
+    degToRad,
+    rotatePoint,movePoint
+    )
 import Files (writePPM, rgbToString,writeObject)
 import Tone_map (gammaFunc,clamp)
 import Figuras
-import Funciones
+    ( Shape(Sphere, Plane), 
+    Plano(Plano), 
+    Esfera(Esfera), 
+    addFigMult,
+    loadObjFile,
+    convertToCustomFormat, encenderShape ,encenderShapes
+    )
+import Funciones (sumFlLuz)
 import PathTracer (pathTracer)
-import KdTest
-import PhotonMap
-import Data.KdTree.Static 
+import KdTest ()
+import PhotonMap ( createPhoton )
+import Data.KdTree.Static ()
 
-import Debug.Trace (trace,traceEventIO)
 import System.Random (StdGen, newStdGen, split)
 import Data.List (transpose)
 import System.CPUTime (getCPUTime)
@@ -24,39 +37,74 @@ import System.Exit (exitFailure)
 
 -- Hacer funcion para a un nuevo objeto, meterle el RGB
 
-intMx = 10000.0
-n=20000
+intMx :: Float
+intMx = 50
+n :: Float
+n=30000
+nRebotes :: Int
+nRebotes = 10
 
+centr :: Point3D
 centr = Point3D (-10) (-10) (-4)
-centr' = Point3D 13 (-15) (-2)
-luz = Luz (Point3D (0) 15 (0)) (RGB 255 255 255) intMx
-luz' = Luz (Point3D (0) 0 (50)) (RGB 255 255 255) 0.70
+centr' :: Point3D
+centr' = Point3D 14 (-15) (-0)
+centr'' :: Point3D
+centr'' = Point3D 0 (-0) (-0)
+centr''' :: Point3D
+centr''' = Point3D 0 25 (-25)
+luz :: Luz
+luz = Luz (Point3D 0 17 0) (RGB 255 255 255) intMx
+luz' :: Luz
+luz' = Luz (Point3D 10 13 0) (RGB 255 255 255) intMx
+luz'' :: Point3D
 luz'' = Point3D 10 14 (-2)
 
-plano0 = Plane (Plano (Point3D (-20) 0 0) (Direction 1 0 0) (RGB 250 255 10) (1, 0, 0) 0) --Izq
-plano1 =  Plane (Plano (Point3D 20 0 0) (Direction 1 0 0) (RGB 122 10 255) (1, 0, 0) 0) -- Der
-plano2 =  Plane (Plano (Point3D 0 25 0) (Direction 0 1 0) (RGB 150 150 150) (1, 0, 0) 0) -- Techo
-plano3 =  Plane (Plano (Point3D 0 0 (-25)) (Direction 0 0 1) (RGB 150 150 150) (1, 0, 0) 0) -- Fondo
-plano4 =  Plane (Plano (Point3D 0 (-20) 0) (Direction 0 1 0) (RGB 150 150 150) (1, 0, 0) 0) -- Suelo
-plano5 =  Plane (Plano (Point3D 0 0 (50.5)) (Direction 0 0 1) (RGB 0 0 0) (1, 0, 0) 0) -- Detras Camara
-bola =  Sphere (Esfera centr 6 (RGB 255 10 10) (0, 0, 1) 0)
-bola' =  Sphere (Esfera centr' 5 (RGB 10 150 240) (0, 1.5, 0) 0)
-bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 0, 0) 0)
+plano0 :: Shape
+plano0 = Plane (Plano (Point3D (-25) 0 0) (Direction 1 0 0) (RGB 250 255 10) (0.8,0,0) 0 0) --Izq
+plano1 :: Shape
+plano1 =  Plane (Plano (Point3D 25 0 0) (Direction 1 0 0) (RGB 122 10 255) (0.8,0,0) 0 0) -- Der
+plano2 :: Shape
+plano2 =  Plane (Plano (Point3D 0 25 0) (Direction 0 1 0) (RGB 150 150 150) (0.8,0,0) 0 0) -- Techo
+plano3 :: Shape
+plano3 =  Plane (Plano (Point3D 0 0 (-25)) (Direction 0 0 1) (RGB 150 150 150) (0.8,0,0) 0 0) -- Fondo
+plano4 :: Shape
+plano4 =  Plane (Plano (Point3D 0 (-20) 0) (Direction 0 1 0) (RGB 150 150 150) (0.8,0,0) 0 0) -- Suelo
+plano5 :: Shape
+plano5 =  Plane (Plano (Point3D 0 0 50.5) (Direction 0 0 1) (RGB 0 0 0) (0.8,0,0) 0 0) -- Detras Camara
+bola :: Shape
+bola =  Sphere (Esfera centr 6 (RGB 145 235 249) (0.3, 0, 0.5) 0 0)
+bola' :: Shape
+bola' =  Sphere (Esfera centr' 5 (RGB 255 255 255) (0, 0.65, 0.2) 1.5 0)
+bola'' :: Shape
+bola'' =  Sphere (Esfera centr' 5 (RGB 250 255 10) (0.25, 0, 0.7) 1.5 0)
+bola''' :: Shape
+bola''' = Sphere (Esfera centr''' 25 (RGB 20 20 20) (0.2, 0.3, 0.4) 10 0)
+-- bola'' :: Shape
+-- bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 0, 0) 0 0)
 --bola'' =  Sphere (Esfera centr' 2 (RGB 10 150 240) (0, 1.5, 0) 0)
 
 
-figuras = addFigMult [bola,bola',plano0,plano1,plano2,plano3, plano4,plano5] [] 
+figuras :: [Shape]
+figuras = addFigMult [bola,bola',{- bola'',bola''', -}plano0,plano1,plano2,plano3, plano4,plano5] []
 -- Poner primero las bolas por la cosa del cristal, modificar el valor de dir Cristal depende del numero de bolas
+luces :: [Luz]
 luces = [luz{- , luz' -}]
-potf = 4.0*pi*intMx/n
-      
+
+
 main :: IO ()
 main = do
-  start <- getCPUTime 
+  start <- getCPUTime
   gen <- newStdGen
   gen' <- newStdGen
-  
-  let kdt =  createPhoton potf [] n figuras luces gen'
+
+  let objFilePath = "../meshes/slab.obj"  
+  (vertices, triangles) <- loadObjFile objFilePath
+  let vertices' = map (movePoint (Direction 0 24.9 (-20)).escalatePoint 5) vertices
+  let customTriangles = convertToCustomFormat (vertices', triangles)
+  let triangleLus = encenderShapes customTriangles
+  --let figuras' = addFigMult triangleLus figuras
+
+  let kdt =  createPhoton (sumFlLuz luces) [] 0 (round n) figuras luces gen' nRebotes
   print $ length kdt
   writeObject "test.bin" kdt
   end <- getCPUTime

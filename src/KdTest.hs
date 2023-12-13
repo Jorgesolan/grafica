@@ -1,15 +1,14 @@
 {-# LANGUAGE BangPatterns #-}
 
 module KdTest where
--- import Data.KdTree.Dynamic 
-import Data.KdTree.Static 
+import Data.KdTree.Static ( build, KdTree )
 
-import PhotonMap
-import Elem3D
+import PhotonMap ()
+import Elem3D ( Foton(..), Point3D(Point3D) )
 import System.CPUTime (getCPUTime)
 import System.Random (StdGen, newStdGen, split)
-import Figuras
-import Funciones 
+import Figuras ()
+import Funciones ()
 
 --Repetir las veces que nos salga de los webos o hasta que se pierda
 {-# INLINE fotonAxis #-}
@@ -26,7 +25,7 @@ fotonAxis (Foton (Point3D x y z) _ _ _ _) = [x, y, z]
 
 
 createKD :: [Foton] -> KdTree Float Foton
-createKD fotones = Data.KdTree.Static.build fotonAxis fotones
+createKD = Data.KdTree.Static.build fotonAxis
 
 -- luz = Luz (Point3D (0) 0 (50)) (RGB 255 255 255) 1
 -- luces = [luz]
@@ -49,7 +48,7 @@ createKD fotones = Data.KdTree.Static.build fotonAxis fotones
 -- main = do
 --     start <- getCPUTime
 --     gen <- newStdGen
-    
+
 -- --   let dkdt = empty fotonAxis
 -- --   let dkdt' = insert dkdt (Foton (Point3D 1.0 1.0 1.0) 5.0 0.0)
 -- --   let dkdt'' = insertMultiple dkdt' [(Foton (Point3D 13.0 13.0 13.0) 0.0 3.0),(Foton (Point3D 31.0 31.0 31.0) 7.0 0.0)]

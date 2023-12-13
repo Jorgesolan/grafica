@@ -1,5 +1,5 @@
 module Files where
-import Elem3D
+import Elem3D ( RGB(..) )
 
 import qualified Data.ByteString as BS
 import Data.Word (Word8)
@@ -7,14 +7,14 @@ import Data.Bits  ((.&.), shiftR)
 import Data.Maybe (isNothing)
 import qualified Data.ByteString.Char8 as BS8
 
-import Data.Binary
+import Data.Binary ( Word8, decodeFile, encode, Binary )
 import qualified Data.ByteString.Lazy as B
 
 writeObject :: Binary a => FilePath -> a -> IO ()
 writeObject path obj = B.writeFile path (encode obj)
 
 readObject :: Binary a => FilePath -> IO a
-readObject path = decodeFile path
+readObject = decodeFile
 
 -- Función para leer un archivo .ppm y almacenar los píxeles en una lista
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
@@ -126,7 +126,7 @@ pixels2BMP rgbList = BS.pack $ concatMap rgbToWord8 $ reverse rgbList
 generateBMPPixelData :: Int -> Int -> [(Int, Int)] -> BS.ByteString
 generateBMPPixelData width height filledpixels =
     -- BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
-    BS.pack $ concat $ map generateRow [0 .. height - 1]
+    BS.pack $ concatMap generateRow [0 .. height - 1]
   where
     generateRow :: Int -> [Word8]
     generateRow row = concatMap generatePixel [0 .. width - 1]
@@ -148,8 +148,8 @@ generatePPMPixelData (x:xs)
 fromPixToList :: Int -> Int -> [(Int, Int)] -> String
 fromPixToList width height filledpixels =
   -- concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
-  concat $ map generateRow [0 .. height - 1]
-  
+  concatMap generateRow [0 .. height - 1]
+
   where
     generateRow :: Int -> String
     generateRow row = concatMap generatePixel [0 .. width - 1]

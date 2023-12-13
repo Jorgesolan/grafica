@@ -1,6 +1,6 @@
 module Tone_map where
-import Files
-import Elem3D
+import Files ()
+import Elem3D ( RGB(..), elevateRGBPoint )
 
 {-# INLINE clamp #-}
 clamp :: Float -> [RGB] -> [RGB]
