@@ -1,6 +1,8 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE RecordWildCards #-}
 module Funciones where
 
+import Codec.Picture
 import Elem3D
     ( RGB(..),
       Luz(..),
@@ -18,32 +20,47 @@ import Elem3D
       divRGB,
       scale,
       generateBase,
-      cambioBase )
+      cambioBase, addPoints, pointDir )
 import Figuras
-    ( Obj(..), Shape, Camara(..), obtenerPunto, oneCollision )
+    ( oneCollision,
+      Camara(..),
+      Obj(..),
+      Rectangulo(Rectangulo),
+      Shape(Rectangle) )
 
+import System.IO.Unsafe (unsafePerformIO)
 import Data.Ord (comparing)
 import Debug.Trace (trace)
 import Data.List (minimumBy,transpose)
-import System.Random (randomR, StdGen, randomRs)
+import System.Random (randomR, StdGen, randomRs,split)
 
+import Data.Either (fromRight)
+import Data.Binary (Word8)
 --------------------------
 -- FUNCIONES DE OBJETOS --
 --------------------------
 
 {-# INLINE objAleatorio #-}
 objAleatorio :: [Shape] -> Obj -> StdGen -> StdGen -> Obj
-objAleatorio figuras obj@(Obj _ _ !p norm _ _ _) gen gen' = nxtObj
+objAleatorio figuras obj gen gen' = nxtObj
   where
-    !nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray p $ normal (puntoAl #< p))) figuras -- Siguiente objeto que choca, q no sea el mismo
-    puntoAl = cambioBase p (generateBase dirAl norm (normal (dirAl * norm))) $ genPoint gen gen'
-    dirAl = normal $ norm * Direction 2 1 (-2) -- Direccion cualquiera para que no se repita, si peta cambiar esto
+    !nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray (colObj obj) $ normal (puntoAl #< colObj obj))) figuras -- Siguiente objeto que choca, q no sea el mismo
+    puntoAl = cambioBase (colObj obj) (generateBase dirAl (normObj obj) (normal (dirAl * normObj obj))) $ genPoint gen gen'
+    dirAl = normal $ normObj obj * Direction 2 1 (-2) -- Direccion cualquiera para que no se repita, si peta cambiar esto
 
 {-# INLINE objEspejo #-}
 objEspejo :: [Shape] -> Direction -> Direction -> Point3D -> Obj
 objEspejo figuras w0 normal p = snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras
   where
     newDir = calcularDirEspejo w0 normal
+
+objEspejoRandom :: [Shape] -> Direction -> Direction -> Point3D -> StdGen -> Float -> (Obj,StdGen)
+objEspejoRandom figuras w0 norm p gen step  = (snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras,gen')
+  where
+    dirW0 = calcularDirEspejo w0 norm
+    newDir = normal $ dirW0 + Direction x y z
+    [x,y,z] = take 3 $ randomRs (-step,step) gen
+    gen' = snd $ split gen
 
 objCristal :: [Shape] -> Direction -> Direction -> Float -> Float -> Point3D -> (Obj, Float)
 objCristal figuras w0 normal n1 n2 p = (snd $ obtenerPrimeraColision $ map (oneCollision (Ray pFix newDir)) figuras, n2')
@@ -107,7 +124,7 @@ generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py 
     startIdx = (n - 1) * yStep
     endIdx = n * yStep
     selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
-    generateDirection !width !height !focal = normal $ Point3D width height focal #< p
+    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal
     !tuplas = generarTuplas  (concatMap (replicate j) [(-px'), (piX-px') ..(px'-piX)]) selectedYValues
     !tuplasRandom = tuplasAleatorias tuplas piY gen
 
@@ -158,7 +175,7 @@ listRay = map (snd . obtenerPrimeraColision) . transpose
 colision :: Point3D -> Point3D -> [Shape] -> Bool
 colision !p0 !luz !figuras = aproxPoint p0 bonk -- Si es el mismo punto, no choca con nada
   where
-    bonk = obtenerPunto $ snd $ obtenerPrimeraColision $ map (oneCollision (Ray luz (normal $ p0 #< luz))) figuras --Saca el punto de la primera colision de la luz con las figuras
+    bonk = colObj $ snd $ obtenerPrimeraColision $ map (oneCollision (Ray luz (normal $ p0 #< luz))) figuras --Saca el punto de la primera colision de la luz con las figuras
 
 --------------------------
 --FUNCIONES DE DIRECCIONES
@@ -213,8 +230,40 @@ ruletaRusa (a,b,c) gen = (i, p')
       | otherwise = absorption
 
 brdf :: Obj -> RGB
-brdf (Obj rgb w0 p norm tr kr id ) = scale rgb
+brdf (Obj {..}) =
+  if idObj == 4
+    then rgbTxt
+    else scale rgbObj
+  where
+    -- Corrección temporal :D
+    (x', y') = ((xP colObj + 25) / 50, (yP colObj + 25) / 50)
+    texX = round $ x' * (texWidth - 1)
+    texY = round $ y' * (texHeight - 1)
+    textureImage = loadTexture "../meshes/algo.png"
+    (texWidth, texHeight) = (fromIntegral $ imageWidth textureImage, fromIntegral $ imageHeight textureImage)
+    rgbTxt = pixtoRGB $ pixelAt textureImage texX texY
+
 
 sumFlLuz :: [Luz] -> Float
 sumFlLuz [] = 0
 sumFlLuz ((Luz _ _ int):luz) = int + sumFlLuz luz
+
+loadTexture :: FilePath -> Image PixelRGB8
+loadTexture filePath =
+    unsafePerformIO $ do
+        eitherImage <- readImage filePath
+        case eitherImage of
+            Right (ImageRGB8 img) -> return img
+            Left err -> error $ "Error loading image: " ++ err
+            _ -> error "Usa png ;)"
+
+pixtoRGB :: PixelRGB8 -> RGB
+pixtoRGB (PixelRGB8 r g b) = RGB (toFloat r) (toFloat g) (toFloat b)
+  where
+    toFloat :: Word8 -> Float
+    toFloat x = fromIntegral x / 255.0
+
+-- Interpolación lineal.
+interpolate :: (Float, Float) -> Float -> Float
+interpolate (a, b) t = a + t * (b - a)
+

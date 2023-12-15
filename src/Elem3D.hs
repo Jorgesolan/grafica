@@ -1,4 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE RecordWildCards #-}
+
 module Elem3D where
 import Data.Binary ( Binary(get, put) )
 import System.IO ()
@@ -6,19 +8,18 @@ import Data.List (transpose)
 import Debug.Trace (trace)
 import qualified Data.Binary.Put
 import qualified Data.Binary as Data.Binary.Get.Internal
--- import Numeric.LinearAlgebra (Vector, Matrix, fromList, inv, (!), (><), R, (#>))
 
-data Point3D = Point3D !Float !Float !Float deriving (Eq)
-data Direction = Direction !Float !Float !Float deriving (Eq)
+data Point3D = Point3D {xP :: !Float, yP :: !Float, zP :: !Float} deriving (Eq)
+data Direction = Direction {xD :: !Float, yD :: !Float, zD :: !Float} deriving (Eq)
 data Ray = Ray !Point3D !Direction
 data Base = Base !Direction !Direction !Direction
-data RGB = RGB !Float !Float !Float deriving (Eq)
+data RGB = RGB {red :: !Float, green :: !Float, blue :: !Float} deriving (Eq)
 data Luz = Luz !Point3D !RGB !Float
-data Foton = Foton !Point3D Float Direction RGB Int
+data Foton = Foton !Point3D Float RGB Int
 
 instance Binary Point3D where
   put :: Point3D -> Data.Binary.Put.Put
-  put (Point3D x y z) = put x >> put y >> put z
+  put (Point3D {..}) = put xP >> put yP >> put zP
   get :: Data.Binary.Get.Internal.Get Point3D
   get = do
     x <- get
@@ -27,7 +28,7 @@ instance Binary Point3D where
 
 instance Binary Direction where
   put :: Direction -> Data.Binary.Get.Internal.Put
-  put (Direction x y z) = put x >> put y >> put z
+  put (Direction {..}) = put xD >> put yD >> put zD
   get :: Data.Binary.Get.Internal.Get Direction
   get = do
     x <- get
@@ -36,7 +37,7 @@ instance Binary Direction where
 
 instance Binary RGB where
   put :: RGB -> Data.Binary.Get.Internal.Put
-  put (RGB r g b) = put r >> put g >> put b
+  put (RGB {..}) = put red >> put green >> put blue
   get :: Data.Binary.Get.Internal.Get RGB
   get = do
     r <- get
@@ -45,14 +46,13 @@ instance Binary RGB where
 
 instance Binary Foton where
   put :: Foton -> Data.Binary.Get.Internal.Put
-  put (Foton p f d c i) = put p >> put f >> put d >> put c >> put i
+  put (Foton p f c i) = put p >> put f  >> put c >> put i
   get :: Data.Binary.Get.Internal.Get Foton
   get = do
     p <- get
     f <- get
-    d <- get
     c <- get
-    Foton p f d c <$> get
+    Foton p f c <$> get
 
 instance Show Base where
     show :: Base -> String
@@ -60,11 +60,11 @@ instance Show Base where
 
 instance Show Point3D where
     show :: Point3D -> String
-    show (Point3D x y z) = "Point3D " ++ show x ++ " " ++ show y ++ " " ++ show z
+    show (Point3D{..}) = "Point3D " ++ show xP ++ " " ++ show yP ++ " " ++ show zP
 
 instance Show Direction where
     show :: Direction -> String
-    show (Direction dx dy dz) = "Direction " ++ show dx ++ " " ++ show dy ++ " " ++ show dz
+    show (Direction {..}) = "Direction " ++ show xD ++ " " ++ show yD ++ " " ++ show zD
 
 instance Show Ray where
     show :: Ray -> String
@@ -72,15 +72,15 @@ instance Show Ray where
 
 instance Show RGB where
     show :: RGB -> String
-    show (RGB r g b) = "R "  ++ show r ++ " G "  ++ show g ++ " B "  ++ show b
+    show (RGB {..}) = "R "  ++ show red ++ " G "  ++ show green ++ " B "  ++ show blue
 
 instance Show Foton where
     show :: Foton -> String
-    show (Foton (Point3D x y z) i j _ _) = "Foton " ++ show x ++ " " ++ show y ++ " " ++ show z ++ " " ++ show i ++ " " ++ show j
+    show (Foton (Point3D x y z) i j  _) = "Foton " ++ show x ++ " " ++ show y ++ " " ++ show z ++ " " ++ show i ++ " " ++ show j
 
 {-# INLINE getPhotonID #-}
 getPhotonID :: Foton -> Int
-getPhotonID (Foton _ _ _ _ id) = id
+getPhotonID (Foton _ _ _  id) = id
 
 {-# INLINE obtenerRayo #-}
 obtenerRayo :: Ray -> Direction
@@ -138,11 +138,11 @@ rotatePoint' axis radiant  (Point3D x y z)
 
 {-# INLINE movePoint #-}
 movePoint :: Direction -> Point3D -> Point3D
-movePoint (Direction !dx !dy !dz) (Point3D !x !y !z) = Point3D (x + dx) (y + dy) (z + dz)
+movePoint (Direction {..}) (Point3D {..}) = Point3D (xD + xP) (yD + yP) (zD + zP)
 
 {-# INLINE movePoint' #-}
 movePoint' :: Direction -> Point3D -> Point3D
-movePoint' (Direction dx dy dz) (Point3D x y z) = Point3D (x - dx) (y - dy) (z - dz)
+movePoint' (Direction {..}) (Point3D {..}) = Point3D (xD - xP) (yD - yP) (zD - zP)
 
 {-# INLINE distPoint #-}
 distPoint :: Point3D -> Point3D -> Float
@@ -185,9 +185,13 @@ escalatePoint s (Point3D xa ya za) = Point3D (s*xa) (s*ya) (s*za)
 pointDir :: Point3D -> Direction
 pointDir (Point3D x y z) = Direction x y z
 
+{-# INLINE dirPoint#-}
+dirPoint :: Direction -> Point3D
+dirPoint (Direction x y z) = Point3D x y z
+
 {-# INLINE pointToPothon#-}
 pointToPothon :: Point3D -> Foton
-pointToPothon p = Foton p 0 (Direction 0 0 0) (RGB 0 0 0) 0
+pointToPothon p = Foton p 0 (RGB 0 0 0) 0
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 --Direcciones
@@ -205,46 +209,46 @@ instance Num Direction where
  -- Producto vectorial
  {-# INLINE (*) #-}
  (*) :: Direction -> Direction -> Direction
- (Direction xa ya za) * (Direction xb yb zb) = Direction x y z
+ dir0 * dir1 = Direction x y z
      where
-        x = ya * zb - za * yb
-        y = za * xb - xa * zb
-        z = xa * yb - ya * xb
+        x = yD dir0 * zD dir1- zD dir0 * yD dir1
+        y = zD dir0* xD dir1 - xD dir0* zD dir1
+        z = xD dir0* yD dir1 - yD dir0 * xD dir1
 
 -- -- -- Producto escalar
 {-# INLINE (.*) #-}
 (.*) :: Direction -> Direction -> Float
-(Direction xb yb zb) .* (Direction xa ya za)  = xb*xa + yb*ya + zb*za
+dir0 .* dir1  = xD dir0*xD dir1 + yD dir0*yD dir1 + zD dir0*zD dir1
 
 -- -- -- Escalado de dirección
 {-# INLINE escalateDir #-}
 escalateDir :: Float -> Direction -> Direction
-escalateDir s (Direction xa ya za) = Direction (s*xa) (s*ya) (s*za)
+escalateDir s (Direction {..}) = Direction (s*xD) (s*yD) (s*zD)
 
 -- -- -- Escalado de dirección
 {-# INLINE escalateDir' #-}
 escalateDir' :: Float -> Direction -> Direction
-escalateDir' s (Direction xa ya za) = Direction (xa/s) (ya/s) (za/s)
+escalateDir' s (Direction {..}) = Direction (xD/s) (yD/s) (zD/s)
 
 -- -- Modulo
 {-# INLINE modd #-}
 modd :: Direction -> Float
-modd (Direction !x !y !z) = sqrt (x*x + y*y + z*z)
+modd (Direction {..}) = sqrt (xD*xD + yD*yD + zD*zD)
 
 -- Normalización
 {-# INLINE normal #-}
 normal :: Direction -> Direction
-normal (Direction !x !y !z) = let !invLen = 1.0 / sqrt (x*x + y*y + z*z) in Direction (x*invLen) (y*invLen) (z*invLen)
+normal (Direction {..}) = let !invLen = 1.0 / sqrt (xD*xD + yD*yD + zD*zD) in Direction (xD*invLen) (yD*invLen) (zD*invLen)
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 --RGB
 
 {-# INLINE elevateRGBPoint #-}
 elevateRGBPoint :: Float -> RGB -> RGB
-elevateRGBPoint x (RGB r g b) =
-    RGB (r ** (1.0 / x))
-        (g ** (1.0 / x))
-        (b ** (1.0 / x))
+elevateRGBPoint x (RGB {..}) =
+    RGB (red ** (1.0 / x))
+        (green ** (1.0 / x))
+        (blue ** (1.0 / x))
 
 instance Num RGB where
 
@@ -266,17 +270,17 @@ instance Num RGB where
 
 {-# INLINE modRGB #-}
 modRGB :: RGB -> Float -> RGB
-modRGB (RGB r g b) f =
-    RGB (r * f)
-        (g * f)
-        (b * f)
+modRGB (RGB {..}) f =
+    RGB (red * f)
+        (green * f)
+        (blue * f)
 
 {-# INLINE divRGB #-}
 divRGB :: RGB -> Float -> RGB
-divRGB (RGB r g b) f =
-    RGB (r / f)
-        (g / f)
-        (b / f)
+divRGB (RGB {..}) f =
+    RGB (red / f)
+        (green / f)
+        (blue / f)
 {-# INLINE scale #-}
 scale :: RGB -> RGB
 scale x = x ./ RGB 255 255 255

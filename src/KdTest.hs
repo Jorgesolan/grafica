@@ -13,7 +13,7 @@ import Funciones ()
 --Repetir las veces que nos salga de los webos o hasta que se pierda
 {-# INLINE fotonAxis #-}
 fotonAxis :: Foton -> [Float]
-fotonAxis (Foton (Point3D x y z) _ _ _ _) = [x, y, z]
+fotonAxis (Foton (Point3D x y z) _ _ _) = [x, y, z]
 
 -- {-# INLINE insertMultiple #-}
 -- insertMultiple :: KdTree Float Foton -> [Foton] -> KdTree Float Foton

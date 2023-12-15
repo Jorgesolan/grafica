@@ -1,5 +1,5 @@
 HC    = ghc
-FLAGS = -O2 -threaded -eventlog -rtsopts
+FLAGS = -O2 -funfolding-use-threshold=16 -fexcess-precision -optc-O3 -optc-ffast-math -threaded -eventlog -rtsopts
 #-Wall -Werror -rtsopts 
 VPATH = ./src
 BIN_DIR = ./bin
@@ -22,7 +22,7 @@ SRCP2 = ./practicas/Pract2.hs
 
 simulacion:
 $(APP0): $(APP) $(SRC0) $(SRC1) $(SRC5) $(SRC6)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -static -o $@ 
+	$(HC) -static $(FLAGS) --make -i$(VPATH) $< -package random -static -o $@ 
 	strip $@
 	mv $(APP0) ./tmp
 

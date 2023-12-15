@@ -1,5 +1,5 @@
 #!/bin/bash
-N=8
+N=1
 etapas=1  # You can change this value to the desired number of iterations per barrier
 pids=()
 
