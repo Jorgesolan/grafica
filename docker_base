@@ -1,0 +1,15 @@
+FROM centos:8
+
+RUN cd /etc/yum.repos.d/ && \
+    sed -i "s/mirrorlist/#mirrorlist/g" /etc/yum.repos.d/CentOS-* && \
+    sed -i "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-* && \
+    yum install -y epel-release && \
+    yum update -y && \
+    yum install -y gcc gcc-c++ gmp-devel zlib-devel && \
+    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
+    yum install -y ghc cabal-install && \
+    cabal update && \
+    cabal install JuicyPixels random kdt
+
+# Set the working directory
+WORKDIR /workspace

@@ -1,6 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE RecordWildCards #-}
-
+{-# LANGUAGE InstanceSigs #-}
 module Elem3D where
 import Data.Binary ( Binary(get, put) )
 import System.IO ()

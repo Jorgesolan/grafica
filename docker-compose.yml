@@ -1,0 +1,21 @@
+#docker build -t base_compilar_pilgor -f docker_base .
+
+version: '3'
+
+services:
+  my-service:
+    image: base_compilar_pilgor:latest
+    volumes:
+      - .:/workspace  # Mounts the current directory inside the container as /workspace
+    command: >
+      bash -c '
+        cd /workspace/src &&
+        ghc cargaKD.hs -static -O2 &&
+        ghc simulacion.hs -static -O2 &&
+        mv cargaKD simulacion ../tmp &&
+        cd .. &&
+        cd ./tmp &&
+        mv simulacion simulacion_pilgor &&
+        mv cargaKD cargaKD_pilgor
+      '
+    stop_signal: SIGINT

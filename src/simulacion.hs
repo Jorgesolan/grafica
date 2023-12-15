@@ -44,7 +44,7 @@ import System.CPUTime (getCPUTime)
 import System.Environment (getArgs)
 import Data.Maybe (listToMaybe)
 import System.Exit (exitFailure)
-
+import Text.Read (readMaybe)
 
 -- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
 
@@ -81,17 +81,17 @@ listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal
 aspectR :: Float
 aspectR = 16/9
 pix :: Float
-pix = 256
+pix = 2160
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 1
+maxN = 72
 etapas :: Int
-etapas = 1
+etapas = 30
 nRay :: Int
-nRay = 1
+nRay = 2000
 intMx :: Float
 intMx = 1.0
 
@@ -159,12 +159,14 @@ luces = [luz{- , luz' -}]
 main :: IO ()
 main = do
   args <- getArgs
-  case listToMaybe args of
-    Just nStr -> do
+  case map readMaybe args of
+    [Just nStr, Just mStr] -> do
       gen <- newStdGen
       gen' <- newStdGen
-      let n = read nStr :: Int
-      putStrLn $ "The value of 'n' is: " ++ show n
+      let n = nStr :: Int
+      let etapa = mStr :: Int
+      let n' = n + (etapa * maxN)
+      putStrLn $ "The value of 'n' is: " ++ show n'
       start <- getCPUTime
       -- let objFilePath = "../meshes/slab.obj"  
       -- (vertices, triangles) <- loadObjFile objFilePath
@@ -182,11 +184,11 @@ main = do
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "../src/test.bin"
       let !kdt = createKD notkdt
-      let !rayitos = generateRaysForPixels (maxN*etapas) n camara (pix*aspectR) pix nRay gen
+      let !rayitos = generateRaysForPixels (maxN*etapas) n' camara (pix*aspectR) pix nRay gen
           a = listRayPhoton kdt gen' cam figuras rayitos nRay
           fin = concatMap rgbToString (gammaFunc fmx gamma a)
 
-      writePPM ("a" ++ show n ++ ".ppm") (round $ pix*aspectR) (round pix) fin
+      writePPM ("a" ++ show n ++ "_" ++ show etapa ++ ".ppm") (round $ pix*aspectR) (round pix) fin
 
 
       end <- getCPUTime
@@ -195,6 +197,6 @@ main = do
 
       traceEventIO "END"
 
-    Nothing -> do
+    _ -> do
       putStrLn "Please provide an integer as the first argument."
       exitFailure
