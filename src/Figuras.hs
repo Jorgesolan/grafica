@@ -107,7 +107,7 @@ oneCollision (Ray p d) (Rectangle (Rectangulo {..}))
     denom = d .* normRe
     right = normal ( Direction 0 1 0 * normRe)
     up = normRe * right
-    normRe' = normRe
+    normRe' = if d .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
 
 
 oneCollision (Ray rayOrigin rayDir) (Triangle (Triangulo {..})) =

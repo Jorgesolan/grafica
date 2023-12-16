@@ -94,7 +94,7 @@ formula rgbLuz intLuz pointLuz p vNormal rgbObj tCos
   | (vNormal .* normal (pointLuz #< p)) < 0 = RGB 0 0 0
   | p == pointLuz = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj
   | tCos = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj `modRGB` (vNormal .* normal (pointLuz #< p)) -- "Integral"
-  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj `modRGB` pi
+  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj `modRGB` (pi * (vNormal .* normal (pointLuz #< p)))
 
 --------------------------
 -- FUNCIONES DE CAMARA  --
@@ -121,13 +121,13 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
     !py' = py / 2.0
     !yValues = [py', (py'-piY) .. (-py'+piY)]
     !yStep = length yValues `div` maxN
-    startIdxy = (n) * yStep
+    startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
     generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal
     !xValues = [px', (px'-piX) .. (-px'+piX)]
     !xStep = length xValues `div` etapasX
-    startIdxx = (etapaX) * xStep
+    startIdxx = etapaX * xStep
     endIdxx = (etapaX + 1) * xStep
     selectedxValues = take (endIdxx - startIdxx) (drop startIdxx xValues)
     !tuplas = generarTuplas  (concatMap (replicate j) selectedxValues) selectedYValues

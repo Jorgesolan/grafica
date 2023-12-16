@@ -60,7 +60,7 @@ listRayToRGB luz cam figuras rayos gen0 gen1 nRay iter
   where
     (gens, _) = splitAt (length rayos) $ tail $ iterate (snd . split) gen0
     rayColisions = listRay $ map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    nRebotes = 0
+    nRebotes = 10
     luzFinal = zipWith (pathTracer 1 luz figuras 0 nRebotes) rayColisions gens
     gen1' = fst $ split gen1
     gen1'' = snd $ split gen1
@@ -75,21 +75,21 @@ listRayPhoton kdt gen cam figuras rayos nRay = map (photonMap kdt radio figuras 
 listaRaySupreme :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> [RGB]
 listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal
   where
-    nIter = 1
+    nIter = 3
     luzFinal = mediaLRGB $ listRayToRGB luz cam figuras rayos gen gen' nRay nIter
 
 aspectR :: Float
-aspectR = 16/9
+aspectR = 1
 pix :: Float
-pix = 216
+pix = 256
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 6
+maxN = 8
 etapasY :: Int
-etapasY = 4
+etapasY = 1
 etapasX:: Int
 etapasX= 1
 nRay :: Int
@@ -112,7 +112,7 @@ centr'' = Point3D 0 (-16) (-20)
 centr''' :: Point3D
 centr''' = Point3D 0 25 (-25)
 luz :: Luz
-luz = Luz (Point3D 0 17 0) (RGB 255 255 255) intMx
+luz = Luz (Point3D 0 17 (-10)) (RGB 255 255 255) 10
 luz' :: Luz
 luz' = Luz (Point3D 0 0 50) (RGB 255 255 255) 0.70
 luz'' :: Point3D
@@ -137,9 +137,9 @@ bola' =  Sphere (Esfera centr' 5 (RGB 255 255 255) (0, 0.65, 0.2) 1.5 0)
 bola'' :: Shape
 bola'' = Sphere (Esfera centr'' 4 (RGB 140 140 142) (0.6, 0, 0.3) 0 0)
 rect0 :: Shape
-rect0 = Rectangle (Rectangulo (Point3D 25 0 0) (Direction 1 0 0) 50 50 (RGB 250 255 10) (0.8,0,0) 0 0)
+rect0 = Rectangle (Rectangulo (Point3D 25 0 0) (Direction 1 0 0) 50 50 (RGB 122 10 255) (0.8,0,0) 0 0)
 rect1 :: Shape
-rect1 = Rectangle (Rectangulo (Point3D (-25) 0 0) (Direction 1 0 0) 50 50 (RGB 122 10 255) (0.8,0,0) 0 0)
+rect1 = Rectangle (Rectangulo (Point3D (-25) 0 0) (Direction (-1) 0 0) 50 50 (RGB 250 255 10) (0.8,0,0) 0 0)
 rect2 :: Shape
 rect2 = Rectangle (Rectangulo (Point3D 0 0 (-25)) (Direction 0 0 (1)) 50 50 (RGB 0 0 0) (0.8,0,0) 0 0)
 -- Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
@@ -189,6 +189,7 @@ main = do
       let !kdt = createKD notkdt
       let !rayitos = generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen
           a = listRayPhoton kdt gen' cam figuras rayitos nRay
+          --a = listaRaySupreme luces cam figuras rayitos gen gen' nRay
           fin = concatMap rgbToString (gammaFunc fmx gamma a)
 
       writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin

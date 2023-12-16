@@ -142,7 +142,7 @@ photonMap :: KdTree Float Foton -> Float -> [Shape] -> StdGen -> Obj -> RGB
 photonMap kdt radio figuras gen obj
   | kr == 0 && ke == 0 = kdToRGB kdt (radio * kd) figuras obj * RGB 255 255 255
   | idObj obj == 0 = dielRGB--kr == 0 && kd > ke = dielRGB --Dielectrico lo tratamos especial :D
-  | otherwise = kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
+  | otherwise = RGB 255 255 255 * kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
   where
     (kd,kr,ke) = trObj obj
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras

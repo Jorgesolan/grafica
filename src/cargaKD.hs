@@ -50,15 +50,15 @@ nRebotes :: Int
 nRebotes = 8
 
 centr :: Point3D
-centr = Point3D (-10) (-10) (-4)
+centr = Point3D (-10) (-10) (-14)
 centr' :: Point3D
-centr' = Point3D 14 (-15) (-0)
+centr' = Point3D 14 (-15) (-10)
 centr'' :: Point3D
 centr'' = Point3D 0 (-0) (-0)
 centr''' :: Point3D
 centr''' = Point3D 0 25 (-25)
 luz :: Luz
-luz = Luz (Point3D 0 17 0) (RGB 255 255 255) intMx
+luz = Luz (Point3D 0 17 (-10)) (RGB 255 255 255) intMx
 luz' :: Luz
 luz' = Luz (Point3D 10 13 0) (RGB 255 255 255) intMx
 luz'' :: Point3D
