@@ -1,7 +1,8 @@
 #!/bin/bash
-N=8
-pix=256
-etapasY=1
+N=6
+pix=384
+piy=216
+etapasY=4
 etapasX=1  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
@@ -35,15 +36,13 @@ done
 
 
 head -n 6 a0_0_0.ppm > output.ppm
-head -n 6 a0_0_0.ppm > aaaaaaaaaaa.ppm
 for ((etapaY = 0; etapaY < etapasY; etapaY++)); do
   for ((i = 0; i < N; i++)); do
-    python3 parseXEpochs.py ${i} ${etapaY} ${etapasX} ${pix}
-    file="a${i}_${etapaY}.ppm"
-    filee="a${i}_${etapaY}_0.ppm"
+    python3 parseXEpochs.py ${i} ${etapaY} ${etapasX} ${pix} ${piy} ${etapasY} ${N}
+    fileBase="a${i}_${etapaY}"
+    file="${fileBase}.ppm"
     tail -n 1 "$file" | tr -d '\n' >> output.ppm
-    tail -n 1 "$filee" | tr -d '\n' >> aaaaaaaaaaa.ppm
-    # rm $file
+    rm ${fileBase}* 
   done
 done
 echo >> output.ppm

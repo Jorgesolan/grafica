@@ -79,17 +79,17 @@ listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal
     luzFinal = mediaLRGB $ listRayToRGB luz cam figuras rayos gen gen' nRay nIter
 
 aspectR :: Float
-aspectR = 1
+aspectR = 16/9
 pix :: Float
-pix = 256
+pix = 216
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 8
+maxN = 6
 etapasY :: Int
-etapasY = 1
+etapasY = 4
 etapasX:: Int
 etapasX= 1
 nRay :: Int
