@@ -4,5 +4,7 @@
 *.bmp
 *.ppm
 *.zip
+*.bin
 production
-simOld
+simulacion
+simulacion_pilgor

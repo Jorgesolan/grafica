@@ -81,17 +81,19 @@ listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal
 aspectR :: Float
 aspectR = 16/9
 pix :: Float
-pix = 2160
+pix = 216
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 72
-etapas :: Int
-etapas = 30
+maxN = 6
+etapasY :: Int
+etapasY = 4
+etapasX:: Int
+etapasX= 1
 nRay :: Int
-nRay = 2000
+nRay = 1
 intMx :: Float
 intMx = 1.0
 
@@ -160,12 +162,13 @@ main :: IO ()
 main = do
   args <- getArgs
   case map readMaybe args of
-    [Just nStr, Just mStr] -> do
+    [Just nStr, Just mStr, Just oStr] -> do
       gen <- newStdGen
       gen' <- newStdGen
       let n = nStr :: Int
-      let etapa = mStr :: Int
-      let n' = n + (etapa * maxN)
+      let etapaY = mStr :: Int
+      let etapaX = oStr :: Int
+      let n' = n + (etapaY * maxN)
       putStrLn $ "The value of 'n' is: " ++ show n'
       start <- getCPUTime
       -- let objFilePath = "../meshes/slab.obj"  
@@ -184,11 +187,11 @@ main = do
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "../src/test.bin"
       let !kdt = createKD notkdt
-      let !rayitos = generateRaysForPixels (maxN*etapas) n' camara (pix*aspectR) pix nRay gen
+      let !rayitos = generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen
           a = listRayPhoton kdt gen' cam figuras rayitos nRay
           fin = concatMap rgbToString (gammaFunc fmx gamma a)
 
-      writePPM ("a" ++ show n ++ "_" ++ show etapa ++ ".ppm") (round $ pix*aspectR) (round pix) fin
+      writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin
 
 
       end <- getCPUTime

@@ -111,8 +111,8 @@ generarTuplas :: [Float] -> [Float] -> [(Float, Float)]
 generarTuplas !xs !ys = [(x, y) | y <- ys, x <- xs]
 
 --Genera los rayos para cada pixel
-generateRaysForPixels :: Int -> Int -> Camara -> Float -> Float -> Int -> StdGen -> [Ray]
-generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j gen =
+generateRaysForPixels :: Int -> Int -> Int -> Int -> Camara -> Float -> Float -> Int -> StdGen -> [Ray]
+generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j gen =
   map (\(x, y) -> Ray p (generateDirection x y focal)) tuplasRandom
   where
     !piY = py / height
@@ -121,11 +121,16 @@ generateRaysForPixels maxN n (Camara p (Base (Direction px _ _) (Direction _ py 
     !py' = py / 2.0
     !yValues = [py', (py'-piY) .. (-py'+piY)]
     !yStep = length yValues `div` maxN
-    startIdx = (n - 1) * yStep
-    endIdx = n * yStep
-    selectedYValues = take (endIdx - startIdx) (drop startIdx yValues)
+    startIdxy = (n) * yStep
+    endIdxy = (n + 1) * yStep
+    selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
     generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal
-    !tuplas = generarTuplas  (concatMap (replicate j) [(-px'), (piX-px') ..(px'-piX)]) selectedYValues
+    !xValues = [px', (px'-piX) .. (-px'+piX)]
+    !xStep = length xValues `div` etapasX
+    startIdxx = (etapaX) * xStep
+    endIdxx = (etapaX + 1) * xStep
+    selectedxValues = take (endIdxx - startIdxx) (drop startIdxx xValues)
+    !tuplas = generarTuplas  (concatMap (replicate j) selectedxValues) selectedYValues
     !tuplasRandom = tuplasAleatorias tuplas piY gen
 
 --------------------------
