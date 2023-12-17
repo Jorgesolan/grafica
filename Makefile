@@ -1,8 +1,7 @@
 HC    = ghc
-FLAGS = -O2 -funfolding-use-threshold=16 -fexcess-precision -optc-O3 -optc-ffast-math -threaded -eventlog -rtsopts
+FLAGS = -O2 -funfolding-use-threshold=16 -fexcess-precision -optc-O3 -optc-ffast-math -threaded -eventlog -rtsopts -outputdir ./compil_files
 #-Wall -Werror -rtsopts 
 VPATH = ./src
-BIN_DIR = ./bin
 
 SRC0 	= $(VPATH)/Funciones.hs
 SRC1 	= $(VPATH)/Elem3D.hs
@@ -10,40 +9,27 @@ SRC3  	= $(VPATH)/Files.hs
 SRC4 	= $(VPATH)/Tone_map.hs
 SRC5	= $(VPATH)/Figuras.hs
 SRC6	= $(VPATH)/PathTracer.hs
+SRC7	= $(VPATH)/KdTest.hs
+SRC8	= $(VPATH)/PhotonMap.hs
+SRC9	= $(VPATH)/Escena.hs
 
-APP = $(VPATH)/simulacion.hs
+APP_0 = $(VPATH)/simulacion.hs
 APP0 = simulacion
-APP3 = production
-APP1 = p1
-APP2 = p2
-SRCP1 = ./practicas/Pract1.hs
-SRCP2 = ./practicas/Pract2.hs
+APP_1 = $(VPATH)/simulacion.hs
+APP1 = cargaKD
 
-
+all: simulacion cargaKD
 simulacion:
-$(APP0): $(APP) $(SRC0) $(SRC1) $(SRC5) $(SRC6)
+$(APP0): $(APP_0) $(SRC0) $(SRC1) $(SRC2) $(SRC3) $(SRC4) $(SRC6) $(SRC7) $(SRC8) $(SRC9)
 	$(HC) -static $(FLAGS) --make -i$(VPATH) $< -package random -static -o $@ 
 	strip $@
 	mv $(APP0) ./tmp
 
-production:
-$(APP3): $(APP) $(SRC1) $(SRC5)
+cargaKD:
+$(APP1): $(APP_1) $(SRC0) $(SRC1) $(SRC2) $(SRC3) $(SRC4) $(SRC6) $(SRC7) $(SRC8) $(SRC9)
 	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -o $@
 	strip $@
-	mv $(APP3) ./tmp
-
-p1:
-$(APP1): $(SRCP1) $(SRC1)
-	$(HC) --make $< -package random -package hmatrix -o $@
-	strip $@
-
-p2:
-
-$(APP2): $(SRCP2) $(SRC1) $(SRC3) $(SRC4)
-	$(HC) --make -i$(VPATH) $< -package random -package hmatrix -o $@
-	strip $@
+	mv $(APP1) ./tmp
 
 clean:
-	-mv $(shell find . -name '*.o') $(BIN_DIR)
-	-mv $(shell find . -name '*.hi') $(BIN_DIR)
-	rm -f $(APP0) $(APP1) $(APP2) $(APP3) $(BIN_DIR)/*.hi $(BIN_DIR)/*.o $(VPATH)/*.hi $(VPATH)/*.o ./tmp/*.eventlog ./tmp/$(APP3) ./tmp/$(APP0) ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.ppm *.bmp *.zip $(BIN_DIR) $(APP0)
+	rm -f ./tmp/$(APP0) ./tmp/$(APP1) ./compil_files/*.hi ./compil_files/*.o ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.zip ./tmp/*.bin

@@ -10,8 +10,8 @@ services:
     command: >
       bash -c '
         cd /workspace/src &&
-        ghc cargaKD.hs -static -O2 &&
-        ghc simulacion.hs -static -O2 &&
+        ghc cargaKD.hs -static -O2 -outputdir ./compil_files &&
+        ghc simulacion.hs -static -O2 -outputdir ./compil_files &&
         mv cargaKD simulacion ../tmp &&
         cd .. &&
         cd ./tmp &&
