@@ -48,6 +48,7 @@ import Data.Maybe (listToMaybe)
 import System.Exit (exitFailure)
 import Text.Read (readMaybe)
 
+-- make clean && make cargaKD && cd ./tmp && ./cargaKD && cd ..
 -- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
 
 
@@ -72,7 +73,7 @@ listRayPhoton kdt gen cam figuras rayos nRay = map (photonMap kdt radio figuras 
   where
     !raySMPP = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
     rayColisions = listRay raySMPP
-    radio = 10
+    radio = 5
 
 listaRaySupreme :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> [RGB]
 listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal

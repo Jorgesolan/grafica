@@ -115,18 +115,18 @@ generateRaysForPixels :: Int -> Int -> Int -> Int -> Camara -> Float -> Float ->
 generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j gen =
   map (\(x, y) -> Ray p (generateDirection x y focal)) tuplasRandom
   where
-    !piY = py / height
-    !piX = px / width
-    !px' = px / 2.0
-    !py' = py / 2.0
-    !yValues = [py', (py'-piY) .. (-py'+piY)]
-    !yStep = length yValues `div` maxN
+    piY = py / height
+    piX = px / width
+    px' = px / 2.0
+    py' = py / 2.0
+    yValues = [py', (py'-piY) .. (-py'+piY)]
+    yStep = length yValues `div` maxN
     startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
     generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal
-    !xValues = [px', (px'-piX) .. (-px'+piX)]
-    !xStep = length xValues `div` etapasX
+    xValues = [(-px'), (-px'+piX) .. (px'-piX)]
+    xStep = length xValues `div` etapasX
     startIdxx = etapaX * xStep
     endIdxx = (etapaX + 1) * xStep
     selectedxValues = take (endIdxx - startIdxx) (drop startIdxx xValues)
@@ -272,3 +272,24 @@ pixtoRGB (PixelRGB8 r g b) = RGB (toFloat r) (toFloat g) (toFloat b)
 interpolate :: (Float, Float) -> Float -> Float
 interpolate (a, b) t = a + t * (b - a)
 
+-- Calcular la media de una lista de valores
+{-# INLINE media #-}
+media :: [Float] -> Float
+media xs = sum xs / fromIntegral (length xs)
+
+-- Calcular la varianza de una lista de valores
+{-# INLINE varianza #-}
+varianza :: [Float] -> Float
+varianza xs = sum (map (\x -> (x - m) ^ 2) xs) / fromIntegral (length xs)
+  where m = media xs
+
+-- Calcular la desviación estándar de una lista de valores
+{-# INLINE desviacionEstandar #-}
+desviacionEstandar :: [Float] -> Float
+desviacionEstandar xs = sqrt (varianza xs)
+
+{-# INLINE fGaus #-}
+fGaus :: Float -> Float -> Float -> Float -> Float
+fGaus a b c x = if isNaN result then 0 else result
+  where 
+    result = a * exp (-(x-b)**2 / (2*c**2))

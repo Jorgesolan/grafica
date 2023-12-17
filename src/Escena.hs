@@ -30,24 +30,24 @@ import Figuras
 intMxKd :: Float
 intMxKd = 50
 n :: Float
-n=30000
+n=10000
 nRebotes :: Int
 nRebotes = 8
 -- SIMULACION
 aspectR :: Float
-aspectR = 16/9
+aspectR = 1
 pix :: Float
-pix = 216
+pix = 512
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 6
+maxN = 8
 etapasY :: Int
 etapasY = 4
 etapasX:: Int
-etapasX= 1
+etapasX= 2
 nRay :: Int
 nRay = 1
 intMxSim :: Float
@@ -69,7 +69,7 @@ centr'' = Point3D 0 (-16) (-20)
 centr''' :: Point3D
 centr''' = Point3D 0 25 (-25)
 luz :: Luz
-luz = Luz (Point3D 0 17 (-10)) (RGB 255 255 255) 10
+luz = Luz (Point3D 0 17 (-10)) (RGB 255 255 255) intMxKd
 luz' :: Luz
 luz' = Luz (Point3D 0 0 50) (RGB 255 255 255) 0.70
 luz'' :: Point3D

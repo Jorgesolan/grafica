@@ -20,7 +20,7 @@ import Elem3D
       modRGB,
       scale,
       addPoints,
-      escalatePoint, Direction (Direction) )
+      escalatePoint, Direction (Direction), distFot )
 import Figuras
     ( getShapeID,
       oneCollision,
@@ -38,10 +38,10 @@ import Funciones
       genPointTotal,
       obtenerPrimeraColision,
       colision,
-      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom )
+      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus )
 import Debug.Trace (trace)
 import Data.List ()
-import Data.KdTree.Static ( kNearest, KdTree, inRadius )
+import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
 
 createPhoton :: Float -> [Foton] -> Int -> Int -> [Shape] -> [Luz] -> StdGen -> Int -> [Foton]
 createPhoton lzT fotones contador contMx figuras luces gen nRebotes
@@ -98,15 +98,19 @@ traceRay p pot rgb fotones figuras n gen obj
     (objCri,_) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
 
 
-photonMulToRGB :: [Foton] -> Obj -> [Shape] -> RGB
-photonMulToRGB photons obj figuras = newRGB
+photonMulToRGB :: [Foton] -> Obj -> [Shape] -> Float -> RGB
+photonMulToRGB photons obj figuras radio = newRGB
   where
-    newRGB = sumRGB $ map (fusion obj) photons
-    fusion :: Obj-> Foton -> RGB
-    fusion obj (Foton point int rgbF idF) = newRGB
+    !list = map (distFot (colObj obj) radio) photons
+    a = 1
+    b = media list
+    c = desviacionEstandar list
+    newRGB = sumRGB $ map (fusion obj (a,b,c) radio) photons
+    fusion :: Obj -> (Float,Float,Float) -> Float -> Foton -> RGB
+    fusion obj (a,b,c) radio fot = newRGB `modRGB` fGaus a b c (distFot (colObj obj) radio fot)
       where
-        newRGB = modRGB (scale rgbF) (int / (1+modd (point #< colObj obj))) * brdf obj
-        figuras' = filter (\shape -> idF /= getShapeID shape) figuras
+        newRGB = modRGB (scale $ rgbFot fot) (iFot fot) * brdf obj
+        figuras' = filter (\shape -> idFot fot /= getShapeID shape) figuras
 
 -- photonMap :: KdTree Float Foton -> Int -> [Shape]-> Obj -> RGB
 -- photonMap kdt nPhoton figuras obj@(Obj rgb w0 p norm (kd,0,0) kr' id) = newRGB * RGB 255 255 255
@@ -157,7 +161,7 @@ photonMap kdt radio figuras gen obj
     espejosRand = map (photonMap kdt radio figuras gen) a
     (a,b) = unzip $ randObjEsp [] gen
     randObjEsp :: [Obj] -> StdGen -> [(Obj, StdGen)]
-    randObjEsp objs gen 
+    randObjEsp objs gen
       | length objs == 6 = []
       | otherwise = (newObj, gen'):randObjEsp (newObj:objs) gen'
       where
@@ -172,4 +176,4 @@ kdToRGB kdt radio figuras obj = newRGB
     photons = inRadius kdt radio (pointToPothon (colObj obj))
     photons' = filter (\(Foton _ _ _ idF) -> idObj obj == idF) photons
     -- Coger solo fotones del mismo objeto
-    !newRGB = photonMulToRGB photons' obj figuras
+    !newRGB = if null photons' then RGB 0 0 0 else photonMulToRGB photons' obj figuras radio

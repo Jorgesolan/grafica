@@ -15,7 +15,7 @@ data Ray = Ray !Point3D !Direction
 data Base = Base !Direction !Direction !Direction
 data RGB = RGB {red :: !Float, green :: !Float, blue :: !Float} deriving (Eq)
 data Luz = Luz !Point3D !RGB !Float
-data Foton = Foton !Point3D Float RGB Int
+data Foton = Foton {pFot :: !Point3D, iFot :: Float, rgbFot :: RGB, idFot :: Int}
 
 instance Binary Point3D where
   put :: Point3D -> Data.Binary.Put.Put
@@ -46,7 +46,7 @@ instance Binary RGB where
 
 instance Binary Foton where
   put :: Foton -> Data.Binary.Get.Internal.Put
-  put (Foton p f c i) = put p >> put f  >> put c >> put i
+  put (Foton {..}) = put pFot >> put iFot  >> put rgbFot >> put idFot
   get :: Data.Binary.Get.Internal.Get Foton
   get = do
     p <- get
@@ -80,7 +80,7 @@ instance Show Foton where
 
 {-# INLINE getPhotonID #-}
 getPhotonID :: Foton -> Int
-getPhotonID (Foton _ _ _  id) = id
+getPhotonID (Foton {..}) = idFot
 
 {-# INLINE obtenerRayo #-}
 obtenerRayo :: Ray -> Direction
@@ -193,7 +193,11 @@ dirPoint (Direction x y z) = Point3D x y z
 pointToPothon :: Point3D -> Foton
 pointToPothon p = Foton p 0 (RGB 0 0 0) 0
 
------------------------------------------------------------------------------------------------------------------------------------------------
+{-# INLINE distFot #-}
+distFot :: Point3D -> Float -> Foton -> Float
+distFot p x fot = abs $ (p `distPoint` pFot fot) / x
+
+------------------------------------------------------------------------------------------------------------------
 --Direcciones
 
 instance Num Direction where
