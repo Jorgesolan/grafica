@@ -141,9 +141,9 @@ photonMulToRGB photons obj figuras radio = newRGB
 
 photonMap :: KdTree Float Foton -> Float -> [Shape] -> StdGen -> Obj -> RGB
 photonMap kdt radio figuras gen obj
-  | kr == 0 && ke == 0 = addNiebla (Point3D 0 0 (-10)) obj 0.6 $ kdToRGB kdt (radio * kd) figuras obj
+  | kr == 0 && ke == 0 = addNiebla (Point3D 0 15 (-10)) obj 0.75 $ kdToRGB kdt (radio * kd) figuras obj
   -- | idObj obj == 0 = dielRGB--kr == 0 && kd > ke = dielRGB --Dielectrico lo tratamos especial :D
-  | otherwise = addNiebla (Point3D 0 0 (-10)) obj 0.6 $ kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
+  | otherwise = addNiebla (Point3D 0 15 (-10)) obj 0.75 $ kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
   where
 
     (kd,kr,ke) = trObj obj

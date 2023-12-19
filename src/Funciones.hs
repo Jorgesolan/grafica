@@ -236,8 +236,8 @@ ruletaRusa (a,b,c) gen = (i, p')
 
 brdf :: Obj -> RGB
 brdf (Obj {..}) =
-  if idObj == 4
-  then scale rgbObj-- rgbTxt
+  if idObj == 5
+  then rgbTxt
   else scale rgbObj
   where
     -- Corrección temporal :D
@@ -299,16 +299,16 @@ fGaus photons obj fot = if isNaN result then 0 else result
     result = a * exp (-(((x-b)**2) / (2*c**2)))
 
 addNiebla :: Point3D -> Obj -> Float -> RGB -> RGB
-addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj)
+addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj) + (scale (RGB 30 30 40 )`modRGB` ((1-reducObj)*0.6))
   where
     newRGB = RGB fact fact fact
     reducLuz = if zP p < 0 then exp (x * zP p) else 1
-    reducObj = if zP (colObj obj) < 0 then exp (x * zP (colObj obj)/25) else 1 -- Como le afecta la niebla de lejos a los objetos
+    reducObj = if zP (colObj obj) < 0 then exp ((1-x) * zP (colObj obj)/7.5) else 1 -- Como le afecta la niebla de lejos a los objetos
 
     camP = Point3D 0 0 30 -- Comienzo de la camara
     cam = Ray camP dir
     dir = normal $ colObj obj #< camP
-    fact = x * reducLuz * ((distanceToRay p cam / 25) ** (-2)) -- Como afecta la luz a los objetos
+    fact = x * reducLuz * ((distanceToRay p cam / 25) ** (-1.75)) -- Como afecta la luz a los objetos
 
 distanceToRay :: Point3D -> Ray -> Float
 distanceToRay point ray =

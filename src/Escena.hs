@@ -30,7 +30,7 @@ import Figuras
 intMxKd :: Float
 intMxKd = 50
 n :: Float
-n=10000
+n=30000
 nRebotes :: Int
 nRebotes = 5
 -- SIMULACION
@@ -61,15 +61,15 @@ cam =  Point3D 0 0 30
 
 -- ESCENA
 centr :: Point3D
-centr = Point3D (-5) (-10) (-10)
+centr = Point3D (-8) (-10) (-10)
 centr' :: Point3D
-centr' = Point3D (-15) (-10) (-5)
+centr' = Point3D (14) (-15) (-11)
 centr'' :: Point3D
-centr'' = Point3D 5 (-10) (-13)
+centr'' = Point3D 0 (-15) (-44)
 centr''' :: Point3D
 centr''' = Point3D 15 (-10) (-22)
 luz :: Luz
-luz = Luz (Point3D 0 0 (-10)) (RGB 255 255 255) intMxKd
+luz = Luz (Point3D 0 15 (-10)) (RGB 255 255 255) intMxKd
 luz' :: Luz
 luz' = Luz (Point3D 0 0 50) (RGB 255 255 255) 0.70
 luz'' :: Point3D
@@ -82,25 +82,25 @@ plano1 =  Plane (Plano (Point3D 25 0 0) (Direction 1 0 0) (RGB 122 10 255) (0.8,
 plano2 :: Shape
 plano2 =  Plane (Plano (Point3D 0 25 0) (Direction 0 1 0) (RGB 150 150 150) (0.9,0,0) 0 0) -- Techo
 plano3 :: Shape
-plano3 =  Plane (Plano (Point3D 0 0 (-25)) (Direction 0 0 1) (RGB 150 150 150) (0.8,0,0) 0 0) -- Fondo
+plano3 =  Plane (Plano (Point3D 0 0 (-50)) (Direction 0 0 1) (RGB 150 150 150) (0.8,0,0) 0 0) -- Fondo
 plano4 :: Shape
 plano4 =  Plane (Plano (Point3D 0 (-20) 0) (Direction 0 1 0) (RGB 200 200 200) (0.7,0,0.2) 0 0) -- Suelo
 plano5 :: Shape
 plano5 =  Plane (Plano (Point3D 0 0 50.5) (Direction 0 0 1) (RGB 1 1 1) (0.8,0,0) 0 0) -- Detras Camara
 bola :: Shape
-bola =  Sphere (Esfera centr 5 (RGB 145 235 249) (0.8, 0, 0) 0 0)
+bola =  Sphere (Esfera centr 6 (RGB 145 235 249) (0.6, 0, 0.1) 0 0)
 bola' :: Shape
-bola' =  Sphere (Esfera centr' 5 (RGB 122 210 155) (0.8,0,0) 1.5 0)
+bola' =  Sphere (Esfera centr' 5 (RGB 255 255 255) (0,0.6,0.3) 1.5 0)
 bola'' :: Shape
-bola'' =  Sphere (Esfera centr'' 5 (RGB 145 235 249) (0.8, 0, 0) 0 0)
+bola'' =  Sphere (Esfera centr'' 4 (RGB 150 0 0 ) (0.8, 0, 0) 0 0)
 bola''' :: Shape
 bola''' =  Sphere (Esfera centr''' 5 (RGB 122 210 155) (0.8,0,0) 1.5 0)
 rect0 :: Shape
-rect0 = Rectangle (Rectangulo (Point3D 25 0 0) (Direction 1 0 0) 50 50 (RGB 122 10 255) (0.9,0,0) 0 0)
+rect0 = Rectangle (Rectangulo (Point3D 25 0 0) (Direction 1 0 0) 100 100 (RGB 122 10 255) (0.9,0,0) 0 0)
 rect1 :: Shape
-rect1 = Rectangle (Rectangulo (Point3D (-25) 0 0) (Direction (-1) 0 0) 50 50 (RGB 250 255 10) (0.9,0,0) 0 0)
+rect1 = Rectangle (Rectangulo (Point3D (-25) 0 0) (Direction (-1) 0 0) 100 100 (RGB 250 255 10) (0.9,0,0) 0 0)
 rect2 :: Shape
-rect2 = Rectangle (Rectangulo (Point3D 0 0 (-25)) (Direction 0 0 (1)) 50 50 (RGB 150 150 150) (0.9,0,0) 0 0)
+rect2 = Rectangle (Rectangulo (Point3D 0 0 (-50)) (Direction 0 0 (1)) 50 50 (RGB 150 150 150) (0.9,0,0) 0 0)
 
 -- Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
 cilindro :: Shape
@@ -110,8 +110,6 @@ camara = Camara cam basCam
 
 fmx :: Float
 fmx = intMxSim
--- Asi pasamos de imagen HDR a HD y tenemos mas margen de maniobra para otras luces
-
 
 plan =  Plane (Plano (Point3D 0 0 (-16)) (Direction 0 0 1) (RGB 0 0 0) (0.8,0,0) 0 0) -- Fondo
 a = Sphere (Esfera (Point3D 10 10 (-10)) 5 (RGB 255 255 255) (0.8,0,0) 1.5 0)
@@ -120,8 +118,8 @@ c = Sphere (Esfera (Point3D (-10) 10 (-10)) 5 (RGB 255 255 255) (0.8,0,0) 1.5 0)
 d = Sphere (Esfera (Point3D (-10) (-10) (-10)) 5 (RGB 255 255 255) (0.8,0,0) 1.5 0)
 
 figuras :: [Shape]
---figuras = addFigMult [bola,bola',bola'',bola''',rect0,rect1,rect2,plano2, plano4,plano5] []
-figuras = addFigMult [plan,a,b,c,d] []
+figuras = addFigMult [bola,bola',bola'',rect0,rect1,rect2,plano2, plano4,plano5] []
+--figuras = addFigMult [plan,a,b,c,d] []
 -- Poner primero las bolas por la cosa del cristal, modificar el valor de dir Cristal depende del numero de bolas
 luces :: [Luz]
 luces = [luz{- , luz' -}]
