@@ -20,7 +20,7 @@ import Elem3D
       divRGB,
       scale,
       generateBase,
-      cambioBase, addPoints, pointDir )
+      cambioBase, addPoints, pointDir, Foton, distFot, (#), escalatePoint, distPoint )
 import Figuras
     ( oneCollision,
       Camara(..),
@@ -32,7 +32,7 @@ import System.IO.Unsafe (unsafePerformIO)
 import Data.Ord (comparing)
 import Debug.Trace (trace)
 import Data.List (minimumBy,transpose)
-import System.Random (randomR, StdGen, randomRs,split)
+import System.Random (randomR, StdGen, randomRs,split, mkStdGen)
 
 import Data.Either (fromRight)
 import Data.Binary (Word8)
@@ -237,8 +237,8 @@ ruletaRusa (a,b,c) gen = (i, p')
 brdf :: Obj -> RGB
 brdf (Obj {..}) =
   if idObj == 4
-    then rgbTxt
-    else scale rgbObj
+  then scale rgbObj-- rgbTxt
+  else scale rgbObj
   where
     -- Corrección temporal :D
     (x', y') = ((xP colObj + 25) / 50, (yP colObj + 25) / 50)
@@ -247,7 +247,6 @@ brdf (Obj {..}) =
     textureImage = loadTexture "../meshes/algo.png"
     (texWidth, texHeight) = (fromIntegral $ imageWidth textureImage, fromIntegral $ imageHeight textureImage)
     rgbTxt = pixtoRGB $ pixelAt textureImage texX texY
-
 
 sumFlLuz :: [Luz] -> Float
 sumFlLuz [] = 0
@@ -289,7 +288,39 @@ desviacionEstandar :: [Float] -> Float
 desviacionEstandar xs = sqrt (varianza xs)
 
 {-# INLINE fGaus #-}
-fGaus :: Float -> Float -> Float -> Float -> Float
-fGaus a b c x = if isNaN result then 0 else result
-  where 
-    result = a * exp (-(x-b)**2 / (2*c**2))
+fGaus :: [Foton] -> Obj -> Foton -> Float
+fGaus photons obj fot = if isNaN result then 0 else result
+  where
+    !list = map (distFot (colObj obj)) photons
+    a = 1 / (c * sqrt (2*pi))
+    b = media list
+    c = desviacionEstandar list
+    x = distFot (colObj obj) fot
+    result = a * exp (-(((x-b)**2) / (2*c**2)))
+
+addNiebla :: Point3D -> Obj -> Float -> RGB -> RGB
+addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj)
+  where
+    newRGB = RGB fact fact fact
+    reducLuz = if zP p < 0 then exp (x * zP p) else 1
+    reducObj = if zP (colObj obj) < 0 then exp (x * zP (colObj obj)/25) else 1 -- Como le afecta la niebla de lejos a los objetos
+
+    camP = Point3D 0 0 30 -- Comienzo de la camara
+    cam = Ray camP dir
+    dir = normal $ colObj obj #< camP
+    fact = x * reducLuz * ((distanceToRay p cam / 25) ** (-2)) -- Como afecta la luz a los objetos
+
+distanceToRay :: Point3D -> Ray -> Float
+distanceToRay point ray =
+  let
+    !(Point3D ox oy oz) = oR ray
+    !(Direction dx dy dz) = dR ray
+    !px = ox - xP point
+    !py = oy - yP point
+    !pz = oz - zP point
+    !a = dx * dx + dy * dy + dz * dz
+    !b = px * dx + py * dy + pz * dz
+    !t = -(b / a)
+    !closestPoint = Point3D (ox + t * dx) (oy + t * dy) (oz + t * dz)
+    !distance = distPoint point closestPoint
+  in distance

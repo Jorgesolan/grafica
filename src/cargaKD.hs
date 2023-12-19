@@ -52,9 +52,9 @@ main = do
 
   let objFilePath = "../meshes/slab.obj"  
   (vertices, triangles) <- loadObjFile objFilePath
-  let vertices' = map (movePoint (Direction 0 24.9 (-20)).escalatePoint 5) vertices
-  let customTriangles = convertToCustomFormat (vertices', triangles)
-  let triangleLus = encenderShapes customTriangles
+  -- let vertices' = map (movePoint (Direction 0 24.9 (-20)).escalatePoint 5) vertices
+  -- let customTriangles = convertToCustomFormat (vertices', triangles)
+  -- let triangleLus = encenderShapes customTriangles
   --let figuras' = addFigMult triangleLus figuras
 
   let kdt =  createPhoton (sumFlLuz luces) [] 0 (round n) figuras luces gen' nRebotes

@@ -63,7 +63,7 @@ listRayToRGB luz cam figuras rayos gen0 gen1 nRay iter
   where
     (gens, _) = splitAt (length rayos) $ tail $ iterate (snd . split) gen0
     rayColisions = listRay $ map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    nRebotes = 10
+    nRebotes = 1
     luzFinal = zipWith (pathTracer 1 luz figuras 0 nRebotes) rayColisions gens
     gen1' = fst $ split gen1
     gen1'' = snd $ split gen1
@@ -114,7 +114,7 @@ main = do
       let !kdt = createKD notkdt
       let !rayitos = generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen
           a = listRayPhoton kdt gen' cam figuras rayitos nRay
-          --a = listaRaySupreme luces cam figuras rayitos gen gen' nRay
+          -- a = listaRaySupreme luces cam figuras rayitos gen gen' nRay
           fin = concatMap rgbToString (gammaFunc fmx gamma a)
 
       writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin

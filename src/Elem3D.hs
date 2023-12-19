@@ -11,7 +11,7 @@ import qualified Data.Binary as Data.Binary.Get.Internal
 
 data Point3D = Point3D {xP :: !Float, yP :: !Float, zP :: !Float} deriving (Eq)
 data Direction = Direction {xD :: !Float, yD :: !Float, zD :: !Float} deriving (Eq)
-data Ray = Ray !Point3D !Direction
+data Ray = Ray {oR :: !Point3D, dR :: !Direction}
 data Base = Base !Direction !Direction !Direction
 data RGB = RGB {red :: !Float, green :: !Float, blue :: !Float} deriving (Eq)
 data Luz = Luz !Point3D !RGB !Float
@@ -174,12 +174,12 @@ aproxPoint (Point3D !xb !yb zb) (Point3D !xa !ya !za) = a && b && c
 -- -- -- Escalado de puntos
 {-# INLINE escalatePoint' #-}
 escalatePoint' :: Float -> Point3D -> Point3D
-escalatePoint' s (Point3D xa ya za) = Point3D (xa/s) (ya/s) (za/s)
+escalatePoint' s (Point3D {..}) = Point3D (xP/s) (yP/s) (zP/s)
 
 -- -- -- Escalado de puntos
 {-# INLINE escalatePoint #-}
-escalatePoint :: Float -> Point3D -> Point3D
-escalatePoint s (Point3D xa ya za) = Point3D (s*xa) (s*ya) (s*za)
+escalatePoint :: Point3D -> Float -> Point3D
+escalatePoint (Point3D {..}) s = Point3D (s*xP) (s*yP) (s*zP)
 
 {-# INLINE pointDir#-}
 pointDir :: Point3D -> Direction
@@ -194,8 +194,8 @@ pointToPothon :: Point3D -> Foton
 pointToPothon p = Foton p 0 (RGB 0 0 0) 0
 
 {-# INLINE distFot #-}
-distFot :: Point3D -> Float -> Foton -> Float
-distFot p x fot = abs $ (p `distPoint` pFot fot) / x
+distFot :: Point3D -> Foton -> Float
+distFot p fot = abs $ p `distPoint` pFot fot
 
 ------------------------------------------------------------------------------------------------------------------
 --Direcciones

@@ -8,7 +8,7 @@ import Elem3D
       Luz(..),
       RGB(..),
       Ray(..),
-      Point3D,
+      Point3D(..),
       movePoint,
       (#<),
       (#),
@@ -38,7 +38,7 @@ import Funciones
       genPointTotal,
       obtenerPrimeraColision,
       colision,
-      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus )
+      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla )
 import Debug.Trace (trace)
 import Data.List ()
 import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
@@ -101,13 +101,10 @@ traceRay p pot rgb fotones figuras n gen obj
 photonMulToRGB :: [Foton] -> Obj -> [Shape] -> Float -> RGB
 photonMulToRGB photons obj figuras radio = newRGB
   where
-    !list = map (distFot (colObj obj) radio) photons
-    a = 1
-    b = media list
-    c = desviacionEstandar list
-    newRGB = sumRGB $ map (fusion obj (a,b,c) radio) photons
-    fusion :: Obj -> (Float,Float,Float) -> Float -> Foton -> RGB
-    fusion obj (a,b,c) radio fot = newRGB `modRGB` fGaus a b c (distFot (colObj obj) radio fot)
+   -- newRGB = sumRGB $ map (\photon -> fusion obj (fGaus photons obj photon) photon) photons
+    newRGB = sumRGB $ map (\photon -> fusion obj (1 / (1 + distFot (colObj obj) photon)) photon) photons
+    fusion :: Obj -> Float -> Foton -> RGB
+    fusion obj kernel fot = newRGB `modRGB` kernel
       where
         newRGB = modRGB (scale $ rgbFot fot) (iFot fot) * brdf obj
         figuras' = filter (\shape -> idFot fot /= getShapeID shape) figuras
@@ -144,19 +141,21 @@ photonMulToRGB photons obj figuras radio = newRGB
 
 photonMap :: KdTree Float Foton -> Float -> [Shape] -> StdGen -> Obj -> RGB
 photonMap kdt radio figuras gen obj
-  | kr == 0 && ke == 0 = kdToRGB kdt (radio * kd) figuras obj * RGB 255 255 255
-  | idObj obj == 0 = dielRGB--kr == 0 && kd > ke = dielRGB --Dielectrico lo tratamos especial :D
-  | otherwise = RGB 255 255 255 * kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
+  | kr == 0 && ke == 0 = addNiebla (Point3D 0 0 (-10)) obj 0.6 $ kdToRGB kdt (radio * kd) figuras obj
+  -- | idObj obj == 0 = dielRGB--kr == 0 && kd > ke = dielRGB --Dielectrico lo tratamos especial :D
+  | otherwise = addNiebla (Point3D 0 0 (-10)) obj 0.6 $ kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
   where
+
     (kd,kr,ke) = trObj obj
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj)
     (objCri,_) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
+    
     colorCri = photonMap kdt radio figuras gen objCri
     colorEsp = photonMap kdt radio figuras gen objEsp
     porc = abs $ w0Obj obj .* normObj obj
 
-    dielRGB = RGB 255 255 255 * kdToRGB kdt radio figuras obj `modRGB` (porc*kd) + randEsp `modRGB` ((1-porc) * ke)
+    dielRGB = kdToRGB kdt radio figuras obj `modRGB` (porc*kd) + randEsp `modRGB` ((1-porc) * ke)
     randEsp = mediaRGB (colorEsp:espejosRand)
     espejosRand = map (photonMap kdt radio figuras gen) a
     (a,b) = unzip $ randObjEsp [] gen

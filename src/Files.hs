@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 module Files where
 import Elem3D ( RGB(..) )
 
@@ -57,7 +58,7 @@ parsePixels' pixels = unwords $ map rgbToString pixels
 
 {-# INLINE rgbToString #-}
 rgbToString :: RGB -> String
-rgbToString (RGB r g b) = show (round r) ++ " " ++ show (round g) ++ " " ++ show (round b) ++ " "
+rgbToString (RGB {..}) = show (round $ red * 255) ++ " " ++ show (round$  green * 255) ++ " " ++ show (round $ blue * 255) ++ " "
 
 
 -- Function to write a 32-bit BMP file

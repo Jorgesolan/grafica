@@ -1,15 +1,11 @@
 #!/bin/bash
 N=8
-pix=512
-piy=512
-etapasY=4
+pix=256
+piy=256
+etapasY=2
 etapasX=2  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
-machine=$(hostname)
-if [[ machine == "pilgor" ]]; then
-  binName="./simulacion_pilgor"
-fi
 # Calculate the number of iterations per barrier
 iterations_per_barrier=$((N / etapasY))
 
