@@ -15,7 +15,7 @@ services:
         mv cargaKD simulacion ../tmp &&
         cd .. &&
         cd ./tmp &&
-        mv simulacion simulacion_pilgor &&
-        mv cargaKD cargaKD_pilgor
+        mv simulacion simulacion &&
+        mv cargaKD cargaKD
       '
     stop_signal: SIGINT
