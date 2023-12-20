@@ -32,4 +32,4 @@ $(APP1): $(APP_1) $(SRC0) $(SRC1) $(SRC2) $(SRC3) $(SRC4) $(SRC6) $(SRC7) $(SRC8
 	mv $(APP1) ./tmp
 
 clean:
-	rm -f ./tmp/$(APP0)* ./tmp/$(APP1)* ./compil_files/*.hi ./compil_files/*.o ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.zip
+	sudo rm -f ./tmp/$(APP0)* ./tmp/$(APP1)* ./tmp/resultados/* ./src/compil_files/*.hi ./src/compil_files/*.o ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.zip

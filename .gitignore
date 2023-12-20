@@ -6,8 +6,6 @@
 *.zip
 *.bin
 cargaKD
-cargaKD_pilgor
-cargaKD_berlin
+cargaKD_*
 simulacion
-simulacion_pilgor
-simulacion_berlin
+simulacion_*

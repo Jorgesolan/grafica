@@ -1,5 +1,8 @@
 #!/bin/bash
 #crear ejec pilg
+cd ..
+make clean
+cd ./tmp
 zip -r original_graf.zip ../../grafica/
 mv original_graf.zip ..
 scp ../original_graf.zip 192.168.0.252:~/
@@ -13,6 +16,13 @@ mv cargaKD cargaKD_pilgor
 cd ..
 make all
 cd tmp
+
+if [ -f "$../src/kd.bin" ]; then
+    cp ../src/kd.bin .
+else
+    ./cargaKD
+fi
+
 mv simulacion simulacion_berlin
 mv cargaKD cargaKD_berlin
 #crear ejec labs

@@ -73,7 +73,7 @@ listRayPhoton kdt gen cam figuras rayos nRay = map (photonMap kdt radio figuras 
   where
     !raySMPP = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
     rayColisions = listRay raySMPP
-    radio = 5
+    radio = 10
 
 listaRaySupreme :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> [RGB]
 listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal

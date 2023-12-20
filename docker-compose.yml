@@ -14,8 +14,6 @@ services:
         ghc simulacion.hs -static -O2 -outputdir ./compil_files &&
         mv cargaKD simulacion ../tmp &&
         cd .. &&
-        cd ./tmp &&
-        mv simulacion simulacion &&
-        mv cargaKD cargaKD
+        cd ./tmp
       '
     stop_signal: SIGINT

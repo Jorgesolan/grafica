@@ -2,10 +2,10 @@
 nstart=$1
 nend=$2
 N=$3
-pix=960
-piy=960
+pix=4176
+piy=4176
 etapasY=1
-etapasX=1
+etapasX=8
 pids=()
 binName="./simulacion_${4}"
 machine=$(hostname)

@@ -37,19 +37,19 @@ nRebotes = 5
 aspectR :: Float
 aspectR = 1
 pix :: Float
-pix = 256
+pix = 4176
 piCam :: Float
 piCam = 25
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 8
+maxN = 174
 etapasY :: Int
-etapasY = 2
+etapasY = 1
 etapasX:: Int
-etapasX= 2
+etapasX= 8
 nRay :: Int
-nRay = 1
+nRay = 500
 intMxSim :: Float
 intMxSim = 1.0
 
