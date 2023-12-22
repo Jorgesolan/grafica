@@ -1,5 +1,5 @@
 #simplifica otros obj mas complejos al formato empleado
-with open('haskell.obj', 'r') as file:
+with open('../meshes/f15.obj', 'r') as file:
     lines = file.readlines()
 
 vertices = []
@@ -14,7 +14,7 @@ for line in lines:
             face_indices = [int(vertex.split('/')[0]) for vertex in face]  # Extract only vertex indices
             faces.append("f " + " ".join(map(str, face_indices)) + "\n")  # Reconstruct the face line
 
-with open('converted_file.obj', 'w') as file:
+with open('../meshes/simplef15.obj', 'w') as file:
     file.write("# Converted OBJ\n")
     file.write("o ConvertedObject\n")
 

@@ -1,9 +1,9 @@
 #!/bin/bash
-N=8
-pix=256
-piy=256
-etapasY=2
-etapasX=2  # You can change this value to the desired number of iterations per barrier
+N=12
+pix=400
+piy=400
+etapasY=1
+etapasX=1  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
 # Calculate the number of iterations per barrier
@@ -38,7 +38,7 @@ for ((etapaY = 0; etapaY < etapasY; etapaY++)); do
     fileBase="a${i}_${etapaY}"
     file="${fileBase}.ppm"
     tail -n 1 "$file" | tr -d '\n' >> output.ppm
-    rm ${fileBase}* 
+    # rm ${fileBase}* 
   done
 done
 echo >> output.ppm

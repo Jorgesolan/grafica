@@ -78,6 +78,15 @@ instance Show Foton where
     show :: Foton -> String
     show (Foton (Point3D x y z) i j  _) = "Foton " ++ show x ++ " " ++ show y ++ " " ++ show z ++ " " ++ show i ++ " " ++ show j
 
+getX :: Point3D -> Float
+getX (Point3D x _ _) = x
+
+getY :: Point3D -> Float
+getY (Point3D _ y _) = y
+
+getZ :: Point3D -> Float
+getZ (Point3D _ _ z) = z
+
 {-# INLINE getPhotonID #-}
 getPhotonID :: Foton -> Int
 getPhotonID (Foton {..}) = idFot
@@ -180,7 +189,8 @@ escalatePoint' s (Point3D {..}) = Point3D (xP/s) (yP/s) (zP/s)
 {-# INLINE escalatePoint #-}
 escalatePoint :: Point3D -> Float -> Point3D
 escalatePoint (Point3D {..}) s = Point3D (s*xP) (s*yP) (s*zP)
-
+escalatePointt :: Float -> Point3D ->   Point3D
+escalatePointt s (Point3D {..}) = Point3D (s*xP) (s*yP) (s*zP)
 {-# INLINE pointDir#-}
 pointDir :: Point3D -> Direction
 pointDir (Point3D x y z) = Direction x y z

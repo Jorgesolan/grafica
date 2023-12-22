@@ -299,7 +299,7 @@ fGaus photons obj fot = if isNaN result then 0 else result
     result = a * exp (-(((x-b)**2) / (2*c**2)))
 
 addNiebla :: Point3D -> Obj -> Float -> RGB -> RGB
-addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj) + (scale (RGB 30 30 40 )`modRGB` ((1-reducObj)*0.6))
+addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj) + (scale (RGB 30 30 40 )`modRGB` ((1-reducObj)*0.15))
   where
     newRGB = RGB fact fact fact
     reducLuz = if zP p < 0 then exp (x * zP p) else 1

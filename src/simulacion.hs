@@ -8,23 +8,24 @@ import Elem3D
       Ray,
       Direction(Direction),
       Point3D(..),
-      escalatePoint,
+      escalatePoint,escalatePointt,
       degToRad,
       rotatePoint,movePoint
     )
 
 import Figuras
     ( Obj,
-      Shape(Sphere, Plane, Cylinder,Rectangle),
+      Shape(Sphere, Plane, Cylinder,Rectangle,Acelerator),
       Plano(Plano),
       Esfera(Esfera),
       Cilindro(Cilindro),
       Rectangulo(Rectangulo),
       Camara(Camara),
+      BVH(BVH),
       addFigMult,
       parametricShapeCollision,
       loadObjFile,
-      convertToCustomFormat, encenderShape ,encenderShapes
+      convertToCustomFormat, encenderShape ,encenderShapes, buildBVH
       )
 import Files (writePPM, rgbToString, readObject)
 import Tone_map (gammaFunc,clamp)
@@ -103,17 +104,19 @@ main = do
       --     trianglesLus = encenderShapes customTriangles
           --figuras' = addFigMult trianglesLus figuras
 
-      -- let objFilePath1 = "cubo.obj"  
-      -- (vertices1, triangles1) <- loadObjFile objFilePath1
-      -- let vertices1' = map (rotatePoint 'X' 0.movePoint (Direction (-5) 0 0).escalatePoint (2.5)) vertices1
-      --     customTriangles1 = convertToCustomFormat (vertices1', triangles1)
-      --     !figuras' = {- addFigMult (customTriangles ++ customTriangles1) -} figuras
+      let objFilePath1 = "../meshes/simplef15.obj"  
+      (vertices1, triangles1) <- loadObjFile objFilePath1
+      let vertices1' = map (movePoint (Direction (0) (-5) (-25)).rotatePoint 'X' (370).rotatePoint 'Y' 90.rotatePoint 'X' 90.movePoint (Direction (0) 0 0).escalatePointt (1)) vertices1
+          customTriangles1 = convertToCustomFormat (vertices1', triangles1)
+          boundingVol = buildBVH customTriangles1
+          !figuras' =  addFigMult [(Acelerator boundingVol)]  figuras
+          
       -- let !kdt = createKD $ createPhoton potf [] n figuras luces gen'
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "./kd.bin"
       let !kdt = createKD notkdt
       let !rayitos = generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen
-          a = listRayPhoton kdt gen' cam figuras rayitos nRay
+          a = listRayPhoton kdt gen' cam figuras' rayitos nRay
           -- a = listaRaySupreme luces cam figuras rayitos gen gen' nRay
           fin = concatMap rgbToString (gammaFunc fmx gamma a)
 

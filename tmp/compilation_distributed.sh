@@ -17,11 +17,11 @@ cd ..
 make all
 cd tmp
 
-if [ -f "$../src/kd.bin" ]; then
-    cp ../src/kd.bin .
-else
-    ./cargaKD
-fi
+# if [ -f "$../src/kd.bin" ]; then
+cp ../src/kd.bin .
+# else
+#     ./cargaKD
+# fi
 
 mv simulacion simulacion_berlin
 mv cargaKD cargaKD_berlin
