@@ -15,7 +15,8 @@ import Elem3D
       escalateDir,
       normal, escalatePoint, pointDir, dirPoint, getX, getY, getZ )
 import Debug.Trace (trace)
-
+import Data.List (minimumBy)
+import Data.Ord (comparing)
 import Data.Maybe (mapMaybe)
 
 
@@ -46,21 +47,23 @@ calculateBoundingBox triangles =
         maxPoint = Point3D (maximum xs) (maximum ys) (maximum zs)
     in AABB minPoint maxPoint
 
-splitTriangles :: [Triangulo] -> ([Triangulo], [Triangulo])
-splitTriangles triangles =
-    let (left, right) = splitAt (length triangles `div` 2) triangles
-    in (left, right)
+splitTriangles :: Int -> [Triangulo] -> [[Triangulo]]
+splitTriangles maxSize [] = []
+splitTriangles maxSize triangles =
+    let (first, rest) = splitAt maxSize triangles
+    in first : splitTriangles maxSize rest
 
-buildBVH :: [Triangulo] -> BVH
-buildBVH triangles =
+buildBVH :: Int -> [Triangulo] -> BVH
+buildBVH idNum triangles =
     let bbox = calculateBoundingBox triangles
-    in if length triangles <= 6000 -- Adjust threshold as needed
-        then BVH bbox [] triangles 9999
+        maxSize = 64
+    in if length triangles <= maxSize
+        then BVH bbox [] triangles idNum
         else
-            let (leftTriangles, rightTriangles) = splitTriangles triangles
-                leftBVH = buildBVH leftTriangles
-                rightBVH = buildBVH rightTriangles
-            in BVH bbox [leftBVH, rightBVH] [] 9999
+            let sublists = splitTriangles (length triangles `div` maxSize) triangles
+                subBVHs = zipWith (\idx sublist -> buildBVH idx sublist) [idNum..] sublists
+            in BVH bbox (subBVHs) [] idNum
+
 
 rayIntersectsAABB :: Ray -> AABB -> Bool
 rayIntersectsAABB (Ray (Point3D ox oy oz) (Direction dx dy dz)) (AABB (Point3D minx miny minz) (Point3D maxx maxy maxz)) =
@@ -153,12 +156,17 @@ oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles
     if rayIntersectsAABB ray bbox
         then
             if null children
-                then oneCollision ray (Triangle $ snd(closestIntersection ray triangles))
+                then
+                    oneCollision ray (Triangle $ snd(closestIntersection ray triangles))
                 else
-                    let (t1, obj1) = oneCollision ray (Acelerator $ head children)
-                        (t2, obj2) = oneCollision ray (Acelerator $ children !! 1)
-                    in if t1 < t2 then (t1, obj1) else (t2, obj2)
+                    let childCollisions = filter (\(t, _) -> t /= -1) $ map (oneCollision ray . Acelerator) children
+
+                    in case childCollisions of
+                        [] -> (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+                        _ -> let (minT, minObj) = minimumBy (comparing fst) childCollisions
+                             in (minT, minObj)
         else (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+
 -- oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles _)) =
 --     if rayIntersectsAABB ray bbox
 --         then

@@ -1,5 +1,5 @@
 HC    = ghc
-FLAGS = -O2 -funfolding-use-threshold=16 -fexcess-precision -optc-O3 -optc-ffast-math -threaded -eventlog -rtsopts -outputdir ./compil_files 
+FLAGS = -O2 -funfolding-use-threshold=16 -fexcess-precision -optc-O3 -optc-ffast-math -threaded -eventlog -rtsopts -outputdir ./compil_files
 #-Wall -Werror -rtsopts 
 VPATH = ./src
 

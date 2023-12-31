@@ -106,9 +106,9 @@ main = do
 
       let objFilePath1 = "../meshes/simplef15.obj"  
       (vertices1, triangles1) <- loadObjFile objFilePath1
-      let vertices1' = map (movePoint (Direction (0) (-5) (-25)).rotatePoint 'X' (370).rotatePoint 'Y' 90.rotatePoint 'X' 90.movePoint (Direction (0) 0 0).escalatePointt (1)) vertices1
+      let vertices1' = map (escalatePointt (1)) vertices1
           customTriangles1 = convertToCustomFormat (vertices1', triangles1)
-          boundingVol = buildBVH customTriangles1
+          boundingVol = buildBVH 4000 customTriangles1
           !figuras' =  addFigMult [(Acelerator boundingVol)]  figuras
           
       -- let !kdt = createKD $ createPhoton potf [] n figuras luces gen'

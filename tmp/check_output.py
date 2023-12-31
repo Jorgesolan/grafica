@@ -12,6 +12,13 @@ def write_clamped_max_ppm(filename, dimensions, rgb, fixedpixels):
         f.write(str(rgb)+"\n")
         f.write(' '.join(fixedpixels) + '\n')
 
+def write_filled_ppm(filename, dimensions, rgb, fixedpixels):
+    with open(filename, 'w') as f:
+        f.write("P3\n")
+        f.write(' '.join(dimensions)+"\n")
+        f.write(str(rgb)+"\n")
+        f.write(' '.join(fixedpixels) + '\n')
+
 def check_ppm_data(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -37,6 +44,8 @@ def check_ppm_data(filename):
         # Check for data mismatch
         if expected_pixels != actual_pixels:
             print(f"Error: Data mismatch - Expected {expected_pixels} pixels, found {actual_pixels} pixels.")
+            filledpixels = pixel_data + ['0' for i in range (expected_pixels-actual_pixels)]
+            write_filled_ppm("output_filled.ppm",dimensions,color_depth,filledpixels)
         elif not valid_color_depth:
             print(f"Error: Color depth mismatch - Color values exceed specified depth of {color_depth}.")
             real_max = max([pixel for pixel in pixel_data if not 0 <= int(pixel) <= color_depth])
@@ -46,4 +55,4 @@ def check_ppm_data(filename):
         else:
             print("Data check passed. No mismatch found.")
 
-check_ppm_data('output.ppm')
+check_ppm_data('output_filled.ppm')

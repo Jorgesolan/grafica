@@ -68,6 +68,8 @@ centr'' :: Point3D
 centr'' = Point3D 0 (-15) (-44)
 centr''' :: Point3D
 centr''' = Point3D 15 (-10) (-22)
+centrG :: Point3D
+centrG = Point3D 0 0 0
 luz :: Luz
 luz = Luz (Point3D 0 15 (-10)) (RGB 255 255 255) intMxKd
 luz' :: Luz
@@ -95,6 +97,8 @@ bola'' :: Shape
 bola'' =  Sphere (Esfera centr'' 4 (RGB 150 0 0 ) (0.8, 0, 0) 0 0)
 bola''' :: Shape
 bola''' =  Sphere (Esfera centr''' 5 (RGB 122 210 155) (0.8,0,0) 1.5 0)
+bolaG :: Shape
+bolaG =  Sphere (Esfera centrG 200 (RGB 50 50 50) (1,0,0) 1.5 0)
 rect0 :: Shape
 rect0 = Rectangle (Rectangulo (Point3D 25 0 0) (Direction 1 0 0) 100 100 (RGB 122 10 255) (0.9,0,0) 0 0)
 rect1 :: Shape
@@ -118,7 +122,8 @@ c = Sphere (Esfera (Point3D (-10) 10 (-10)) 5 (RGB 255 255 255) (0.8,0,0) 1.5 0)
 d = Sphere (Esfera (Point3D (-10) (-10) (-10)) 5 (RGB 255 255 255) (0.8,0,0) 1.5 0)
 
 figuras :: [Shape]
-figuras = addFigMult [bola,bola',bola'',rect0,rect1,rect2,plano2, plano4,plano5] []
+-- figuras = addFigMult [bola,bola',bola'',rect0,rect1,rect2,plano2, plano4,plano5] []
+figuras = addFigMult [bolaG, plano4,plano5] []
 --figuras = addFigMult [plan,a,b,c,d] []
 -- Poner primero las bolas por la cosa del cristal, modificar el valor de dir Cristal depende del numero de bolas
 luces :: [Luz]
