@@ -1,4 +1,4 @@
-
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -13,19 +13,18 @@ import Elem3D
       (#<),
       (.*),
       escalateDir,
-      normal, escalatePoint, pointDir, dirPoint, getX, getY, getZ )
+      normal, escalatePoint, pointDir, dirPoint, getX, getY, getZ, distPoint, addPoints )
 import Debug.Trace (trace)
+import Data.Maybe (mapMaybe)
 import Data.List (minimumBy)
 import Data.Ord (comparing)
-import Data.Maybe (mapMaybe)
-
 
 data Camara = Camara Point3D Base
 data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int}
 data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int}
 data Triangulo = Triangulo {xTr :: Point3D, yTr :: Point3D, zTr :: Point3D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int}
 data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
-data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, alrRe :: Float, ancRe :: Float, rgbRe ::  RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int}
+data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int}
 
 data AABB = AABB Point3D Point3D
 data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int}
@@ -36,6 +35,55 @@ data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Cylinder Cilindr
 -- data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Donut Rosquilla
 
 data Obj = Obj {rgbObj :: RGB, w0Obj :: Direction, colObj :: Point3D, normObj :: Direction, trObj ::(Float, Float, Float), reflObj :: Float, idObj:: Int} deriving Show
+
+
+getUV :: Shape -> Point3D -> (Float, Float)
+--getUV (Plane (Plano {..})) p = (1,1)
+getUV (Sphere (Esfera {..})) p = trace (show (u,v) ) (u,v)
+    where
+        (Point3D x y z) = p
+        (Point3D cx cy cz) = centEs
+        u = 0.5 + atan2 (z - cz) (x - cx) / (2 * pi)
+        v = 0.5 - asin ((y - cy) / radEs) / pi
+
+getUV (Triangle (Triangulo {..})) p = (1,1)
+getUV (Cylinder (Cilindro p1 p2 p3 _ _ _ _)) p = (1,1)
+getUV (Rectangle(Rectangulo {..})) p = (u,v)
+    where
+      halfHeight = altRe / 2
+      halfWidth = ancRe / 2
+      Direction x y z = normRe 
+      right = tngRe
+      up = normal $ normRe * normal right
+      bottomLeft = calculateVertex (-halfWidth) (-halfHeight)
+      bottomRight = calculateVertex halfWidth (-halfHeight)
+      topLeft = calculateVertex (-halfWidth) halfHeight
+
+      calculateVertex w h = centRe `addPoints` dirPoint (escalateDir w right + escalateDir h up)
+
+      !u = distanceToRay p (Ray bottomLeft (bottomLeft #< topLeft)) / altRe
+      !v = distanceToRay p (Ray bottomLeft (bottomLeft #< bottomRight)) / ancRe
+
+      distanceToRay :: Point3D -> Ray -> Float -- Punto más cercano al rayo
+      distanceToRay point ray =
+        let
+            (Point3D ox oy oz) = oR ray
+            (Direction dx dy dz) = dR ray
+            px = ox - xP point
+            py = oy - yP point
+            pz = oz - zP point
+            a = dx * dx + dy * dy + dz * dz
+            b = px * dx + py * dy + pz * dz
+            t = -(b / a)
+            closestPoint = Point3D (ox + t * dx) (oy + t * dy) (oz + t * dz)
+            in distPoint point closestPoint
+
+        -- (Direction x y z) = normal normRe
+        -- pAbI = Point3D (xP centRe - (ancRe/2 * abs(1 - x))) (yP centRe - (altRe/2 * abs(1 - y))) (zP centRe + (ancRe/2 * abs(1 - z)))
+        -- pArI = Point3D (xP centRe - (ancRe/2 * abs(1 - x))) (yP centRe - (altRe/2 * abs(1 - y))) (zP centRe - (ancRe/2 * abs(1 - z)))
+        -- pAbD = Point3D (xP centRe - (ancRe/2 * abs(1 - x))) (yP centRe - (altRe/2 * abs(1 - y))) (zP centRe - (ancRe/2 * abs(1 - z)))
+    
+getUV (Acelerator (BVH {..})) p = (1,1)
 
 
 calculateBoundingBox :: [Triangulo] -> AABB
@@ -99,7 +147,7 @@ addFig (Plane (Plano {..})) shapes = Plane (Plano centPl normPl rgbPl trPl reflP
 addFig (Sphere (Esfera {..})) shapes = Sphere (Esfera centEs radEs rgbEs trEs reflEs (length shapes)):shapes
 addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo xTr yTr zTr rgbTr trTr reflTr (length shapes)):shapes
 addFig (Cylinder (Cilindro p1 p2 p3 color reflec kr _)) shapes = Cylinder (Cilindro p1 p2 p3 color reflec kr (length shapes)):shapes
-addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe alrRe ancRe rgbRe trRe reflRe (length shapes)):shapes
+addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe (length shapes)):shapes
 addFig (Acelerator (BVH {..})) shapes = Acelerator (BVH aabb bvhs triangulos (length shapes)):shapes
 addFigMult :: [Shape] -> [Shape] -> [Shape]
 addFigMult xs shapes = foldl (flip addFig) shapes xs
@@ -189,12 +237,12 @@ oneCollision (Ray p d) (Rectangle (Rectangulo {..}))
     localX = offset .* right
     localY = offset .* up
     halfWidth = ancRe / 2
-    halfHeight = alrRe / 2
+    halfHeight = altRe / 2
     collisionPoint = pointDir p + escalateDir t d
     t = (centRe #< p) .* normRe / denom
     withinBounds = -halfWidth <= localX && localX <= halfWidth && -halfHeight <= localY && localY <= halfHeight
     denom = d .* normRe
-    right = normal ( Direction 0 1 0 * normRe)
+    right = normal tngRe
     up = normRe * right
     normRe' = if d .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
 

@@ -10,9 +10,8 @@ import Elem3D
       Point3D(..),
       escalatePoint,escalatePointt,
       degToRad,
-      rotatePoint,movePoint
+      rotatePoint,movePoint, divRGB
     )
-
 import Figuras
     ( Obj,
       Shape(Sphere, Plane, Cylinder,Rectangle,Acelerator),
@@ -34,8 +33,8 @@ import Funciones
       generateRaysForPixels,
       obtenerPrimeraColision,
       listRay,
-      chunksOf )
-import PathTracer (pathTracer)
+      chunksOf, mulCam )
+import PathTracer (pathTracer, luzDirecta, luzArea)
 import KdTest ( createKD )
 import PhotonMap ( photonMap )
 import Data.KdTree.Static ( KdTree )
@@ -52,36 +51,33 @@ import Text.Read (readMaybe)
 -- make clean && make cargaKD && cd ./tmp && ./cargaKD && cd ..
 -- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
 
-
 {-# INLINE antialiasing #-}
 antialiasing :: Int -> [(Float, Obj)] ->  [(Float, Obj)]
 antialiasing n rayos = map obtenerPrimeraColision (chunksOf n rayos) -- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing
 
-listRayToRGB :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> Int -> [[RGB]]
-listRayToRGB luz cam figuras rayos gen0 gen1 nRay iter
-  | iter == 0 = []
-  | otherwise = luzFinal : listRayToRGB luz cam figuras rayos gen1' gen1'' nRay (iter-1)
+{-# INLINE listRayToRGB #-}
+listRayToRGB :: [Luz] -> [Shape] -> [Ray] -> StdGen -> Int -> [RGB]
+listRayToRGB luz figuras rayos gen nRay = colorDirecto
+  --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+  -- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   where
-    (gens, _) = splitAt (length rayos) $ tail $ iterate (snd . split) gen0
-    rayColisions = listRay $ map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    nRebotes = 1
-    luzFinal = zipWith (pathTracer 1 luz figuras 0 nRebotes) rayColisions gens
-    gen1' = fst $ split gen1
-    gen1'' = snd $ split gen1
+    !antial = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
+    rayColisions = listRay antial
+    
+    (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-listRayPhoton :: KdTree Float Foton -> StdGen -> Point3D -> [Shape] -> [Ray] -> Int -> [RGB]
-listRayPhoton kdt gen cam figuras rayos nRay = map (photonMap kdt radio figuras gen) rayColisions
+    ppp = 10 -- Caminos por pixel
+    colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
+    colorDirecto = map (luzDirecta luz figuras) rayColisions
+    colorArea = zipWith (luzArea figuras ppp) rayColisions gens
+
+
+listRayPhoton :: KdTree Float Foton -> Point3D -> [Shape] -> [Ray] -> Int -> [RGB]
+listRayPhoton kdt cam figuras rayos nRay = map (photonMap kdt radio figuras) rayColisions
   where
     !raySMPP = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
     rayColisions = listRay raySMPP
     radio = 10
-
-listaRaySupreme :: [Luz] -> Point3D -> [Shape] -> [Ray] -> StdGen -> StdGen -> Int -> [RGB]
-listaRaySupreme luz cam figuras rayos gen gen' nRay = luzFinal
-  where
-    nIter = 3
-    luzFinal = mediaLRGB $ listRayToRGB luz cam figuras rayos gen gen' nRay nIter
-
 
 
 main :: IO ()
@@ -115,10 +111,12 @@ main = do
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "./kd.bin"
       let !kdt = createKD notkdt
-      let !rayitos = generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen
-          a = listRayPhoton kdt gen' cam figuras' rayitos nRay
-          -- a = listaRaySupreme luces cam figuras rayitos gen gen' nRay
-          fin = concatMap rgbToString (gammaFunc fmx gamma a)
+      let cams = mulCam camara 0
+      let !rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams
+          -- a = map (\rayos -> listRayPhoton kdt cam figuras' rayos nRay) rayitos
+          a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos
+          c = mediaLRGB a
+          fin = concatMap rgbToString (gammaFunc fmx gamma c)
 
       writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin
 

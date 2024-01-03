@@ -13,21 +13,22 @@ import Elem3D
       (#<),
       aproxPoint,
       (.*),
-      escalateDir,
+      escalateDir, escalateDir',
       modd,
       normal,
       modRGB,
       divRGB,
       scale,
       generateBase,
-      cambioBase, addPoints, pointDir, Foton, distFot, (#), escalatePoint, distPoint )
+      cambioBase, addPoints, pointDir, Foton, distFot, (#), escalatePoint, distPoint, movePoint, angleBetween )
 import Figuras
     ( oneCollision,
       Camara(..),
       Obj(..),
       Rectangulo(Rectangulo),
-      Shape(Rectangle) )
+      Shape(Rectangle), getShapeID, getUV )
 
+--import Math.Erf (erf)
 import System.IO.Unsafe (unsafePerformIO)
 import Data.Ord (comparing)
 import Debug.Trace (trace)
@@ -36,39 +37,55 @@ import System.Random (randomR, StdGen, randomRs,split, mkStdGen)
 
 import Data.Either (fromRight)
 import Data.Binary (Word8)
+import Data.Number.Erf
+
+--------------------------
+--  FUNCIONES LIBRERIA  --
+--------------------------
+{-# INLINE build #-}
+build :: ((a -> [a] -> [a]) -> [a] -> [a]) -> [a]
+build g = g (:) []
+
+--Divide una lista en n sublistas
+chunksOf :: Int -> [e] -> [[e]]
+chunksOf i ls = map (take i) (build (splitter ls))
+  where
+    splitter :: [e] -> ([e] -> a -> a) -> a -> a
+    splitter [] _ n = n
+    splitter l c n = l `c` splitter (drop i l) c n
+
 --------------------------
 -- FUNCIONES DE OBJETOS --
 --------------------------
 
 {-# INLINE objAleatorio #-}
-objAleatorio :: [Shape] -> Obj -> StdGen -> StdGen -> Obj
-objAleatorio figuras obj gen gen' = nxtObj
+objAleatorio :: [Shape] -> Obj -> StdGen -> Obj
+objAleatorio figuras obj gen = nxtObj
   where
-    !nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray (colObj obj) $ normal (puntoAl #< colObj obj))) figuras -- Siguiente objeto que choca, q no sea el mismo
-    puntoAl = cambioBase (colObj obj) (generateBase dirAl (normObj obj) (normal (dirAl * normObj obj))) $ genPoint gen gen'
-    dirAl = normal $ normObj obj * Direction 2 1 (-2) -- Direccion cualquiera para que no se repita, si peta cambiar esto
+    !nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray (colObj obj) $ normal (puntoAl #< colObj obj))) figuras
+    !puntoAl = cambioBase (colObj obj) (generateBase dirAl (normObj obj) (normal (dirAl * normObj obj))) $ genPoint gen
+    !dirAl = normal $ normObj obj * Direction 2 1 (-2)
 
 {-# INLINE objEspejo #-}
 objEspejo :: [Shape] -> Direction -> Direction -> Point3D -> Obj
-objEspejo figuras w0 normal p = snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras
+objEspejo figuras w0 norm p = snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras
   where
-    newDir = calcularDirEspejo w0 normal
+    newDir = dirEspejo w0 norm
 
 objEspejoRandom :: [Shape] -> Direction -> Direction -> Point3D -> StdGen -> Float -> (Obj,StdGen)
 objEspejoRandom figuras w0 norm p gen step  = (snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras,gen')
   where
-    dirW0 = calcularDirEspejo w0 norm
+    dirW0 = dirEspejo w0 norm
     newDir = normal $ dirW0 + Direction x y z
     [x,y,z] = take 3 $ randomRs (-step,step) gen
     gen' = snd $ split gen
 
 objCristal :: [Shape] -> Direction -> Direction -> Float -> Float -> Point3D -> (Obj, Float)
-objCristal figuras w0 normal n1 n2 p = (snd $ obtenerPrimeraColision $ map (oneCollision (Ray pFix newDir)) figuras, n2')
+objCristal figuras w0 norm n1 n2 p = {- trace (show newDir ++ " " ++ show nxtObj) $ -} (nxtObj, n2)
   where
-    pFix = {- movePoint (escalateDir' 1000 newDir) -} p
-    newDir = calcularDirCristal w0 normal n1 n2'
-    n2' = if n1 == n2 then 1 else n2
--- Para planos el final devolver 1
+    nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray pFix newDir)) figuras
+    pFix = movePoint newDir p
+    newDir = normal $ calcularDirCristal w0 norm n1 n2
 
 --------------------------
 -- FUNCIONES DE COLORES --
@@ -89,12 +106,11 @@ sumRGB xs = foldr (+) (head xs) (tail xs)
 
 
 {-# INLINE formula #-}
-formula :: RGB -> Float -> Point3D -> Point3D -> Direction -> RGB -> Bool -> RGB
-formula rgbLuz intLuz pointLuz p vNormal rgbObj tCos
+formula :: RGB -> Float -> Point3D -> Point3D -> Direction -> RGB -> RGB
+formula rgbLuz intLuz pointLuz p vNormal rgbObj
   | (vNormal .* normal (pointLuz #< p)) < 0 = RGB 0 0 0
-  | p == pointLuz = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj
-  | tCos = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj `modRGB` (vNormal .* normal (pointLuz #< p)) -- "Integral"
-  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/5.0))**2)) * rgbObj `modRGB` (pi * (vNormal .* normal (pointLuz #< p)))
+  | p == pointLuz = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/10.0))**2)) * rgbObj
+  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/10.0))**2)) * rgbObj `modRGB` (vNormal .* normal (pointLuz #< p))
 
 --------------------------
 -- FUNCIONES DE CAMARA  --
@@ -124,7 +140,7 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
     startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
-    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal
+    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal # p
     xValues = [(-px'), (-px'+piX) .. (px'-piX)]
     xStep = length xValues `div` etapasX
     startIdxx = etapaX * xStep
@@ -141,18 +157,18 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
 polarToCartesian :: Float -> Float -> Float -> Point3D
 polarToCartesian !inclinacion !azimut !cosRand = Point3D (sin inclinacion * cos azimut) cosRand (sin inclinacion * sin azimut)
 
-genPointTotal :: StdGen -> StdGen -> Point3D
-genPointTotal gen1 gen2 = polarToCartesian (acos randIncl) (2.0 * pi * randAz) randIncl
+genPointTotal :: StdGen -> Point3D
+genPointTotal gen = polarToCartesian (acos randIncl) (2.0 * pi * randAz) randIncl
   where
-    !(randIncl, _) = randomR (-1.0, 1.0) gen1 :: (Float, StdGen)
-    !(randAz, _) = randomR (0.0, 1.0) gen2 :: (Float, StdGen)
+    !(randIncl, gen') = randomR (-1.0, 1.0) gen :: (Float, StdGen)
+    !(randAz, _) = randomR (0.0, 1.0) gen' :: (Float, StdGen)
 
-genPoint :: StdGen -> StdGen -> Point3D
-genPoint gen1 gen2 = polarToCartesian (acos randIncl) (2 * pi * randAz) randIncl
+{-# INLINE genPoint #-}    
+genPoint :: StdGen -> Point3D
+genPoint gen = polarToCartesian (acos randIncl) (2 * pi * randAz) (sqrt randIncl) -- (1 - randIncl)
   where
-    !(randIncl, _) = randomR (0.0, 1.0) gen1 :: (Float, StdGen)
-    !(randAz, _) = randomR (0.0, 1.0) gen2 :: (Float, StdGen)
-
+    !(randIncl, gen') = randomR (0.0, 1.0) gen :: (Float, StdGen)
+    !(randAz, _) = randomR (0.0, 1.0) gen' :: (Float, StdGen)
 
 gen2Point :: StdGen -> StdGen -> (Float,Float)
 gen2Point gen1 gen2 = (u, v)
@@ -186,9 +202,9 @@ colision !p0 !luz !figuras = aproxPoint p0 bonk -- Si es el mismo punto, no choc
 --FUNCIONES DE DIRECCIONES
 --------------------------
 
-{-# INLINE calcularDirEspejo #-}
-calcularDirEspejo :: Direction -> Direction -> Direction
-calcularDirEspejo !d !normal = d - escalateDir (2.0 * (d .* normal)) normal
+{-# INLINE dirEspejo #-}
+dirEspejo :: Direction -> Direction -> Direction
+dirEspejo !d !norm = normal $  d - escalateDir (2.0 * (d .* norm)) norm
 
 {-# INLINE calcularDirCristal #-}
 calcularDirCristal :: Direction -> Direction -> Float -> Float -> Direction
@@ -196,26 +212,14 @@ calcularDirCristal !d !norm n1 n2 = if sinT2 > 1 then d else d'
  where
     n = n1 / n2
     cosI = -(d .* norm)
-    !sinT2 = n * n * (1 - cosI * cosI)
+    !sinT2 = (n * n) * (1 - (cosI * cosI))
     d' = normal $ escalateDir n d + escalateDir (n * cosI - sqrt (1 - sinT2)) norm
 
 --------------------------
 -- FUNCIONES AUXILIARES --
 --------------------------
-
-{-# INLINE build #-}
-build :: ((a -> [a] -> [a]) -> [a] -> [a]) -> [a]
-build g = g (:) []
-
---Divide una lista en n sublistas
-chunksOf :: Int -> [e] -> [[e]]
-chunksOf i ls = map (take i) (build (splitter ls))
-  where
-    splitter :: [e] -> ([e] -> a -> a) -> a -> a
-    splitter [] _ n = n
-    splitter l c n = l `c` splitter (drop i l) c n
-
-ruletaRusa :: (Float, Float, Float) -> StdGen-> (Int, Float)
+{-# INLINE ruletaRusa #-}
+ruletaRusa :: (Float, Float, Float) -> StdGen -> (Int, Float)
 ruletaRusa (a,b,c) gen = (i, p')
   where
     absorption = if a+b+c == 1 then 0.1 else 1-(a+b+c)
@@ -234,23 +238,23 @@ ruletaRusa (a,b,c) gen = (i, p')
       | p < c' = c/d
       | otherwise = absorption
 
-brdf :: Obj -> RGB
-brdf (Obj {..}) =
-  if idObj == 5
-  then rgbTxt
-  else scale rgbObj
+{-# INLINE brdf #-}
+brdf :: Obj -> [Shape]-> RGB
+brdf (Obj {..}) figuras
+  | idObj == 4 = scale rgbObj -- rgbTxt
+  | kd == 0 = RGB 1 1 1 -- Que a los cristales o espejos sin difusa no le afecte un color que le hayas puesto
+  | otherwise = scale rgbObj
   where
-    -- Corrección temporal :D
-    (x', y') = ((xP colObj + 25) / 50, (yP colObj + 25) / 50)
-    texX = round $ x' * (texWidth - 1)
-    texY = round $ y' * (texHeight - 1)
-    textureImage = loadTexture "../meshes/algo.png"
-    (texWidth, texHeight) = (fromIntegral $ imageWidth textureImage, fromIntegral $ imageHeight textureImage)
-    rgbTxt = pixtoRGB $ pixelAt textureImage texX texY
+      (kd, ke, kr) = trObj
+      (x', y') = ((xP colObj + 10) / 50, (yP colObj + 10) / 50)
+      textureImage = loadTexture "../meshes/algo.png"
+      (texWidth, texHeight)
+        = (fromIntegral $ imageWidth textureImage,
+           fromIntegral $ imageHeight textureImage)
+      rgbTxt = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth - 1)) (round $  v * (texHeight - 1))
+      fig = head $ filter (\shape -> idObj == getShapeID shape) figuras
+      (u,v) = getUV fig colObj
 
-sumFlLuz :: [Luz] -> Float
-sumFlLuz [] = 0
-sumFlLuz ((Luz _ _ int):luz) = int + sumFlLuz luz
 
 loadTexture :: FilePath -> Image PixelRGB8
 loadTexture filePath =
@@ -261,15 +265,21 @@ loadTexture filePath =
             Left err -> error $ "Error loading image: " ++ err
             _ -> error "Usa png ;)"
 
+{-# INLINE pixtoRGB #-}
 pixtoRGB :: PixelRGB8 -> RGB
 pixtoRGB (PixelRGB8 r g b) = RGB (toFloat r) (toFloat g) (toFloat b)
   where
     toFloat :: Word8 -> Float
     toFloat x = fromIntegral x / 255.0
 
--- Interpolación lineal.
-interpolate :: (Float, Float) -> Float -> Float
-interpolate (a, b) t = a + t * (b - a)
+{-# INLINE sumFlLuz #-}
+sumFlLuz :: [Luz] -> Float
+sumFlLuz [] = 0
+sumFlLuz ((Luz _ _ int):luz) = int + sumFlLuz luz
+
+--------------------------
+--FUNCIONES ESTADISTICAS--
+--------------------------
 
 -- Calcular la media de una lista de valores
 {-# INLINE media #-}
@@ -298,19 +308,26 @@ fGaus photons obj fot = if isNaN result then 0 else result
     x = distFot (colObj obj) fot
     result = a * exp (-(((x-b)**2) / (2*c**2)))
 
-addNiebla :: Point3D -> Obj -> Float -> RGB -> RGB
-addNiebla p obj x rgb = newRGB + (rgb `modRGB` reducObj) + (scale (RGB 30 30 40 )`modRGB` ((1-reducObj)*0.15))
+
+--------------------------
+--       EXTRAS         --
+--------------------------
+{-# INLINE addNiebla #-}
+addNiebla :: Point3D -> Obj -> Float -> [Shape] ->  RGB -> RGB
+addNiebla p obj x figuras rgb = newRGB + (rgb `modRGB` reducObj)
   where
     newRGB = RGB fact fact fact
-    reducLuz = if zP p < 0 then exp (x * zP p) else 1
-    reducObj = if zP (colObj obj) < 0 then exp ((1-x) * zP (colObj obj)/7.5) else 1 -- Como le afecta la niebla de lejos a los objetos
+    reducLuz = if zP closest < 0 then exp (x * zP closest / 10) else 1
+    reducObj = if zP (colObj obj) < 0 then exp ((1-x) * zP (colObj obj) / 10) else 1 -- Como le afecta la niebla de lejos a los objetos
 
-    camP = Point3D 0 0 30 -- Comienzo de la camara
+    camP = Point3D 0 0 10 -- Comienzo de la camara
     cam = Ray camP dir
     dir = normal $ colObj obj #< camP
-    fact = x * reducLuz * ((distanceToRay p cam / 25) ** (-1.75)) -- Como afecta la luz a los objetos
+    closest = distanceToRay p cam
+    fact = (1-x) * reducLuz * (distPoint p closest ** (-1.75)) -- Como afecta la luz a los objetos
 
-distanceToRay :: Point3D -> Ray -> Float
+{-# INLINE distanceToRay #-}
+distanceToRay :: Point3D -> Ray -> Point3D -- Punto más cercano al rayo
 distanceToRay point ray =
   let
     !(Point3D ox oy oz) = oR ray
@@ -322,5 +339,64 @@ distanceToRay point ray =
     !b = px * dx + py * dy + pz * dz
     !t = -(b / a)
     !closestPoint = Point3D (ox + t * dx) (oy + t * dy) (oz + t * dz)
-    !distance = distPoint point closestPoint
-  in distance
+    in closestPoint
+
+{-# INLINE fPhong #-}
+fPhong :: Point3D -> Obj -> Float -> [Shape] -> Float
+fPhong pLuz obj alpha figuras  = if col then (alpha+2/2) *abs (dirEspejo (colObj obj #<pLuz) (normObj obj) .* w0Obj obj)**alpha else 0
+  where
+    col = colision (colObj obj) pLuz figuras'
+    figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
+
+-- iris :: Obj -> RGB
+-- iris (Obj {..}) = newRGB
+--   where
+--     newRGB = RGB (1 * rFactor') (1 * gFactor') (1 * bFactor')
+--     angle = abs $ normObj .* w0Obj
+--     thickness = 0.3
+--     rFactor' = rFactor
+--     bFactor' = bFactor
+--     gFactor' = gFactor
+--     -- Factores de ajuste para cada canal
+--     rFactor = abs $ interferenceFactor * cos (2 * pi * thickness * refractiveIndex)
+--     gFactor = abs $ interferenceFactor * cos (2 * pi * thickness * refractiveIndex)
+--     bFactor = abs $ interferenceFactor * cos (2 * pi * thickness * refractiveIndex)
+
+--     -- Ajusta estos parámetros según tu necesidad
+--     interferenceFactor = 0.2
+--     refractiveIndex = reflObj
+
+-- fresnell :: Obj -> Float -> Float
+-- fresnell (Obj {..}) iR = 0.5 * (paralelo**2 + perpendicular**2)
+--   where
+--     paralelo = (reflObj* cosI - iR * cosT) / (reflObj* cosI + iR * cosT)
+--     perpendicular = (iR* cosI - reflObj * cosT) / (iR* cosI + reflObj * cosT)
+--     cosI = w0Obj .* normObj
+--     cosT = normObj .* calcularDirCristal w0Obj normObj iR reflObj
+
+-- microfacet :: Direction -> Direction -> Float -> Float
+-- microfacet wH norm alpha = exp (- (sqrt (1 - cos**2) / cos) / alpha**2) / (pi * alpha**2 * cos**4 )
+--   where cos = min (wH .* norm) 1
+
+-- shadowing :: Direction -> Direction -> Float -> Float
+-- shadowing wI norm alpha = 2 / (1 + erf s + 1/(s*sqrt pi) + exp (-(s**2)))
+--   where
+--     s = abs $ 1 / (alpha * tan)
+--     tan = sqrt (1 - cos**2) / cos
+--     cos = min (wI .* norm) 1
+
+{-# INLINE mulCam #-}
+mulCam :: Camara -> Int -> [Camara]
+mulCam cam@(Camara p b) n = cam : map (`Camara` b) (take n transformedPoints)
+  where
+    circlePoints = pointsInUnitCircle  -- Tomamos todos los puntos dentro de un círculo unitario
+    scale = 0.75  -- Ajusta el radio del círculo según tus necesidades
+
+    -- Función para escalar y desplazar puntos según el círculo deseado
+    transformPoint (x, y) = Point3D (scale * x) (scale * y) 20
+
+    -- Lista de puntos dentro de un círculo unitario
+    pointsInUnitCircle = [(cos theta, sin theta) | theta <- [0, (2 * pi) / fromIntegral n .. 2 * pi]]
+
+    -- Aplicar la transformación a cada punto
+    transformedPoints = map transformPoint circlePoints

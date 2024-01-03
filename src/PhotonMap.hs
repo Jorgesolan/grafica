@@ -38,7 +38,7 @@ import Funciones
       genPointTotal,
       obtenerPrimeraColision,
       colision,
-      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla )
+      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla, dirEspejo)
 import Debug.Trace (trace)
 import Data.List ()
 import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
@@ -46,19 +46,19 @@ import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
 createPhoton :: Float -> [Foton] -> Int -> Int -> [Shape] -> [Luz] -> StdGen -> Int -> [Foton]
 createPhoton lzT fotones contador contMx figuras luces gen nRebotes
   | contador == contMx = fotones
-  | contador == contMx `div` round (lzT / intLuz) = createPhoton (lzT-intLuz) fotones (contador+1) contMx figuras (tail luces) gen' nRebotes
-  | otherwise = createPhoton lzT newlisP (contador+1) contMx figuras luces gen0' nRebotes
+  | contador == contMx `div` round (lzT / intLuz) = createPhoton (lzT-intLuz) fotones (contador+1) contMx figuras (tail luces) gen' nRebotes -- Cambio de luz
+  | otherwise = createPhoton lzT newlisP (contador+1) contMx figuras luces gen' nRebotes
   where
-    (gen', gen'') = split gen
-    (gen0, gen0') = split gen''
     figLuz = filter (\shape -> 0 < getShapeID shape) figuras
-    (ray, Luz pointPapa rgbPadre intLuz) = selescLightSource luces figLuz contador contMx gen gen0
+    (ray, Luz pointPapa rgbPadre intLuz) = selescLightSource luces figLuz contador contMx gen
     !newlisP = traceRay pointPapa (4.0*pi*intLuz/fromIntegral contMx) rgbPadre fotones figuras nRebotes gen' nxtObj
     nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision ray) figuras -- Siguiente objeto que choca
 
+    gen' = snd $ split gen
 
-selescLightSource :: [Luz] -> [Shape] -> Int -> Int -> StdGen -> StdGen -> (Ray, Luz)
-selescLightSource luces figuras contador contMx gen gen' = (Ray pLuz (movePoint (pointDir pLuz) (genPointTotal gen gen') #< pLuz), luz) --(Ray (movePoint (Direction 0 (-1) 0) pRand) (movePoint (pointDir pRand) (genPoint gen gen') #< pRand), luz) 
+
+selescLightSource :: [Luz] -> [Shape] -> Int -> Int -> StdGen -> (Ray, Luz)
+selescLightSource luces figuras contador contMx gen = (Ray pLuz (movePoint (pointDir pLuz) (genPointTotal gen) #< pLuz), luz) --(Ray (movePoint (Direction 0 (-1) 0) pRand) (movePoint (pointDir pRand) (genPoint gen gen') #< pRand), luz) 
   where
     luz@(Luz pLuz _ _) = head luces -- Tomar la primera luz 
     -- Contador que lleve photones, meteler formula y select de otra 
@@ -80,22 +80,22 @@ traceRay p pot rgb fotones figuras n gen obj
                 | rgb == RGB 0 0 0 -> fotones
                 | otherwise -> fotones
 
-    (caso, por) = ruletaRusa (trObj obj) gen'''
+    (caso, por) = ruletaRusa (trObj obj) gen
 
-    photonD = traceRay (colObj obj) (2*pi*pot'*por* abs (w0' .* normObj obj)) (brdf obj `modRGB` 255) (fotones ++ [foton]) figuras (n-1) gen'''' nxtObj
-    photonE = traceRay (colObj obj) (pot * por) (brdf obj * rgb ) fotones figuras n gen'''' objEsp -- De momento espejo blanco
-    photonR = traceRay (colObj obj) (pot * por) (brdf obj * rgb ) fotones figuras n gen'''' objCri -- De momento cristal blanco
+    photonD = traceRay (colObj obj) (2*pi*pot'*por* abs (w0Obj nxtObj .* normObj obj)) (brdf obj figuras `modRGB` 255) (fotones ++ [foton]) figuras (n-1) gen' nxtObj
+    photonE = traceRay (colObj obj) (pot * por) (brdf obj figuras * rgb ) fotones figuras n gen' objEsp
+    photonR = traceRay (colObj obj) (pot * por) (brdf obj figuras * rgb ) fotones figuras n gen' objCri
 
     foton = Foton (colObj obj) pot' rgb (idObj obj)
-    pot' = abs (w0Obj obj .* normObj obj)*pot / ((1+(modd (colObj obj #< p)/50.0))**2)
-    (gen', gen'') = split gen
-    (gen''', gen'''') = split gen''
-    w0' = w0Obj nxtObj
-    nxtObj = objAleatorio figuras' obj gen gen'
+    pot' = abs (w0Obj obj .* normObj obj)*pot / ((1+(modd (colObj obj #< p)/10.0))**2)
+    
+    nxtObj = objAleatorio figuras' obj gen
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
 
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj)
-    (objCri,_) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
+    (objCri,_) = objCristal figuras (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
+
+    gen' = snd $ split gen
 
 
 photonMulToRGB :: [Foton] -> Obj -> [Shape] -> Float -> RGB
@@ -106,9 +106,8 @@ photonMulToRGB photons obj figuras radio = newRGB
     fusion :: Obj -> Float -> Foton -> RGB
     fusion obj kernel fot = newRGB `modRGB` kernel
       where
-        newRGB = modRGB (scale $ rgbFot fot) (iFot fot) * brdf obj
-        figuras' = filter (\shape -> idFot fot /= getShapeID shape) figuras
-
+        newRGB = modRGB (scale $ rgbFot fot) (iFot fot) * brdf obj figuras
+        
 -- photonMap :: KdTree Float Foton -> Int -> [Shape]-> Obj -> RGB
 -- photonMap kdt nPhoton figuras obj@(Obj rgb w0 p norm (kd,0,0) kr' id) = newRGB * RGB 255 255 255
 --   where
@@ -139,33 +138,26 @@ photonMulToRGB photons obj figuras radio = newRGB
 
 
 
-photonMap :: KdTree Float Foton -> Float -> [Shape] -> StdGen -> Obj -> RGB
-photonMap kdt radio figuras gen obj
-  | kr == 0 && ke == 0 = addNiebla (Point3D 0 15 (-10)) obj 0.75 $ kdToRGB kdt (radio * kd) figuras obj
-  -- | idObj obj == 0 = dielRGB--kr == 0 && kd > ke = dielRGB --Dielectrico lo tratamos especial :D
-  | otherwise = addNiebla (Point3D 0 15 (-10)) obj 0.75 $ kdToRGB kdt (radio * kd) figuras obj + (rgbObj obj * scale colorEsp `modRGB` ke) + (rgbObj obj * scale colorCri `modRGB` kr)
+photonMap :: KdTree Float Foton -> Float -> [Shape] -> Obj -> RGB
+photonMap kdt radio figuras obj
+  | kr == 0 && ke == 0 = difuso| otherwise = difuso + espejo + cristal
   where
+    -- wH = normal (dirEspejo (w0Obj obj) (normObj obj) - w0Obj obj)
+    -- fres = fresnell obj 1
+    -- micro = microfacet wH (normObj obj) 0.4
+    -- shadow = shadowing wH (normObj obj) 0.4
+
+    difuso = kdToRGB kdt (radio * kd) figuras obj
+    espejo = rgbObj obj * scale colorEsp `modRGB` ke
+    cristal = rgbObj obj * scale colorCri `modRGB` kr
 
     (kd,kr,ke) = trObj obj
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj)
-    (objCri,_) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
-    
-    colorCri = photonMap kdt radio figuras gen objCri
-    colorEsp = photonMap kdt radio figuras gen objEsp
-    porc = abs $ w0Obj obj .* normObj obj
+    (objCri,_) = objCristal figuras (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
 
-    dielRGB = kdToRGB kdt radio figuras obj `modRGB` (porc*kd) + randEsp `modRGB` ((1-porc) * ke)
-    randEsp = mediaRGB (colorEsp:espejosRand)
-    espejosRand = map (photonMap kdt radio figuras gen) a
-    (a,b) = unzip $ randObjEsp [] gen
-    randObjEsp :: [Obj] -> StdGen -> [(Obj, StdGen)]
-    randObjEsp objs gen
-      | length objs == 6 = []
-      | otherwise = (newObj, gen'):randObjEsp (newObj:objs) gen'
-      where
-        (newObj, gen') = objEspejoRandom figuras' (w0Obj obj) (normObj obj) (colObj obj) gen 0.1
-
+    colorCri = photonMap kdt radio figuras objCri
+    colorEsp = photonMap kdt radio figuras objEsp
 
 
 kdToRGB :: KdTree Float Foton -> Float -> [Shape]-> Obj -> RGB

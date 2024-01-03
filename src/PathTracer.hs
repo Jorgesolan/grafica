@@ -1,60 +1,98 @@
 {-# LANGUAGE BangPatterns #-}
+
 module PathTracer where
 
-import Elem3D ( Luz(..), RGB(..), divRGB, scale, modRGB )
+import Elem3D ( Luz(..), RGB(..), divRGB, scale, modRGB, (.*), Point3D (Point3D), normal,nanRGB )
 import Figuras ( Obj(..), Shape, getShapeID )
 import System.Random (StdGen, split)
 import Funciones
-    ( objAleatorio, objEspejo, objCristal, formula, colision, brdf )
+    ( objAleatorio, objEspejo, objCristal, formula, colision, brdf, ruletaRusa, addNiebla, dirEspejo)
 import Debug.Trace (trace)
 
-pathTracer :: Float -> [Luz] -> [Shape] -> Float -> Float -> Obj -> StdGen -> RGB
-pathTracer rFl luz !figuras !n nMx obj gen
-  | nMx == 0 = colorDirecto -- Solo luz directa
-  | otherwise = colorDirecto + colorIndirecto -- Luz directa + indirecta
+pathTracer :: Float -> [Luz] -> [Shape] -> Int -> Obj -> StdGen -> RGB
+pathTracer rFl luz !figuras ppp obj gen
+  | ppp == 1 = colorIndirecto
+  | otherwise = colorIndirecto + pathTracer rFl luz figuras (ppp - 1) obj gen' -- Luz directa + indirecta
   where
-    colorDirecto = luzDirecta obj luz figuras True
-    colorIndirecto = luzIndirecta obj luz figuras gen (n+1) nMx
+    colorIndirecto = luzIndirecta obj luz figuras gen''
+    (gen',gen'') = split gen
 
-luzDirecta :: Obj -> [Luz] -> [Shape] -> Bool -> RGB
-luzDirecta obj luces figuras peso
+luzDirecta :: [Luz] -> [Shape] -> Obj -> RGB
+luzDirecta luces figuras obj
   | null luces = RGB 0 0 0
-  | length luces == 1 = luzMono obj (head luces) figuras peso
-  | length  luces > 1 = (luzMono obj (head luces) figuras peso + luzDirecta obj (tail luces) figuras peso) `divRGB` 2
+  | length luces == 1 = {- addNiebla (Point3D 0 0 (-8)) obj 0.8 figuras $ -} luzMono obj (head luces) figuras
+  | length  luces > 1 = (luzMono obj (head luces) figuras + luzDirecta (tail luces) figuras obj) `divRGB` 2 -- Si todas pesaran igual que no es asi
 
-luzMono :: Obj -> Luz -> [Shape] -> Bool -> RGB
-luzMono obj (Luz pointLuz rgbLuz intLuz) figuras bool = colorDirecto `modRGB` kd + colEsp `modRGB` kr + colCr `modRGB` ke
+luzMono :: Obj -> Luz -> [Shape] -> RGB
+luzMono obj (Luz pointLuz rgbLuz intLuz) figuras = difuso + espejo +cristal
   where
     (kd,ke,kr) = trObj obj
-    colorDirecto = if colision (colObj obj) pointLuz figuras then newRGB else RGB 0 0 0
-    newRGB = formula (scale rgbLuz) intLuz pointLuz (colObj obj) (normObj obj) (brdf obj) True -- "Integral"
-   
+
+    newRGB = formula (scale rgbLuz) intLuz pointLuz (colObj obj) (normObj obj) (brdf obj figuras)
+
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj)
-    (objCr, _) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj) --ke por poner algo, ya se cambiara por la relfexion del obj
+    (objCr, _) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
 
-    colEsp = if kr > 0 then luzMono objEsp (Luz pointLuz rgbLuz intLuz) figuras' bool else RGB 0 0 0
-    colCr = if ke > 0 then luzMono objCr (Luz pointLuz rgbLuz intLuz) figuras' bool else RGB 0 0 0
-luzIndirecta :: Obj -> [Luz] -> [Shape] -> StdGen -> Float -> Float -> RGB
-luzIndirecta obj luz figuras gen n nMx
-  -- | kr > 0 = luzIndirecta rFlNew objCr luz figuras genxt n nMx -- Rayo reflejado
-  -- | ke > 0 = luzIndirecta rFl objEsp luz figuras genxt n nMx
-  | nMx == n = rgbNew colorDirecto $ brdf obj
-  | otherwise = rgbNew (colorDirecto + rgbNew colorIndirecto colorDirecto) $ brdf obj
-  where
-    rgbNew rgb0 rgb1 = formula rgb0 1 (colObj obj) p' norm' rgb1 True
-    colorDirecto = luzDirecta nxtObj luz figuras True
-    colorIndirecto = luzIndirecta nxtObj luz figuras genxt (n+1) nMx
-    (gen',gen'') = split gen
-    (genR, genxt) = split gen'
-    p' = colObj nxtObj
-    norm' = normObj nxtObj
+    difuso = if colision (colObj obj) pointLuz figuras && kd > 0 then newRGB `modRGB` kd else RGB 0 0 0
+    espejo = if kr > 0 then luzMono objEsp (Luz pointLuz rgbLuz intLuz) figuras `modRGB` kr else RGB 0 0 0
+    cristal = if ke > 0 then luzMono objCr (Luz pointLuz rgbLuz intLuz) figuras `modRGB` ke else RGB 0 0 0
+
+    --iridiscencia = iris obj
+
+    -- wH = normal (dirEspejo (w0Obj obj) (normObj obj) - w0Obj obj)
+    -- fres = fresnell obj 1
+    -- micro = microfacet wH (normObj obj) 0.4
+    -- shadow = shadowing (w0Obj obj) (normObj obj) 0.4
+
+luzIndirecta :: Obj -> [Luz] -> [Shape] -> StdGen -> RGB
+luzIndirecta obj luz figuras gen = result where
+    result = case caso of
+        0 -> rgbNew rndObj (brdf obj figuras) `modRGB` por
+        1 -> colorIndirecto objCr `modRGB` por
+        2 -> colorIndirecto objEsp `modRGB` por
+        _ -> RGB 0 0 0
+
+    (caso, por) = ruletaRusa (trObj obj) gen
+
+    colorDirecto nxtObj = luzDirecta luz figuras nxtObj `modRGB` abs ((w0Obj nxtObj .* normObj obj) * 2 * pi)
+
+    colorIndirecto nxtObj = luzIndirecta nxtObj luz figuras gen'
+
+    rgbNew nxtObj = formula (colorDirecto nxtObj + colorIndirecto nxtObj) 1 (colObj obj) (colObj nxtObj) (normObj nxtObj)
 
     figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
-    nxtObj = objAleatorio figuras' obj gen gen'' -- Siguiente objeto que choca, q no sea el mismo
+    rndObj = objAleatorio figuras' obj gen
+
+    gen' = snd (split gen)
 
     (objCr, rFlNew) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
-    objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj) --Objeto que refleja el objeto
+    objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj) -- Multiplicarlo por el coseno de donde sale * 2pi por el monteCarlo
 
+luzArea :: [Shape] -> Int -> Obj -> StdGen -> RGB
+luzArea figuras 0 obj gen = luzAreaRec figuras obj gen
+luzArea figuras p obj gen = luzArea figuras (p-1) obj gen' + luzAreaRec figuras obj gen''
+  where
+    (gen',gen'') =split gen
 
+luzAreaRec :: [Shape] -> Obj -> StdGen -> RGB
+luzAreaRec figuras obj gen = rgbFin
+  where
+    rgbFin = if idObj obj == 4 then RGB 1 1 1 else if rgbObj rndObj == RGB 0 0 0 then RGB 0 0 0 else if nanRGB result then RGB 0 0 0 else result
+    result = case caso of
+        0 -> rgbNew rndObj (brdf obj figuras) `modRGB`( pi * por)
+        -- 1 -> colorIndirecto objCr `modRGB` por
+        -- 2 -> colorIndirecto objEsp `modRGB` por
+        _ -> RGB 0 0 0
+    
+    (caso, por) = ruletaRusa (trObj obj) gen
 
+    rgbNew nxtObj = formula (luzAreaRec figuras nxtObj gen') 1 (colObj obj) (colObj nxtObj) (normObj nxtObj)
+
+    figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
+    rndObj = objAleatorio figuras' obj gen
+
+    gen' = snd (split gen)
+
+    (objCr, rFlNew) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
+    objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj) -- Multiplicarlo por el coseno de donde sale * 2pi por el monteCarlo

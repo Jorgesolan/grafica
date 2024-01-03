@@ -189,7 +189,8 @@ escalatePoint' s (Point3D {..}) = Point3D (xP/s) (yP/s) (zP/s)
 {-# INLINE escalatePoint #-}
 escalatePoint :: Point3D -> Float -> Point3D
 escalatePoint (Point3D {..}) s = Point3D (s*xP) (s*yP) (s*zP)
-escalatePointt :: Float -> Point3D ->   Point3D
+{-# INLINE escalatePointt #-}
+escalatePointt :: Float -> Point3D -> Point3D
 escalatePointt s (Point3D {..}) = Point3D (s*xP) (s*yP) (s*zP)
 {-# INLINE pointDir#-}
 pointDir :: Point3D -> Direction
@@ -303,9 +304,10 @@ scale x = x ./ RGB 255 255 255
 prodRGB ::  RGB -> RGB -> Float -> RGB
 prodRGB r0 r1 = modRGB (scale r0 * r1)
 
-{-# INLINE comparateRGB #-}
-comparateRGB :: RGB -> RGB -> Bool
-comparateRGB (RGB r' g' b') (RGB r g b) = r == r' && g == g' && b == b'
+{-# INLINE nanRGB #-}
+nanRGB :: RGB -> Bool
+nanRGB (RGB r g b) = isNaN r || isNaN g || isNaN b
+
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 --Bases y Matrices
