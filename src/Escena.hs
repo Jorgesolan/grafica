@@ -26,11 +26,15 @@ import Figuras
       loadObjFile,
       convertToCustomFormat, encenderShape ,encenderShapes
       )
+import qualified Data.DList as DL
+import qualified Data.Set as Set
+
+
 -- CARGAKD
 intMxKd :: Float
 intMxKd = 50
 n :: Float
-n=10000
+n=20000
 nRebotes :: Int
 nRebotes = 8
 -- SIMULACION
@@ -69,7 +73,7 @@ centr'' = Point3D 0 (-15) (-44)
 centr''' :: Point3D
 centr''' = Point3D 15 (-10) (-22)
 luz :: Luz
-luz = Luz (Point3D 0 8 (-7)) (RGB 255 255 255) 1
+luz = Luz (Point3D 0 8 (-7)) (RGB 255 255 255) intMxKd
 luz' :: Luz
 luz' = Luz (Point3D 0 0 50) (RGB 255 255 255) 0.70
 luz'' :: Point3D
@@ -116,10 +120,9 @@ fmx :: Float
 fmx = intMxSim
 
 bolo = Sphere (Esfera (Point3D 0 0 10) 15 (RGB 200 200 200) (0,1,0) 1 0)
-figuras :: [Shape]
-figuras = addFigMult [{- bolo, -} bola', rect0,rect1,rect2,rect3, plano4] []
 
-
+figuras :: Set.Set Shape
+figuras = Set.fromList $ addFigMult [bola', rect0, rect1, rect2, rect3, plano4] []
 a :: Shape
 a =  Sphere (Esfera (Point3D 5 5 (-10)) 2 (RGB 200 200 200) (1, 0, 0) 1.7 0)
 

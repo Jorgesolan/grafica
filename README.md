@@ -5,3 +5,5 @@ cabal install random
 cabal install kdt
 cabal install erf
 cabal install binary
+cabal install containers
+cabal install dlist

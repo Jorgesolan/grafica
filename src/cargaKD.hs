@@ -38,6 +38,9 @@ import System.Environment (getArgs)
 import Data.Maybe (listToMaybe)
 import System.Exit (exitFailure)
 
+import qualified Data.DList as DL
+import qualified Data.Set as Set
+
 -- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
 -- make clean && make sim && ./sim  +RTS -N -l -RTS && convert a.ppm out.bmp
 -- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
@@ -64,11 +67,11 @@ main = do
   let vertices1' = map (escalatePointt (1)) vertices1
       customTriangles1 = convertToCustomFormat (vertices1', triangles1)
       boundingVol = buildBVH 4000 customTriangles1
-      figuras' =  addFigMult [(Acelerator boundingVol)]  figuras
+      figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] (Set.toList figuras)
 
-  let kdt =  createPhoton (sumFlLuz luces) [] 0 (round n) figuras' luces gen' nRebotes
+  let !kdt =  createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras luces gen' nRebotes
   print $ length kdt
-  writeObject "./kd.bin" kdt
   end <- getCPUTime
   let diff = fromIntegral (end - start) / (10^12) :: Float
-  putStrLn $ "Tiempo de procesado de la imagen: " ++ show diff ++ " segundos"
+  putStrLn $ "Tiempo de creacion del kdt: " ++ show diff ++ " segundos"
+  writeObject "./kd.bin" kdt

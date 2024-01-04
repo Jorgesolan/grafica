@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ViewPatterns #-}
 module Funciones where
 
 import Codec.Picture
@@ -32,12 +33,15 @@ import Figuras
 import System.IO.Unsafe (unsafePerformIO)
 import Data.Ord (comparing)
 import Debug.Trace (trace)
-import Data.List (minimumBy,transpose)
+import Data.List (minimumBy,transpose,sort)
 import System.Random (randomR, StdGen, randomRs,split, mkStdGen)
 
 import Data.Either (fromRight)
 import Data.Binary (Word8)
 import Data.Number.Erf
+import Data.Foldable (toList)
+import qualified Data.DList as DL
+import qualified Data.Set as Set
 
 --------------------------
 --  FUNCIONES LIBRERIA  --
@@ -54,36 +58,37 @@ chunksOf i ls = map (take i) (build (splitter ls))
     splitter [] _ n = n
     splitter l c n = l `c` splitter (drop i l) c n
 
+
 --------------------------
 -- FUNCIONES DE OBJETOS --
 --------------------------
 
 {-# INLINE objAleatorio #-}
-objAleatorio :: [Shape] -> Obj -> StdGen -> Obj
+objAleatorio :: Set.Set Shape -> Obj -> StdGen -> Obj
 objAleatorio figuras obj gen = nxtObj
   where
-    !nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray (colObj obj) $ normal (puntoAl #< colObj obj))) figuras
+    !nxtObj = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray (colObj obj) $ normal (puntoAl #< colObj obj))) figuras
     !puntoAl = cambioBase (colObj obj) (generateBase dirAl (normObj obj) (normal (dirAl * normObj obj))) $ genPoint gen
     !dirAl = normal $ normObj obj * Direction 2 1 (-2)
 
 {-# INLINE objEspejo #-}
-objEspejo :: [Shape] -> Direction -> Direction -> Point3D -> Obj
-objEspejo figuras w0 norm p = snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras
+objEspejo :: Set.Set Shape -> Direction -> Direction -> Point3D -> Obj
+objEspejo figuras w0 norm p = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray p newDir)) figuras
   where
     newDir = dirEspejo w0 norm
 
-objEspejoRandom :: [Shape] -> Direction -> Direction -> Point3D -> StdGen -> Float -> (Obj,StdGen)
-objEspejoRandom figuras w0 norm p gen step  = (snd $ obtenerPrimeraColision $ map (oneCollision (Ray p newDir)) figuras,gen')
+objEspejoRandom :: Set.Set Shape -> Direction -> Direction -> Point3D -> StdGen -> Float -> (Obj,StdGen)
+objEspejoRandom figuras w0 norm p gen step  = (obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray p newDir)) figuras,gen')
   where
     dirW0 = dirEspejo w0 norm
     newDir = normal $ dirW0 + Direction x y z
     [x,y,z] = take 3 $ randomRs (-step,step) gen
     gen' = snd $ split gen
 
-objCristal :: [Shape] -> Direction -> Direction -> Float -> Float -> Point3D -> (Obj, Float)
+objCristal :: Set.Set Shape -> Direction -> Direction -> Float -> Float -> Point3D -> (Obj, Float)
 objCristal figuras w0 norm n1 n2 p = {- trace (show newDir ++ " " ++ show nxtObj) $ -} (nxtObj, n2)
   where
-    nxtObj = snd $ obtenerPrimeraColision $ map (oneCollision (Ray pFix newDir)) figuras
+    nxtObj = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray pFix newDir)) figuras
     pFix = movePoint newDir p
     newDir = normal $ calcularDirCristal w0 norm n1 n2
 
@@ -116,17 +121,17 @@ formula rgbLuz intLuz pointLuz p vNormal rgbObj
 -- FUNCIONES DE CAMARA  --
 --------------------------
 
-tuplasAleatorias :: [(Float, Float)] -> Float -> StdGen  -> [(Float, Float)]
-tuplasAleatorias inputTuplas salto gen = [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
+tuplasAleatorias :: [(Float, Float)] -> Float -> StdGen -> [(Float, Float)]
+tuplasAleatorias inputTuplas salto gen =
+  [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
   where
-    !randomNumbers = take (length inputTuplas * 2) $ randomRs (0.0, salto) gen :: [Float]
-    !halfLen = length randomNumbers `div` 2
+    randomNumbers = take (length inputTuplas * 2) $ randomRs (0.0, salto) gen :: [Float]
+    halfLen = length randomNumbers `div` 2
 
 {-# INLINE generarTuplas #-}
 generarTuplas :: [Float] -> [Float] -> [(Float, Float)]
-generarTuplas !xs !ys = [(x, y) | y <- ys, x <- xs]
+generarTuplas !xs !ys =[(x, y) | y <- ys, x <- xs]
 
---Genera los rayos para cada pixel
 generateRaysForPixels :: Int -> Int -> Int -> Int -> Camara -> Float -> Float -> Int -> StdGen -> [Ray]
 generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j gen =
   map (\(x, y) -> Ray p (generateDirection x y focal)) tuplasRandom
@@ -135,20 +140,19 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
     piX = px / width
     px' = px / 2.0
     py' = py / 2.0
-    yValues = [py', (py'-piY) .. (-py'+piY)]
+    yValues = [py', (py' - piY) .. (-py' + piY)]
     yStep = length yValues `div` maxN
     startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
     generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal # p
-    xValues = [(-px'), (-px'+piX) .. (px'-piX)]
+    xValues = [(-px'), (-px' + piX) .. (px' - piX)]
     xStep = length xValues `div` etapasX
     startIdxx = etapaX * xStep
     endIdxx = (etapaX + 1) * xStep
     selectedxValues = take (endIdxx - startIdxx) (drop startIdxx xValues)
-    !tuplas = generarTuplas  (concatMap (replicate j) selectedxValues) selectedYValues
+    !tuplas = generarTuplas (concatMap (replicate j) selectedxValues) selectedYValues
     !tuplasRandom = tuplasAleatorias tuplas piY gen
-
 --------------------------
 --FUNCIONES DE PUNTOS.AL--
 --------------------------
@@ -181,22 +185,22 @@ gen2Point gen1 gen2 = (u, v)
 
 --Devuelve la primera colision de cada lista de colisiones
 {-# INLINE obtenerPrimeraColision #-}
-obtenerPrimeraColision :: [(Float, Obj)] -> (Float, Obj)
-obtenerPrimeraColision !xs =
-  case filter (\(x, _) -> x >= 0) xs of
-    [] -> (-1,Obj (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
-    filteredList -> minimumBy (comparing fst) filteredList
+obtenerPrimeraColision :: Set.Set Obj -> Obj
+obtenerPrimeraColision xs =
+  case Set.lookupMin $ Set.filter (\obj -> mindObj obj >= 0) xs of
+    Nothing -> (Obj (-1) (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0, 0, 0) 0 0)
+    Just obj -> obj
 
 -- dada la lista de listas de colisiones, devuelve la lista de la primera colisión de cada rayo
 {-# INLINE listRay #-}
-listRay :: [[(Float, Obj)]] -> [Obj]
-listRay = map (snd . obtenerPrimeraColision) . transpose
+listRay :: Set.Set Obj -> Obj
+listRay = obtenerPrimeraColision
 
 {-# INLINE colision #-}
-colision :: Point3D -> Point3D -> [Shape] -> Bool
+colision :: Point3D -> Point3D -> Set.Set Shape -> Bool
 colision !p0 !luz !figuras = aproxPoint p0 bonk -- Si es el mismo punto, no choca con nada
   where
-    bonk = colObj $ snd $ obtenerPrimeraColision $ map (oneCollision (Ray luz (normal $ p0 #< luz))) figuras --Saca el punto de la primera colision de la luz con las figuras
+    bonk = colObj $ obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray luz (normal $ p0 #< luz))) figuras --Saca el punto de la primera colision de la luz con las figuras
 
 --------------------------
 --FUNCIONES DE DIRECCIONES
@@ -239,7 +243,7 @@ ruletaRusa (a,b,c) gen = (i, p')
       | otherwise = absorption
 
 {-# INLINE brdf #-}
-brdf :: Obj -> [Shape]-> RGB
+brdf :: Obj -> Set.Set Shape-> RGB
 brdf (Obj {..}) figuras
   | idObj == 4 = scale rgbObj -- rgbTxt
   | kd == 0 = RGB 1 1 1 -- Que a los cristales o espejos sin difusa no le afecte un color que le hayas puesto
@@ -252,7 +256,7 @@ brdf (Obj {..}) figuras
         = (fromIntegral $ imageWidth textureImage,
            fromIntegral $ imageHeight textureImage)
       rgbTxt = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth - 1)) (round $  v * (texHeight - 1))
-      fig = head $ filter (\shape -> idObj == getShapeID shape) figuras
+      fig = head $ filter (\shape -> idObj == getShapeID shape) (Set.toList figuras)
       (u,v) = getUV fig colObj
 
 
@@ -313,7 +317,7 @@ fGaus photons obj fot = if isNaN result then 0 else result
 --       EXTRAS         --
 --------------------------
 {-# INLINE addNiebla #-}
-addNiebla :: Point3D -> Obj -> Float -> [Shape] ->  RGB -> RGB
+addNiebla :: Point3D -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
 addNiebla p obj x figuras rgb = newRGB + (rgb `modRGB` reducObj)
   where
     newRGB = RGB fact fact fact
@@ -342,11 +346,11 @@ distanceToRay point ray =
     in closestPoint
 
 {-# INLINE fPhong #-}
-fPhong :: Point3D -> Obj -> Float -> [Shape] -> Float
+fPhong :: Point3D -> Obj -> Float -> Set.Set Shape -> Float
 fPhong pLuz obj alpha figuras  = if col then (alpha+2/2) *abs (dirEspejo (colObj obj #<pLuz) (normObj obj) .* w0Obj obj)**alpha else 0
   where
     col = colision (colObj obj) pLuz figuras'
-    figuras' = filter (\shape -> idObj obj /= getShapeID shape) figuras
+    figuras' = Set.filter (\shape -> idObj obj /= getShapeID shape) figuras
 
 -- iris :: Obj -> RGB
 -- iris (Obj {..}) = newRGB

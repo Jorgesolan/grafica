@@ -10,9 +10,10 @@ import qualified Data.ByteString.Char8 as BS8
 
 import Data.Binary ( Word8, decodeFile, encode, Binary )
 import qualified Data.ByteString.Lazy as B
+import qualified Data.DList as DL
 
-writeObject :: Binary a => FilePath -> a -> IO ()
-writeObject path obj = B.writeFile path (encode obj)
+writeObject :: Binary a => FilePath -> DL.DList a -> IO ()
+writeObject path obj = B.writeFile path (encode (DL.toList obj))
 
 readObject :: Binary a => FilePath -> IO a
 readObject = decodeFile

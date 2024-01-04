@@ -47,37 +47,37 @@ import System.Environment (getArgs)
 import Data.Maybe (listToMaybe)
 import System.Exit (exitFailure)
 import Text.Read (readMaybe)
-
+import qualified Data.DList as DL
+import qualified Data.Set as Set
 -- make clean && make cargaKD && cd ./tmp && ./cargaKD && cd ..
 -- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
 
 {-# INLINE antialiasing #-}
-antialiasing :: Int -> [(Float, Obj)] ->  [(Float, Obj)]
-antialiasing n rayos = map obtenerPrimeraColision (chunksOf n rayos) -- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing
+antialiasing :: Int -> [Obj] -> [Obj]
+antialiasing n rayos = map obtenerPrimeraColision $ map Set.fromList (chunksOf n rayos) -- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing
 
 {-# INLINE listRayToRGB #-}
-listRayToRGB :: [Luz] -> [Shape] -> [Ray] -> StdGen -> Int -> [RGB]
-listRayToRGB luz figuras rayos gen nRay = colorDirecto
-  --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+listRayToRGB :: [Luz] -> Set.Set Shape -> [Ray] -> StdGen -> Int -> [RGB]
+listRayToRGB luz figuras rayos gen nRay =  zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   -- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   where
-    !antial = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    rayColisions = listRay antial
+    !antial = map listRay $ parametricShapeCollision figuras rayos
+    rayColisions = antialiasing nRay antial
     
     (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-    ppp = 10 -- Caminos por pixel
+    ppp = 250 -- Caminos por pixel
     colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
     colorDirecto = map (luzDirecta luz figuras) rayColisions
     colorArea = zipWith (luzArea figuras ppp) rayColisions gens
 
 
-listRayPhoton :: KdTree Float Foton -> Point3D -> [Shape] -> [Ray] -> Int -> [RGB]
+listRayPhoton :: KdTree Float Foton -> Point3D -> Set.Set Shape -> [Ray] -> Int -> [RGB]
 listRayPhoton kdt cam figuras rayos nRay = map (photonMap kdt radio figuras) rayColisions
   where
-    !raySMPP = map (antialiasing nRay) $ parametricShapeCollision figuras rayos
-    rayColisions = listRay raySMPP
-    radio = 10
+    !raySMPP = map listRay $ parametricShapeCollision figuras rayos
+    rayColisions = antialiasing nRay raySMPP
+    radio = 1
 
 
 main :: IO ()
@@ -105,15 +105,15 @@ main = do
       let vertices1' = map (escalatePointt (1)) vertices1
           customTriangles1 = convertToCustomFormat (vertices1', triangles1)
           boundingVol = buildBVH 4000 customTriangles1
-          !figuras' =  addFigMult [(Acelerator boundingVol)]  figuras
+          !figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] $ Set.toList figuras
           
       -- let !kdt = createKD $ createPhoton potf [] n figuras luces gen'
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "./kd.bin"
-      let !kdt = createKD notkdt
+      let kdt = createKD notkdt
       let cams = mulCam camara 0
       let !rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams
-          -- a = map (\rayos -> listRayPhoton kdt cam figuras' rayos nRay) rayitos
+          --a = map (\rayos -> listRayPhoton kdt cam figuras rayos nRay) rayitos
           a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos
           c = mediaLRGB a
           fin = concatMap rgbToString (gammaFunc fmx gamma c)

@@ -19,23 +19,39 @@ import Data.Maybe (mapMaybe)
 import Data.List (minimumBy)
 import Data.Ord (comparing)
 
-data Camara = Camara Point3D Base
-data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int}
-data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int}
-data Triangulo = Triangulo {xTr :: Point3D, yTr :: Point3D, zTr :: Point3D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int}
-data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
-data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int}
+import qualified Data.DList as DL
+import qualified Data.Set as Set
 
-data AABB = AABB Point3D Point3D
-data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int}
+data Camara = Camara Point3D Base
+data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int} deriving Show
+data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int} deriving Show
+data Triangulo = Triangulo {xTr :: Point3D, yTr :: Point3D, zTr :: Point3D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int} deriving Show
+data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int deriving Show
+data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int} deriving Show
+
+data AABB = AABB Point3D Point3D deriving Show
+data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int} deriving Show
 
 -- data Rosquilla = Rosquilla Point3D Direction Float Float RGB Float Int
 
-data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Cylinder Cilindro | Rectangle Rectangulo | Acelerator BVH
+data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Cylinder Cilindro | Rectangle Rectangulo | Acelerator BVH deriving Show
+
 -- data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Donut Rosquilla
 
-data Obj = Obj {rgbObj :: RGB, w0Obj :: Direction, colObj :: Point3D, normObj :: Direction, trObj ::(Float, Float, Float), reflObj :: Float, idObj:: Int} deriving Show
+data Obj = Obj {mindObj :: Float, rgbObj :: RGB, w0Obj :: Direction, colObj :: Point3D, normObj :: Direction, trObj ::(Float, Float, Float), reflObj :: Float, idObj:: Int} deriving Show
 
+instance Eq Shape where
+    a == b = False
+instance Ord Shape where
+    compare = comparing getShapeID
+
+instance Eq Obj where
+    obj == obj1 = mindObj obj == mindObj obj1
+instance Ord Obj where
+    compare obj obj1 = compare (mindObj obj) (mindObj obj1)
+
+lengthDL :: DL.DList a -> Int
+lengthDL = DL.foldr (\_ n -> n + 1) 0
 
 getUV :: Shape -> Point3D -> (Float, Float)
 --getUV (Plane (Plano {..})) p = (1,1)
@@ -149,11 +165,13 @@ addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo xTr yTr zTr rgbT
 addFig (Cylinder (Cilindro p1 p2 p3 color reflec kr _)) shapes = Cylinder (Cilindro p1 p2 p3 color reflec kr (length shapes)):shapes
 addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe (length shapes)):shapes
 addFig (Acelerator (BVH {..})) shapes = Acelerator (BVH aabb bvhs triangulos (length shapes)):shapes
+
 addFigMult :: [Shape] -> [Shape] -> [Shape]
 addFigMult xs shapes = foldl (flip addFig) shapes xs
 
 encenderShapes :: [Shape] -> [Shape]
 encenderShapes = map encenderShape
+
 
 encenderShape :: Shape -> Shape
 encenderShape (Plane (Plano {..})) = Plane (Plano centPl normPl rgbPl trPl reflPl (-idPl))
@@ -161,13 +179,13 @@ encenderShape (Sphere (Esfera {..})) = Sphere (Esfera centEs radEs rgbEs trEs re
 encenderShape (Triangle (Triangulo {..})) = Triangle (Triangulo xTr yTr zTr rgbTr trTr reflTr (-idTr))
 
 {-# INLINE parametricShapeCollision #-}
-parametricShapeCollision :: [Shape] -> [Ray] -> [[(Float, Obj)]]
-parametricShapeCollision shapes rays = map (collision rays) shapes
+parametricShapeCollision :: Set.Set Shape -> [Ray] -> [Set.Set Obj]
+parametricShapeCollision shapes rays = map (collision shapes) rays
   where
-    collision rays shape = map (`oneCollision` shape) rays
+    collision shapes ray = Set.map (`oneCollision` ray) shapes
 
-oneCollision :: Ray -> Shape -> (Float, Obj)
-oneCollision (Ray p1 d) (Sphere (Esfera {..})) =
+oneCollision :: Shape -> Ray -> Obj
+oneCollision (Sphere (Esfera {..})) (Ray p1 d) =
     let f = p1 #< centEs
         a = d .* d
         b = 2.0 * (f .* d)
@@ -180,17 +198,17 @@ oneCollision (Ray p1 d) (Sphere (Esfera {..})) =
                                collisionPoint = movePoint (escalateDir mind d) p1
                                vectorNormal = normal $ collisionPoint #< centEs
                            in if t0 > 0 || t1 > 0
-                               then (mind, Obj rgbEs d collisionPoint vectorNormal trEs reflEs idEs)
-                               else (-1, Obj (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0)) else (-1, Obj (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0))
+                               then (Obj mind rgbEs d collisionPoint vectorNormal trEs reflEs idEs)
+                               else (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0)) else (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0))
 
-oneCollision (Ray p1 d) (Plane (Plano {..})) = (mind, Obj rgbPl d collisionPoint vectorNormal trPl reflPl idPl)
+oneCollision (Plane (Plano {..})) (Ray p1 d) = (Obj mind rgbPl d collisionPoint vectorNormal trPl reflPl idPl)
   where
     mind = ((centPl #< p1) .* vectorNormal) / (d .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind d) p1
     vectorNormal = if (d.*normPl) > 0 then normal (escalateDir (-1) normPl) else normal normPl
 
 
-oneCollision (Ray p1 d) (Cylinder(Cilindro p0 n r color reflec kr id)) = (mind, Obj color d collisionPoint vectorNormal reflec kr id)
+oneCollision (Cylinder(Cilindro p0 n r color reflec kr id)) (Ray p1 d) = (Obj mind color d collisionPoint vectorNormal reflec kr id)
   where
     mind = findMinPositive t1 t2
     t1 = ((p0 #< p1) .* vectorNormal + sqrt discriminant) / (d .* vectorNormal)
@@ -200,20 +218,20 @@ oneCollision (Ray p1 d) (Cylinder(Cilindro p0 n r color reflec kr id)) = (mind, 
     vectorNormal = if (d.*n)>0 then normal (escalateDir (-1) n) else normal n
 
 
-oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles _)) =
+oneCollision (Acelerator (BVH bbox children triangles _)) ray@(Ray rayOrigin rayDir) =
     if rayIntersectsAABB ray bbox
         then
             if null children
                 then
-                    oneCollision ray (Triangle $ snd(closestIntersection ray triangles))
+                    oneCollision (Triangle $ snd(closestIntersection ray triangles)) ray
                 else
-                    let childCollisions = filter (\(t, _) -> t /= -1) $ map (oneCollision ray . Acelerator) children
+                    let childCollisions = filter (\obj -> mindObj obj /= -1) $ map (\ch -> oneCollision (Acelerator ch) ray ) children
 
                     in case childCollisions of
-                        [] -> (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
-                        _ -> let (minT, minObj) = minimumBy (comparing fst) childCollisions
-                             in (minT, minObj)
-        else (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+                        [] -> (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+                        _ -> let mindObj = minimum childCollisions
+                             in mindObj
+        else (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
 -- oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles _)) =
 --     if rayIntersectsAABB ray bbox
@@ -227,11 +245,11 @@ oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles
 --                         (t2, obj2) = oneCollision ray (Acelerator $ children !! 1)
 --                         result = if t1 < t2 then (t1, obj1) else (t2, obj2)
 --                     in trace ("Intermediate node hit. T1: " ++ show t1 ++ ", Obj1: " ++ show obj1 ++ ", T2: " ++ show t2 ++ ", Obj2: " ++ show obj2) result
---         else trace "No intersection with AABB." (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+--         else trace "No intersection with AABB." (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
-oneCollision (Ray p d) (Rectangle (Rectangulo {..}))
-  | denom /= 0 && t > 0 && withinBounds = (t, Obj rgbRe d (dirPoint collisionPoint) normRe' trRe reflRe idRe)
-  | otherwise = (-1, Obj (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0)
+oneCollision  (Rectangle (Rectangulo {..})) (Ray p d)
+  | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe d (dirPoint collisionPoint) normRe' trRe reflRe idRe)
+  | otherwise = (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0)
   where
     offset = collisionPoint - pointDir centRe
     localX = offset .* right
@@ -247,13 +265,13 @@ oneCollision (Ray p d) (Rectangle (Rectangulo {..}))
     normRe' = if d .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
 
 
-oneCollision (Ray rayOrigin rayDir) (Triangle (Triangulo {..})) =
+oneCollision (Triangle (Triangulo {..})) (Ray rayOrigin rayDir) =
     case rayTriangleIntersection rayOrigin rayDir xTr yTr zTr of
         Just (t, intersectionPoint) ->
             let normalVec = (yTr #< xTr) * (zTr #< xTr)
                 normalVec' = if (rayDir.*normalVec) > 0 then normal (escalateDir (-1) normalVec) else normal normalVec
-            in (t, Obj rgbTr rayDir intersectionPoint normalVec' trTr reflTr idTr)
-        Nothing -> (-1, Obj (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+            in (Obj t rgbTr rayDir intersectionPoint normalVec' trTr reflTr idTr)
+        Nothing -> (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
 getShapeID :: Shape -> Int
 getShapeID (Sphere (Esfera{..})) = idEs
