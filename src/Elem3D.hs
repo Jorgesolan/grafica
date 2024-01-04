@@ -133,6 +133,17 @@ rotatePoint axis radiant  (Point3D x y z)
         !c = cos radiant
         !s = sin radiant
 
+rotatePointt :: Char -> Float -> Point3D -> Point3D
+rotatePointt axis radiant  (Point3D x y z)
+ | radiant == 0 = Point3D x y z
+ | axis == 'X' = Point3D x (c*y + s*z) (-s*y + c*z)
+ | axis == 'Y' = Point3D (-s*z + c*x) y (s*x + c*z)
+ | axis == 'Z' = Point3D (c*x + s*y) (-s*x + c*y) z
+ | otherwise = Point3D 0 0 0
+    where
+        !c = cos $ degToRad radiant
+        !s = sin $ degToRad radiant
+
 rotatePoint' :: Char -> Float -> Point3D -> Point3D
 rotatePoint' axis radiant  (Point3D x y z)
  | radiant == 0 = Point3D x y z
@@ -192,6 +203,7 @@ escalatePoint (Point3D {..}) s = Point3D (s*xP) (s*yP) (s*zP)
 {-# INLINE escalatePointt #-}
 escalatePointt :: Float -> Point3D -> Point3D
 escalatePointt s (Point3D {..}) = Point3D (s*xP) (s*yP) (s*zP)
+
 {-# INLINE pointDir#-}
 pointDir :: Point3D -> Direction
 pointDir (Point3D x y z) = Direction x y z

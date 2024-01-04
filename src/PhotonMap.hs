@@ -138,13 +138,14 @@ photonMulToRGB photons obj figuras radio = newRGB
 
 photonMap :: KdTree Float Foton -> Float -> Set.Set Shape -> Obj -> RGB
 photonMap kdt radio figuras obj
-  | kr == 0 && ke == 0 = difuso| otherwise = difuso + espejo + cristal
+  | kr == 0 && ke == 0 = difuso| otherwise = if mindObj obj <0 then scale (RGB 73 122 131) else difuso + espejo + cristal
   where
     -- wH = normal (dirEspejo (w0Obj obj) (normObj obj) - w0Obj obj)
     -- fres = fresnell obj 1
     -- micro = microfacet wH (normObj obj) 0.4
     -- shadow = shadowing wH (normObj obj) 0.4
 
+    
     difuso = kdToRGB kdt (radio * kd) figuras obj
     espejo = rgbObj obj * scale colorEsp `modRGB` ke
     cristal = rgbObj obj * scale colorCri `modRGB` kr

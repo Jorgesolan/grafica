@@ -10,7 +10,7 @@ import Elem3D
       Point3D(..),
       escalatePoint,escalatePointt,
       degToRad,
-      rotatePoint,movePoint, divRGB
+      rotatePoint,movePoint, divRGB,rotatePointt
     )
 import Figuras
     ( Obj,
@@ -58,7 +58,7 @@ antialiasing n rayos = map obtenerPrimeraColision $ map Set.fromList (chunksOf n
 
 {-# INLINE listRayToRGB #-}
 listRayToRGB :: [Luz] -> Set.Set Shape -> [Ray] -> StdGen -> Int -> [RGB]
-listRayToRGB luz figuras rayos gen nRay =  zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+listRayToRGB luz figuras rayos gen nRay =  colorDirecto --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   -- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   where
     !antial = map listRay $ parametricShapeCollision figuras rayos
@@ -66,7 +66,7 @@ listRayToRGB luz figuras rayos gen nRay =  zipWith (+) colorDirecto $ map (`divR
     
     (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-    ppp = 250 -- Caminos por pixel
+    ppp = 10 -- Caminos por pixel
     colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
     colorDirecto = map (luzDirecta luz figuras) rayColisions
     colorArea = zipWith (luzArea figuras ppp) rayColisions gens
@@ -77,7 +77,7 @@ listRayPhoton kdt cam figuras rayos nRay = map (photonMap kdt radio figuras) ray
   where
     !raySMPP = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay raySMPP
-    radio = 1
+    radio = 2
 
 
 main :: IO ()
@@ -100,21 +100,26 @@ main = do
       --     trianglesLus = encenderShapes customTriangles
           --figuras' = addFigMult trianglesLus figuras
 
-      let objFilePath1 = "../meshes/simplef15.obj"  
+      let objFilePath1 = "../meshes/simplepalace.obj"  
       (vertices1, triangles1) <- loadObjFile objFilePath1
-      let vertices1' = map (escalatePointt (1)) vertices1
+      let vertices1' = map (escalatePointt (2.4).movePoint (Direction 5 (-3.25) (-13)). rotatePointt 'Y' (282.5) ) vertices1
           customTriangles1 = convertToCustomFormat (vertices1', triangles1)
           boundingVol = buildBVH 4000 customTriangles1
           !figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] $ Set.toList figuras
-          
+      let objFilePath2 = "../meshes/simplehaskell.obj"  
+      (vertices2, triangles2) <- loadObjFile objFilePath2
+      let vertices2' = map (escalatePointt (1).movePoint (Direction 0 (0) (0)). rotatePointt 'Y' (90)) vertices2
+          customTriangles2 = convertToCustomFormat (vertices2', triangles2)
+          boundingVol' = buildBVH 4000 customTriangles2
+          figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVol')] (Set.toList figuras')    
       -- let !kdt = createKD $ createPhoton potf [] n figuras luces gen'
       -- writeObject "test.bin" kdt
       !notkdt <- readObject "./kd.bin"
       let kdt = createKD notkdt
       let cams = mulCam camara 0
       let !rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams
-          --a = map (\rayos -> listRayPhoton kdt cam figuras rayos nRay) rayitos
-          a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos
+          a = map (\rayos -> listRayPhoton kdt cam figuras'' rayos nRay) rayitos
+          -- a = map (\rayos -> listRayToRGB luces figuras' rayos gen' nRay) rayitos
           c = mediaLRGB a
           fin = concatMap rgbToString (gammaFunc fmx gamma c)
 

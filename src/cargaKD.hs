@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 import Escena
 import Elem3D
     ( Luz(Luz), 
@@ -6,7 +7,7 @@ import Elem3D
     Point3D(Point3D), 
     escalatePoint, escalatePointt,
     degToRad,
-    rotatePoint,movePoint
+    rotatePoint,movePoint, rotatePointt
     )
 import Files (writePPM, rgbToString,writeObject)
 import Tone_map (gammaFunc,clamp)
@@ -62,14 +63,21 @@ main = do
   -- let triangleLus = encenderShapes customTriangles
   --let figuras' = addFigMult triangleLus figuras
 
-  let objFilePath1 = "../meshes/simplef15.obj"  
+  let objFilePath1 = "../meshes/simplepalace.obj"  
   (vertices1, triangles1) <- loadObjFile objFilePath1
-  let vertices1' = map (escalatePointt (1)) vertices1
+  let vertices1' = map (escalatePointt (2.4).movePoint (Direction 5 (-3.25) (-13)). rotatePointt 'Y' (282.5)) vertices1
       customTriangles1 = convertToCustomFormat (vertices1', triangles1)
       boundingVol = buildBVH 4000 customTriangles1
       figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] (Set.toList figuras)
 
-  let !kdt =  createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras luces gen' nRebotes
+  let objFilePath2 = "../meshes/simplehaskell.obj"  
+  (vertices2, triangles2) <- loadObjFile objFilePath2
+  let vertices2' = map (escalatePointt (1).movePoint (Direction 0 (0) (0)). rotatePointt 'Y' (90)) vertices2
+      customTriangles2 = convertToCustomFormat (vertices2', triangles2)
+      boundingVol' = buildBVH 4000 customTriangles2
+      figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVol')] (Set.toList figuras')
+
+  let !kdt =  createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras'' luces gen' nRebotes
   print $ length kdt
   end <- getCPUTime
   let diff = fromIntegral (end - start) / (10^12) :: Float

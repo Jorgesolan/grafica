@@ -368,7 +368,7 @@ triangleToTriangulo :: ([Point3D], TrianglePos) -> Triangulo
 triangleToTriangulo (vertices, TrianglePos v1 v2 v3) =
     (Triangulo
         (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
-        (RGB 200 200 200) (1,0,0) 0 0
+        (RGB 220 120 50) (1,0,0) 0 0
     )
     where
         v1' = vertices !! (v1 - 1)
