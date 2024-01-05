@@ -9,8 +9,7 @@ import Elem3D
     degToRad,
     rotatePoint,movePoint, rotatePointt
     )
-import Files (writePPM, rgbToString,writeObject)
-import Tone_map (gammaFunc,clamp)
+import Files (writeObject)
 import Figuras
     ( Obj,
       Shape(Sphere, Plane, Cylinder,Rectangle, Acelerator),
@@ -28,26 +27,13 @@ import Figuras
       )
 import Funciones (sumFlLuz)
 import PathTracer (pathTracer)
-import KdTest ()
-import PhotonMap ( createPhoton )
-import Data.KdTree.Static ()
+import PhotonMap (createPhoton)
 
 import System.Random (StdGen, newStdGen, split)
-import Data.List (transpose)
 import System.CPUTime (getCPUTime)
-import System.Environment (getArgs)
-import Data.Maybe (listToMaybe)
-import System.Exit (exitFailure)
 
 import qualified Data.DList as DL
 import qualified Data.Set as Set
-
--- make clean && make sim && ./sim -N12 && convert a.ppm out.bmp
--- make clean && make sim && ./sim  +RTS -N -l -RTS && convert a.ppm out.bmp
--- make clean && make simulacion && cd ./tmp && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
-
-
--- Hacer funcion para a un nuevo objeto, meterle el RGB
 
 
 main :: IO ()

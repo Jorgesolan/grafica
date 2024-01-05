@@ -7,7 +7,7 @@ import Codec.Picture
 import Elem3D
     ( RGB(..),
       Luz(..),
-      Base(Base),
+      Base(..),
       Ray(..),
       Direction(..),
       Point3D(..),
@@ -50,6 +50,7 @@ import qualified Data.Set as Set
 build :: ((a -> [a] -> [a]) -> [a] -> [a]) -> [a]
 build g = g (:) []
 
+{-# INLINE chunksOf #-}
 --Divide una lista en n sublistas
 chunksOf :: Int -> [e] -> [[e]]
 chunksOf i ls = map (take i) (build (splitter ls))
@@ -85,6 +86,7 @@ objEspejoRandom figuras w0 norm p gen step  = (obtenerPrimeraColision $ Set.map 
     [x,y,z] = take 3 $ randomRs (-step,step) gen
     gen' = snd $ split gen
 
+{-# INLINE objCristal #-}
 objCristal :: Set.Set Shape -> Direction -> Direction -> Float -> Float -> Point3D -> (Obj, Float)
 objCristal figuras w0 norm n1 n2 p = {- trace (show newDir ++ " " ++ show nxtObj) $ -} (nxtObj, n2)
   where
@@ -120,7 +122,7 @@ formula rgbLuz intLuz pointLuz p vNormal rgbObj
 --------------------------
 -- FUNCIONES DE CAMARA  --
 --------------------------
-
+{-# INLINE tuplasAleatorias #-}
 tuplasAleatorias :: [(Float, Float)] -> Float -> StdGen -> [(Float, Float)]
 tuplasAleatorias inputTuplas salto gen =
   [(x + r1, y + r2) | ((x, y), r1, r2) <- zip3 inputTuplas (take halfLen randomNumbers) (drop halfLen randomNumbers)]
@@ -132,10 +134,13 @@ tuplasAleatorias inputTuplas salto gen =
 generarTuplas :: [Float] -> [Float] -> [(Float, Float)]
 generarTuplas !xs !ys =[(x, y) | y <- ys, x <- xs]
 
+{-# INLINE generateRaysForPixels #-}
 generateRaysForPixels :: Int -> Int -> Int -> Int -> Camara -> Float -> Float -> Int -> StdGen -> [Ray]
-generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (Direction _ py _) (Direction _ _ focal))) width height j gen =
-  map (\(x, y) -> Ray p (generateDirection x y focal)) tuplasRandom
+generateRaysForPixels maxN etapasX n etapaX (Camara p (Base {..})) width height j gen =
+  map (\(x, y) -> Ray p (generateDirection x y (zD d2))) tuplasRandom
   where
+    px = xD d0
+    py = yD d1
     piY = py / height
     piX = px / width
     px' = px / 2.0
@@ -145,7 +150,7 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
     startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
-    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height focal # p
+    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height (zD d2) # p
     xValues = [(-px'), (-px' + piX) .. (px' - piX)]
     xStep = length xValues `div` etapasX
     startIdxx = etapaX * xStep
@@ -161,6 +166,7 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base (Direction px _ _) (
 polarToCartesian :: Float -> Float -> Float -> Point3D
 polarToCartesian !inclinacion !azimut !cosRand = Point3D (sin inclinacion * cos azimut) cosRand (sin inclinacion * sin azimut)
 
+{-# INLINE genPointTotal #-}
 genPointTotal :: StdGen -> Point3D
 genPointTotal gen = polarToCartesian (acos randIncl) (2.0 * pi * randAz) randIncl
   where
@@ -174,11 +180,7 @@ genPoint gen = polarToCartesian (acos randIncl) (2 * pi * randAz) (sqrt randIncl
     !(randIncl, gen') = randomR (0.0, 1.0) gen :: (Float, StdGen)
     !(randAz, _) = randomR (0.0, 1.0) gen' :: (Float, StdGen)
 
-gen2Point :: StdGen -> StdGen -> (Float,Float)
-gen2Point gen1 gen2 = (u, v)
-  where
-    !(u, _) = randomR (0.0, 1.0) gen1 :: (Float, StdGen)
-    !(v, _) = randomR (0.0, u) gen2 :: (Float, StdGen)
+
 --------------------------
 --FUNCIONES DE COLISION --
 --------------------------
@@ -390,14 +392,13 @@ fPhong pLuz obj alpha figuras  = if col then (alpha+2/2) *abs (dirEspejo (colObj
 --     cos = min (wI .* norm) 1
 
 {-# INLINE mulCam #-}
-mulCam :: Camara -> Int -> [Camara]
-mulCam cam@(Camara p b) n = cam : map (`Camara` b) (take n transformedPoints)
+mulCam :: Camara -> Int -> Float -> [Camara]
+mulCam cam@(Camara p b) n radio = cam : map (`Camara` b) (take n transformedPoints)
   where
     circlePoints = pointsInUnitCircle  -- Tomamos todos los puntos dentro de un círculo unitario
-    scale = 0.75  -- Ajusta el radio del círculo según tus necesidades
-
+    
     -- Función para escalar y desplazar puntos según el círculo deseado
-    transformPoint (x, y) = Point3D (scale * x) (scale * y) 20
+    transformPoint (x, y) = Point3D (radio * x) (radio * y) 20
 
     -- Lista de puntos dentro de un círculo unitario
     pointsInUnitCircle = [(cos theta, sin theta) | theta <- [0, (2 * pi) / fromIntegral n .. 2 * pi]]

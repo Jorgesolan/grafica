@@ -112,18 +112,19 @@ main = do
           customTriangles2 = convertToCustomFormat (vertices2', triangles2)
           boundingVol' = buildBVH 4000 customTriangles2
           figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVol')] (Set.toList figuras')    
-      -- let !kdt = createKD $ createPhoton potf [] n figuras luces gen'
-      -- writeObject "test.bin" kdt
-      !notkdt <- readObject "./kd.bin"
-      let kdt = createKD notkdt
-      let cams = mulCam camara 0
-      let !rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams
-          a = map (\rayos -> listRayPhoton kdt cam figuras'' rayos nRay) rayitos
-          -- a = map (\rayos -> listRayToRGB luces figuras' rayos gen' nRay) rayitos
+      
+      
+      !notkdt <- readObject "./kd.bin" -- Carga la lista de fotones del binario
+      let kdt = createKD notkdt -- Crea el kdtree
+
+      let cams = mulCam camara 0 0.75-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
+          rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
+
+          --a = map (\rayos -> listRayPhoton kdt cam figuras rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
+          
           c = mediaLRGB a
           fin = concatMap rgbToString (gammaFunc fmx gamma c)
-
-      writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin
 
 
       end <- getCPUTime

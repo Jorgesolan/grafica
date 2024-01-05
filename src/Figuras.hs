@@ -13,7 +13,7 @@ import Elem3D
       (#<),
       (.*),
       escalateDir,
-      normal, escalatePoint, pointDir, dirPoint, getX, getY, getZ, distPoint, addPoints )
+      normal, escalatePoint, pointDir, dirPoint, distPoint, addPoints )
 import Debug.Trace (trace)
 import Data.Maybe (mapMaybe)
 import Data.List (minimumBy)
@@ -25,11 +25,11 @@ import qualified Data.Set as Set
 data Camara = Camara Point3D Base
 data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int} deriving Show
 data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int} deriving Show
-data Triangulo = Triangulo {xTr :: Point3D, yTr :: Point3D, zTr :: Point3D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int} deriving Show
+data Triangulo = Triangulo {p0Tr :: Point3D, p1Tr :: Point3D, p2Tr :: Point3D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int} deriving Show
 data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int deriving Show
 data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int} deriving Show
 
-data AABB = AABB Point3D Point3D deriving Show
+data AABB = AABB {p0AB :: Point3D, p1AB ::  Point3D} deriving Show
 data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int} deriving Show
 
 -- data Rosquilla = Rosquilla Point3D Direction Float Float RGB Float Int
@@ -104,9 +104,9 @@ getUV (Acelerator (BVH {..})) p = (1,1)
 
 calculateBoundingBox :: [Triangulo] -> AABB
 calculateBoundingBox triangles =
-    let xs = [x | tri <- triangles, x <- [getX (xTr tri), getX (yTr tri), getX (zTr tri)]]
-        ys = [y | tri <- triangles, y <- [getY (xTr tri), getY (yTr tri), getY (zTr tri)]]
-        zs = [z | tri <- triangles, z <- [getZ (xTr tri), getZ (yTr tri), getZ (zTr tri)]]
+    let xs = [x | tri <- triangles, x <- [xP (p0Tr tri), xP (p1Tr tri), xP (p2Tr tri)]]
+        ys = [y | tri <- triangles, y <- [yP (p0Tr tri), yP (p1Tr tri), yP (p2Tr tri)]]
+        zs = [z | tri <- triangles, z <- [zP (p0Tr tri), zP (p1Tr tri), zP (p2Tr tri)]]
         minPoint = Point3D (minimum xs) (minimum ys) (minimum zs)
         maxPoint = Point3D (maximum xs) (maximum ys) (maximum zs)
     in AABB minPoint maxPoint
@@ -130,25 +130,25 @@ buildBVH idNum triangles =
 
 
 rayIntersectsAABB :: Ray -> AABB -> Bool
-rayIntersectsAABB (Ray (Point3D ox oy oz) (Direction dx dy dz)) (AABB (Point3D minx miny minz) (Point3D maxx maxy maxz)) =
-    let tx1 = (minx - ox) / dx
-        tx2 = (maxx - ox) / dx
-        ty1 = (miny - oy) / dy
-        ty2 = (maxy - oy) / dy
-        tz1 = (minz - oz) / dz
-        tz2 = (maxz - oz) / dz
+rayIntersectsAABB (Ray {oR = Point3D x y z ,dR = Direction dx dy dz}) (AABB {p0AB = Point3D minx miny minz, p1AB = Point3D maxx maxy maxz}) =
+    let tx1 = (minx - x) / dx
+        tx2 = (maxx - x) / dx
+        ty1 = (miny - y) / dy
+        ty2 = (maxy - y) / dy
+        tz1 = (minz - z) / dz
+        tz2 = (maxz - z) / dz
         tmin = maximum [min tx1 tx2, min ty1 ty2, min tz1 tz2]
         tmax = minimum [max tx1 tx2, max ty1 ty2, max tz1 tz2]
     in tmax >= tmin && tmax >= 0
 
 closestIntersection :: Ray -> [Triangulo] -> (Float, Triangulo)
 closestIntersection _ [] = (-1, Triangulo (Point3D 0 0 0) (Point3D 0 0 0) (Point3D 0 0 0) (RGB 0 0 0) (0, 0, 0) 0 0) -- Default value
-closestIntersection (Ray rayOrigin rayDir) triangles =
+closestIntersection (Ray {..}) triangles =
     foldr findClosestIntersection (-1, head triangles) triangles
     where
         findClosestIntersection :: Triangulo -> (Float, Triangulo) -> (Float, Triangulo)
-        findClosestIntersection triangle@(Triangulo p1 p2 p3 _ _ _ _) (minDist, closestTri) =
-            let intersection = rayTriangleIntersection rayOrigin rayDir p1 p2 p3
+        findClosestIntersection triangle (minDist, closestTri) =
+            let intersection = rap1TriangleIntersection oR dR (p0Tr triangle) (p1Tr triangle) (p2Tr triangle)
             in case intersection of
                 Just (t, _) ->
                     if minDist < 0 || (t > 0 && t < minDist)
@@ -161,7 +161,7 @@ closestIntersection (Ray rayOrigin rayDir) triangles =
 addFig :: Shape -> [Shape] -> [Shape]
 addFig (Plane (Plano {..})) shapes = Plane (Plano centPl normPl rgbPl trPl reflPl (length shapes)):shapes
 addFig (Sphere (Esfera {..})) shapes = Sphere (Esfera centEs radEs rgbEs trEs reflEs (length shapes)):shapes
-addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo xTr yTr zTr rgbTr trTr reflTr (length shapes)):shapes
+addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo p0Tr p1Tr p2Tr rgbTr trTr reflTr (length shapes)):shapes
 addFig (Cylinder (Cilindro p1 p2 p3 color reflec kr _)) shapes = Cylinder (Cilindro p1 p2 p3 color reflec kr (length shapes)):shapes
 addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe (length shapes)):shapes
 addFig (Acelerator (BVH {..})) shapes = Acelerator (BVH aabb bvhs triangulos (length shapes)):shapes
@@ -176,7 +176,7 @@ encenderShapes = map encenderShape
 encenderShape :: Shape -> Shape
 encenderShape (Plane (Plano {..})) = Plane (Plano centPl normPl rgbPl trPl reflPl (-idPl))
 encenderShape (Sphere (Esfera {..})) = Sphere (Esfera centEs radEs rgbEs trEs reflEs (-idEs))
-encenderShape (Triangle (Triangulo {..})) = Triangle (Triangulo xTr yTr zTr rgbTr trTr reflTr (-idTr))
+encenderShape (Triangle (Triangulo {..})) = Triangle (Triangulo p0Tr p1Tr p2Tr rgbTr trTr reflTr (-idTr))
 
 {-# INLINE parametricShapeCollision #-}
 parametricShapeCollision :: Set.Set Shape -> [Ray] -> [Set.Set Obj]
@@ -184,54 +184,55 @@ parametricShapeCollision shapes rays = map (collision shapes) rays
   where
     collision shapes ray = Set.map (`oneCollision` ray) shapes
 
+{-# INLINE oneCollision #-}
 oneCollision :: Shape -> Ray -> Obj
-oneCollision (Sphere (Esfera {..})) (Ray p1 d) =
-    let f = p1 #< centEs
-        a = d .* d
-        b = 2.0 * (f .* d)
+oneCollision (Sphere (Esfera {..})) (Ray {..}) =
+    let f = oR #< centEs
+        a = dR .* dR
+        b = 2.0 * (f .* dR)
         c = f .* f - radEs * radEs
         raiz = b * b - 4.0*a*c
     in
         (if raiz > 0 then (let t0 = (-b + sqrt raiz) / (2.0 * a)
                                t1 = (-b - sqrt raiz) / (2.0 * a)
                                mind = findMinPositive t0 t1
-                               collisionPoint = movePoint (escalateDir mind d) p1
+                               collisionPoint = movePoint (escalateDir mind dR) oR
                                vectorNormal = normal $ collisionPoint #< centEs
                            in if t0 > 0 || t1 > 0
-                               then (Obj mind rgbEs d collisionPoint vectorNormal trEs reflEs idEs)
-                               else (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0)) else (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0))
+                               then (Obj mind rgbEs dR collisionPoint vectorNormal trEs reflEs idEs)
+                               else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0)) else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0))
 
-oneCollision (Plane (Plano {..})) (Ray p1 d) = (Obj mind rgbPl d collisionPoint vectorNormal trPl reflPl idPl)
+oneCollision (Plane (Plano {..})) (Ray {..}) = (Obj mind rgbPl dR collisionPoint vectorNormal trPl reflPl idPl)
   where
-    mind = ((centPl #< p1) .* vectorNormal) / (d .* vectorNormal)
-    collisionPoint = movePoint (escalateDir mind d) p1
-    vectorNormal = if (d.*normPl) > 0 then normal (escalateDir (-1) normPl) else normal normPl
+    mind = ((centPl #< oR) .* vectorNormal) / (dR .* vectorNormal)
+    collisionPoint = movePoint (escalateDir mind dR) oR
+    vectorNormal = if (dR.*normPl) > 0 then normal (escalateDir (-1) normPl) else normal normPl
 
 
-oneCollision (Cylinder(Cilindro p0 n r color reflec kr id)) (Ray p1 d) = (Obj mind color d collisionPoint vectorNormal reflec kr id)
+oneCollision (Cylinder(Cilindro p0 n r color reflec kr id)) (Ray {..}) = (Obj mind color dR collisionPoint vectorNormal reflec kr id)
   where
     mind = findMinPositive t1 t2
-    t1 = ((p0 #< p1) .* vectorNormal + sqrt discriminant) / (d .* vectorNormal)
-    t2 = ((p0 #< p1) .* vectorNormal - sqrt discriminant) / (d .* vectorNormal)
-    discriminant = ((p1 #< p0) .* (p1 #< p0)) - r * r
-    collisionPoint = movePoint (escalateDir mind d) p1
-    vectorNormal = if (d.*n)>0 then normal (escalateDir (-1) n) else normal n
+    t1 = ((p0 #< oR) .* vectorNormal + sqrt discriminant) / (dR .* vectorNormal)
+    t2 = ((p0 #< oR) .* vectorNormal - sqrt discriminant) / (dR .* vectorNormal)
+    discriminant = ((oR #< p0) .* (oR #< p0)) - r * r
+    collisionPoint = movePoint (escalateDir mind dR) oR
+    vectorNormal = if (dR.*n)>0 then normal (escalateDir (-1) n) else normal n
 
 
-oneCollision (Acelerator (BVH bbox children triangles _)) ray@(Ray rayOrigin rayDir) =
-    if rayIntersectsAABB ray bbox
+oneCollision (Acelerator (BVH {..})) ray =
+    if rayIntersectsAABB ray aabb
         then
-            if null children
+            if null bvhs
                 then
-                    oneCollision (Triangle $ snd(closestIntersection ray triangles)) ray
+                    oneCollision (Triangle $ snd(closestIntersection ray triangulos)) ray
                 else
-                    let childCollisions = filter (\obj -> mindObj obj /= -1) $ map (\ch -> oneCollision (Acelerator ch) ray ) children
+                    let childCollisions = filter (\obj -> mindObj obj /= -1) $ map (\ch -> oneCollision (Acelerator ch) ray ) bvhs
 
                     in case childCollisions of
-                        [] -> (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+                        [] -> (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
                         _ -> let mindObj = minimum childCollisions
                              in mindObj
-        else (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+        else (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
 -- oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles _)) =
 --     if rayIntersectsAABB ray bbox
@@ -247,43 +248,43 @@ oneCollision (Acelerator (BVH bbox children triangles _)) ray@(Ray rayOrigin ray
 --                     in trace ("Intermediate node hit. T1: " ++ show t1 ++ ", Obj1: " ++ show obj1 ++ ", T2: " ++ show t2 ++ ", Obj2: " ++ show obj2) result
 --         else trace "No intersection with AABB." (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
-oneCollision  (Rectangle (Rectangulo {..})) (Ray p d)
-  | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe d (dirPoint collisionPoint) normRe' trRe reflRe idRe)
-  | otherwise = (Obj (-1) (RGB 0 0 0) d (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0)
+oneCollision  (Rectangle (Rectangulo {..})) (Ray {..})
+  | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe dR (dirPoint collisionPoint) normRe' trRe reflRe idRe)
+  | otherwise = (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0)
   where
     offset = collisionPoint - pointDir centRe
     localX = offset .* right
     localY = offset .* up
     halfWidth = ancRe / 2
     halfHeight = altRe / 2
-    collisionPoint = pointDir p + escalateDir t d
-    t = (centRe #< p) .* normRe / denom
+    collisionPoint = pointDir oR + escalateDir t dR
+    t = (centRe #< oR) .* normRe / denom
     withinBounds = -halfWidth <= localX && localX <= halfWidth && -halfHeight <= localY && localY <= halfHeight
-    denom = d .* normRe
+    denom = dR .* normRe
     right = normal tngRe
     up = normRe * right
-    normRe' = if d .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
+    normRe' = if dR .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
 
 
-oneCollision (Triangle (Triangulo {..})) (Ray rayOrigin rayDir) =
-    case rayTriangleIntersection rayOrigin rayDir xTr yTr zTr of
+oneCollision (Triangle (Triangulo {..})) (Ray {..}) =
+    case rap1TriangleIntersection oR dR p0Tr p1Tr p2Tr of
         Just (t, intersectionPoint) ->
-            let normalVec = (yTr #< xTr) * (zTr #< xTr)
-                normalVec' = if (rayDir.*normalVec) > 0 then normal (escalateDir (-1) normalVec) else normal normalVec
-            in (Obj t rgbTr rayDir intersectionPoint normalVec' trTr reflTr idTr)
-        Nothing -> (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+            let normalVec = (p1Tr #< p0Tr) * (p2Tr #< p0Tr)
+                normalVec' = if (dR.*normalVec) > 0 then normal (escalateDir (-1) normalVec) else normal normalVec
+            in (Obj t rgbTr dR intersectionPoint normalVec' trTr reflTr idTr)
+        Nothing -> (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
 getShapeID :: Shape -> Int
 getShapeID (Sphere (Esfera{..})) = idEs
-getShapeID (Plane (Plano _ _ _ _  _ id)) = id
-getShapeID (Triangle (Triangulo _ _ _ _ _ _ id)) = id
+getShapeID (Plane (Plano {..})) = idPl
+getShapeID (Triangle (Triangulo {..})) = idTr
 getShapeID (Cylinder (Cilindro _ _ _ _ _ _ id)) = id
 getShapeID (Rectangle(Rectangulo{..})) = idRe
 getShapeID (Acelerator(BVH{..})) = idBvh
 -- getShapeID (Donut (Rosquilla _ _ _ _ _ _ _ id)) = id
 
-rayTriangleIntersection :: Point3D -> Direction -> Point3D -> Point3D -> Point3D -> Maybe (Float, Point3D)
-rayTriangleIntersection orig dir v1 v2 v3 = do
+rap1TriangleIntersection :: Point3D -> Direction -> Point3D -> Point3D -> Point3D -> Maybe (Float, Point3D)
+rap1TriangleIntersection orig dir v1 v2 v3 = do
     let e1 = v2 #< v1
         e2 = v3 #< v1
         h = dir * e2

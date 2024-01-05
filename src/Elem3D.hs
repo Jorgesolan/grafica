@@ -9,13 +9,13 @@ import Debug.Trace (trace)
 import qualified Data.Binary.Put
 import qualified Data.Binary as Data.Binary.Get.Internal
 
-data Point3D = Point3D {xP :: !Float, yP :: !Float, zP :: !Float} deriving (Eq)
-data Direction = Direction {xD :: !Float, yD :: !Float, zD :: !Float} deriving (Eq)
-data Ray = Ray {oR :: !Point3D, dR :: !Direction}
-data Base = Base !Direction !Direction !Direction
-data RGB = RGB {red :: !Float, green :: !Float, blue :: !Float} deriving (Eq)
-data Luz = Luz !Point3D !RGB !Float
-data Foton = Foton {pFot :: !Point3D, iFot :: Float, rgbFot :: RGB, idFot :: Int}
+data Point3D = Point3D {xP :: Float, yP :: Float, zP :: Float} deriving (Eq)
+data Direction = Direction {xD :: Float, yD :: Float, zD :: Float} deriving (Eq)
+data Ray = Ray {oR :: Point3D, dR :: Direction}
+data Base = Base {d0 :: Direction, d1 :: Direction, d2 :: Direction} deriving (Show)
+data RGB = RGB {red :: Float, green :: Float, blue :: Float} deriving (Eq)
+data Luz = Luz Point3D RGB Float
+data Foton = Foton {pFot :: Point3D, iFot :: Float, rgbFot :: RGB, idFot :: Int}
 
 instance Binary Point3D where
   put :: Point3D -> Data.Binary.Put.Put
@@ -54,10 +54,6 @@ instance Binary Foton where
     c <- get
     Foton p f c <$> get
 
-instance Show Base where
-    show :: Base -> String
-    show (Base (Direction dx0 dy0 dz0) (Direction dx1 dy1 dz1) (Direction dx2 dy2 dz2)) = "Base:\n| " ++ show dx0 ++" " ++show dy0 ++" "++ show dz0 ++ " |\n" ++ "| " ++ show dx1 ++" " ++show dy1 ++" "++ show dz1 ++ " |\n"++ "| " ++ show dx2 ++" " ++show dy2 ++" "++ show dz2 ++ "| "
-
 instance Show Point3D where
     show :: Point3D -> String
     show (Point3D{..}) = "Point3D " ++ show xP ++ " " ++ show yP ++ " " ++ show zP
@@ -68,7 +64,7 @@ instance Show Direction where
 
 instance Show Ray where
     show :: Ray -> String
-    show (Ray p d) = "Rayo hasta "  ++ show d
+    show (Ray {..}) = "Rayo hasta "  ++ show dR
 
 instance Show RGB where
     show :: RGB -> String
@@ -76,24 +72,8 @@ instance Show RGB where
 
 instance Show Foton where
     show :: Foton -> String
-    show (Foton (Point3D x y z) i j  _) = "Foton " ++ show x ++ " " ++ show y ++ " " ++ show z ++ " " ++ show i ++ " " ++ show j
+    show (Foton {..}) = "Foton " ++ show (xP pFot) ++ " " ++ show (yP pFot) ++ " " ++ show (zP pFot) ++ " " ++ show iFot ++ " " ++ show rgbFot
 
-getX :: Point3D -> Float
-getX (Point3D x _ _) = x
-
-getY :: Point3D -> Float
-getY (Point3D _ y _) = y
-
-getZ :: Point3D -> Float
-getZ (Point3D _ _ z) = z
-
-{-# INLINE getPhotonID #-}
-getPhotonID :: Foton -> Int
-getPhotonID (Foton {..}) = idFot
-
-{-# INLINE obtenerRayo #-}
-obtenerRayo :: Ray -> Direction
-obtenerRayo (Ray _ dir) = dir
 
 {-# INLINE roundTo #-}
 roundTo :: Int -> Point3D -> Point3D
@@ -166,30 +146,30 @@ movePoint' (Direction {..}) (Point3D {..}) = Point3D (xD - xP) (yD - yP) (zD - z
 
 {-# INLINE distPoint #-}
 distPoint :: Point3D -> Point3D -> Float
-distPoint (Point3D x1 y1 z1) (Point3D x2 y2 z2) = sqrt $ (x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2
+distPoint p p' = sqrt $ (xP p'-xP p)**2 + (yP p'-yP p)**2 + (zP p'-zP p)**2
 
 -- -- Resta de puntos -> Dirección del primero al segundo
 {-# INLINE (#) #-}
 (#) :: Point3D -> Point3D -> Point3D
-(Point3D !xb !yb !zb) # (Point3D !xa !ya !za) = Point3D (xb-xa) (yb-ya) (zb-za)
+p # p'= Point3D (xP p'-xP p) (yP p'-yP p) (zP p'-zP p)
 
 {-# INLINE addPoints #-}
 addPoints :: Point3D -> Point3D -> Point3D
-addPoints (Point3D !xb !yb !zb) (Point3D !xa !ya !za) = Point3D (xb+xa) (yb+ya) (zb+za)
+addPoints p p'= Point3D (xP p' + xP p) (yP p' + yP p) (zP p' + zP p)
 
 
 -- -- Direccion entre puntos -> Dirección del primero al segundo
 {-# INLINE (#<) #-}
 (#<) :: Point3D -> Point3D -> Direction
-(Point3D !xb !yb !zb) #< (Point3D !xa !ya !za) = Direction (xb-xa) (yb-ya) (zb-za)
+p' #< p= Direction (xP p'-xP p) (yP p'-yP p) (zP p'-zP p)
 
 {-# INLINE aproxPoint #-}
 aproxPoint :: Point3D -> Point3D -> Bool
-aproxPoint (Point3D !xb !yb zb) (Point3D !xa !ya !za) = a && b && c
+aproxPoint p p' = a && b && c
     where
-        !a = abs (xb-xa) < 0.1
-        !b = abs (yb-ya) < 0.1
-        !c = abs (zb-za) < 0.1
+        !a = abs (xP p'-xP p) < 0.1
+        !b = abs (yP p'-yP p) < 0.1
+        !c = abs (zP p'-zP p) < 0.1
 
 -- -- -- Escalado de puntos
 {-# INLINE escalatePoint' #-}
@@ -206,11 +186,11 @@ escalatePointt s (Point3D {..}) = Point3D (s*xP) (s*yP) (s*zP)
 
 {-# INLINE pointDir#-}
 pointDir :: Point3D -> Direction
-pointDir (Point3D x y z) = Direction x y z
+pointDir (Point3D {..}) = Direction xP yP zP
 
 {-# INLINE dirPoint#-}
 dirPoint :: Direction -> Point3D
-dirPoint (Direction x y z) = Point3D x y z
+dirPoint (Direction {..}) = Point3D xD yD zD
 
 {-# INLINE pointToPothon#-}
 pointToPothon :: Point3D -> Foton
@@ -227,11 +207,11 @@ instance Num Direction where
 -- Suma de direcciones
  {-# INLINE (+) #-}
  (+) :: Direction -> Direction -> Direction
- (Direction x1 y1 z1) + (Direction x2 y2 z2) = Direction (x1 + x2) (y1 + y2) (z1 + z2)
+ d + d' = Direction (xD d + xD d') (yD d+ yD d') (zD d + zD d')
 -- Resta de Direcciones
  {-# INLINE (-) #-}
  (-) :: Direction -> Direction -> Direction
- (Direction x1 y1 z1) - (Direction x2 y2 z2) = Direction (x1 - x2) (y1 - y2) (z1 - z2)
+ d - d' = Direction (xD d - xD d') (yD d - yD d') (zD d - zD d')
 
  -- Producto vectorial
  {-# INLINE (*) #-}
@@ -281,19 +261,19 @@ instance Num RGB where
 
  {-# INLINE (+) #-}
  (+) :: RGB -> RGB -> RGB
- (RGB r1 g1 b1) + (RGB r2 g2 b2) = RGB (r1 + r2) (g1 + g2) (b1 + b2)
+ rgb + rgb' = RGB (red rgb + red rgb') (green rgb + green rgb') (blue rgb + blue rgb') 
 
  {-# INLINE (-) #-}
  (-) :: RGB -> RGB -> RGB
- (RGB r1 g1 b1) - (RGB r2 g2 b2) = RGB (r1 - r2) (g1 - g2) (b1 - b2)
+ rgb - rgb' = RGB (red rgb - red rgb') (green rgb - green rgb') (blue rgb - blue rgb') 
 
  {-# INLINE (*) #-}
  (*) :: RGB -> RGB -> RGB
- (RGB r1 g1 b1) * (RGB r2 g2 b2) = RGB (r1 * r2) (g1 * g2) (b1 * b2)
+ rgb * rgb' = RGB (red rgb * red rgb') (green rgb * green rgb') (blue rgb * blue rgb') 
 
 {-# INLINE (./) #-}
 (./) :: RGB -> RGB -> RGB
-(RGB r1 g1 b1) ./ (RGB r2 g2 b2) = RGB (r1 / r2) (g1 / g2) (b1 / b2)
+rgb ./ rgb' = RGB (red rgb / red rgb') (green rgb / green rgb') (blue rgb / blue rgb') 
 
 {-# INLINE modRGB #-}
 modRGB :: RGB -> Float -> RGB
@@ -308,6 +288,7 @@ divRGB (RGB {..}) f =
     RGB (red / f)
         (green / f)
         (blue / f)
+
 {-# INLINE scale #-}
 scale :: RGB -> RGB
 scale x = x ./ RGB 255 255 255
@@ -318,7 +299,7 @@ prodRGB r0 r1 = modRGB (scale r0 * r1)
 
 {-# INLINE nanRGB #-}
 nanRGB :: RGB -> Bool
-nanRGB (RGB r g b) = isNaN r || isNaN g || isNaN b
+nanRGB (RGB {..}) = isNaN red || isNaN green || isNaN blue
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
@@ -327,7 +308,7 @@ nanRGB (RGB r g b) = isNaN r || isNaN g || isNaN b
 
 -- Punto a Vector
 pointToVector :: Point3D -> [Float]
-pointToVector (Point3D x y z) = [x, y, z]
+pointToVector (Point3D {..}) = [xP, yP, zP]
 
 -- Vector a Punto
 vectorToPoint :: [Float] -> Point3D
@@ -340,10 +321,10 @@ generateBase = Base
 
 -- Base + Punto a Matriz
 basePointMatrix :: Base -> [[Float]]
-basePointMatrix (Base (Direction a0 b0 c0) (Direction a1 b1 c1) (Direction a2 b2 c2)) =
-  [[a0, a1, a2],
-   [b0, b1, b2],
-   [c0, c1, c2]]
+basePointMatrix (Base {..}) =
+  [[xD d0, xD d1, xD d2],
+   [yD d0, yD d1, yD d2],
+   [zD d0, zD d1, zD d2]]
 
 --Cambio de Base con punto y matriz en Global, devuelve punto visto en local
 cambioBase :: Point3D -> Base -> Point3D -> Point3D

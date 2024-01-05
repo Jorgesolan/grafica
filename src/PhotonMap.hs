@@ -2,7 +2,6 @@
 {-# LANGUAGE MultiWayIf #-}
 module PhotonMap where
 
-
 import Elem3D
     ( Foton(..),
       Luz(..),
@@ -38,7 +37,7 @@ import Funciones
       genPointTotal,
       obtenerPrimeraColision,
       colision,
-      brdf, sumRGB, ruletaRusa,gen2Point, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla, dirEspejo)
+      brdf, sumRGB, ruletaRusa, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla, dirEspejo)
 import Debug.Trace (trace)
 import qualified Data.DList as DL
 import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
@@ -48,17 +47,18 @@ import qualified Data.Set as Set
 
 createPhoton :: Float -> DL.DList Foton -> Int -> Int -> Set.Set Shape -> [Luz] -> StdGen -> Int -> DL.DList Foton
 createPhoton lzT fotones contador contMx figuras luces gen nRebotes
-  | contador == contMx = fotones
+  | contador == contMx = fotones -- Devuelve la lista de fotones
   | contador == contMx `div` round (lzT / intLuz) = createPhoton (lzT - intLuz) fotones' (contador+1) contMx figuras (tail luces) gen' nRebotes -- Cambio de luz
-  | otherwise = createPhoton lzT newlisP (contador+1) contMx figuras luces gen' nRebotes
+  | otherwise = createPhoton lzT newlisP (contador+1) contMx figuras luces gen' nRebotes -- Se vuelve a llamar con la nueva lista de fotones
   where
     (ray, Luz pointPapa rgbPadre intLuz) = selescLightSource luces contador contMx gen
-    newlisP = traceRay pointPapa (4.0 * pi * intLuz / fromIntegral contMx) rgbPadre fotones figuras nRebotes gen' nxtObj
+    newlisP = traceRay pointPapa ((4.0 * pi * intLuz) / fromIntegral contMx) rgbPadre fotones figuras nRebotes gen' nxtObj
     nxtObj = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura ray) figuras -- Siguiente objeto que choca
 
     gen' = snd $ split gen
     fotones' = DL.append fotones (DL.fromList (DL.toList fotones))
 
+{-# INLINE selescLightSource #-}
 selescLightSource :: [Luz] -> Int -> Int -> StdGen -> (Ray, Luz)
 selescLightSource luces contador contMx gen = (Ray pLuz (movePoint (pointDir pLuz) (genPointTotal gen) #< pLuz), luz)
   where
@@ -70,10 +70,10 @@ traceRay p pot rgb fotones figuras n gen obj
   | otherwise = result
   where
     result = case caso of
-      0 -> photonD
-      1 -> photonR
-      2 -> photonE
-      _ -> fotones
+      0 -> photonD -- Difuso
+      1 -> photonR --Refracción
+      2 -> photonE -- Especular
+      _ -> fotones -- Absorción
 
     pObj = colObj obj
     nObj = normObj obj
@@ -86,20 +86,20 @@ traceRay p pot rgb fotones figuras n gen obj
     foton = Foton pObj pot' rgb (idObj obj)
     pot' = abs (w0Obj obj .* nObj)*pot / ((1+(modd (colObj obj #< p)/10.0))**2)
     
-    
-    nxtObj = objAleatorio figuras' obj gen
-    figuras' = Set.filter (\shape -> idObj obj /= getShapeID shape) figuras
+    nxtObj = objAleatorio figuras' obj gen -- Siguiente objeto que choca con dirección random
+    objEsp = objEspejo figuras' (w0Obj obj) nObj pObj -- Siguiente objeto que choca con dirección espejo
+    (objCri, _) = objCristal figuras (w0Obj obj) nObj 1 (reflObj obj) pObj -- Siguiente objeto que choca con dirección refracción
 
-    objEsp = objEspejo figuras' (w0Obj obj) nObj pObj
-    (objCri, _) = objCristal figuras (w0Obj obj) nObj 1 (reflObj obj) pObj
+    figuras' = Set.filter (\shape -> idObj obj /= getShapeID shape) figuras -- Quita el objeto que choca de la lista de figuras para que al buscar la primera vez no choque consigo mismo
 
     gen' = snd $ split gen
 
-
-photonMulToRGB :: [Foton] -> Obj -> Set.Set Shape -> Float -> RGB
-photonMulToRGB photons obj figuras radio = newRGB
+{-# INLINE estDensPhoton #-}
+estDensPhoton :: [Foton] -> Obj -> Set.Set Shape -> Float -> RGB
+estDensPhoton photons obj figuras radio = newRGB
   where
    -- newRGB = sumRGB $ map (\photon -> fusion obj (fGaus photons obj photon) photon) photons
+   -- newRGB = sumRGB $ map (\photon -> fusion obj (1/(radio * radio * pi)) photon) photons
     newRGB = sumRGB $ map (\photon -> fusion obj (1 / (1 + distFot (colObj obj) photon)) photon) photons
     fusion :: Obj -> Float -> Foton -> RGB
     fusion obj kernel fot = newRGB `modRGB` kernel
@@ -131,21 +131,15 @@ photonMulToRGB photons obj figuras radio = newRGB
 --     photons = kNearest kdt nPhoton (pointToPothon p)
 --     photons' = filter (\(Foton point int dir rgbF idF) -> id == idF) photons
 --     -- Coger solo fotones del mismo objeto
---     !newRGB = photonMulToRGB photons' obj figuras
-
-
+--     !newRGB = estDensPhoton photons' obj figuras
 
 
 photonMap :: KdTree Float Foton -> Float -> Set.Set Shape -> Obj -> RGB
 photonMap kdt radio figuras obj
-  | kr == 0 && ke == 0 = difuso| otherwise = if mindObj obj <0 then scale (RGB 73 122 131) else difuso + espejo + cristal
+  | kr == 0 && ke == 0 = difuso 
+  | otherwise = difuso + espejo + cristal
   where
-    -- wH = normal (dirEspejo (w0Obj obj) (normObj obj) - w0Obj obj)
-    -- fres = fresnell obj 1
-    -- micro = microfacet wH (normObj obj) 0.4
-    -- shadow = shadowing wH (normObj obj) 0.4
 
-    
     difuso = kdToRGB kdt (radio * kd) figuras obj
     espejo = rgbObj obj * scale colorEsp `modRGB` ke
     cristal = rgbObj obj * scale colorCri `modRGB` kr
@@ -164,6 +158,7 @@ kdToRGB kdt 0 figuras obj = RGB 0 0 0
 kdToRGB kdt radio figuras obj = newRGB
   where
     photons = inRadius kdt radio (pointToPothon (colObj obj))
-    photons' = filter (\(Foton _ _ _ idF) -> idObj obj == idF) photons
-    -- Coger solo fotones del mismo objeto
-    !newRGB = if null photons' then RGB 0 0 0 else photonMulToRGB photons' obj figuras radio
+    -- photons = kNearest kdt (round radio) (pointToPothon (colObj obj)) -- Si quisieramos coger los k-fotones más cercanos
+    photons' = filter (\fot -> idObj obj == idFot fot) photons -- Coger solo fotones del mismo objeto
+    
+    !newRGB = if null photons' then RGB 0 0 0 else estDensPhoton photons' obj figuras radio --Si no hay fotones el color es 0, sino ecuación de estiamcion de densidad
