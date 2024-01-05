@@ -1,9 +1,9 @@
 #!/bin/bash
-N=8
-pix=256
-piy=256
+N=10
+pix=2560
+piy=2560
 etapasY=1
-etapasX=1  # You can change this value to the desired number of iterations per barrier
+etapasX=4  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
 # Calculate the number of iterations per barrier

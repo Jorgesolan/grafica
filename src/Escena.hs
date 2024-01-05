@@ -41,17 +41,17 @@ nRebotes = 8
 aspectR :: Float
 aspectR = 1
 pix :: Float
-pix = 1024
+pix = 2560
 piCam :: Float
 piCam = 12.5
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 8
+maxN = 10
 etapasY :: Int
 etapasY = 1
 etapasX:: Int
-etapasX= 1
+etapasX= 4
 nRay :: Int
 nRay = 4
 intMxSim :: Float
@@ -73,9 +73,9 @@ centr = Point3D 0 0 0
 -- centr''' :: Point3D
 -- centr''' = Point3D 15 (-10) (-22)
 luz :: Luz
-luz = Luz (Point3D 0 0 (10)) (RGB 255 255 255) intMxKd
+luz = Luz (Point3D (3.5) 1 (-10)) (RGB 255 255 255) intMxKd
 luz' :: Luz
-luz' = Luz (Point3D (-15) (0) (-7.5)) (RGB 255 255 255) intMxKd
+luz' = Luz (Point3D (-20) (0) (-7.5)) (RGB 255 255 255) intMxKd
 luz'' :: Luz
 luz'' = Luz (Point3D 8 3 (-12))  (RGB 255 255 255) intMxKd
 

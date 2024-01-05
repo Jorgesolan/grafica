@@ -65,14 +65,14 @@ main = do
 
   let objFilePath1 = "../meshes/simplepalace.obj"  
   (vertices1, triangles1) <- loadObjFile objFilePath1
-  let vertices1' = map (escalatePointt (2.4).movePoint (Direction 5 (-3.25) (-13)). rotatePointt 'Y' (282.5)) vertices1
+  let vertices1' = map (escalatePointt (4).movePoint (Direction 7.5 (-2.5) (-9.75)). rotatePointt 'Y' (282.5)) vertices1
       customTriangles1 = convertToCustomFormat (vertices1', triangles1)
       boundingVol = buildBVH 4000 customTriangles1
       figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] (Set.toList figuras)
 
   let objFilePath2 = "../meshes/simplehaskell.obj"  
   (vertices2, triangles2) <- loadObjFile objFilePath2
-  let vertices2' = map (escalatePointt (1).movePoint (Direction 0 (0) (0)). rotatePointt 'Y' (90)) vertices2
+  let vertices2' = map (escalatePointt (1).movePoint (Direction (-5) (-5) (-28)). rotatePointt 'Y' (90)) vertices2
       customTriangles2 = convertToCustomFormat (vertices2', triangles2)
       boundingVol' = buildBVH 4000 customTriangles2
       figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVol')] (Set.toList figuras')

@@ -1,5 +1,5 @@
 #simplifica otros obj mas complejos al formato empleado
-with open('../meshes/haskell.obj', 'r') as file:
+with open('../meshes/palace.obj', 'r') as file:
     lines = file.readlines()
 
 vertices = []
@@ -18,7 +18,7 @@ for line in lines:
                 faces.append("f " + " ".join(map(str, face_indices[:3])) + "\n")  # Reconstruct the face line
                 faces.append("f " + " ".join(map(str, face_indices[1:])) + "\n")  # Reconstruct the face line
 
-with open('../meshes/simplehaskell.obj', 'w') as file:
+with open('../meshes/simplepalace.obj', 'w') as file:
     file.write("# Converted OBJ\n")
     file.write("o ConvertedObject\n")
 
