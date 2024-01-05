@@ -34,7 +34,7 @@ import qualified Data.Set as Set
 intMxKd :: Float
 intMxKd = 50
 n :: Float
-n=20000
+n=40000
 nRebotes :: Int
 nRebotes = 8
 -- SIMULACION
@@ -53,7 +53,7 @@ etapasY = 1
 etapasX:: Int
 etapasX= 4
 nRay :: Int
-nRay = 4
+nRay = 20
 intMxSim :: Float
 intMxSim = 1.0
 
@@ -73,11 +73,13 @@ centr = Point3D 0 0 0
 -- centr''' :: Point3D
 -- centr''' = Point3D 15 (-10) (-22)
 luz :: Luz
-luz = Luz (Point3D (3.5) 1 (-10)) (RGB 255 255 255) intMxKd
+luz = Luz (Point3D (0) 8 (-8)) (RGB 255 255 255) 1-- Dentro
 luz' :: Luz
-luz' = Luz (Point3D (-20) (0) (-7.5)) (RGB 255 255 255) intMxKd
+luz' = Luz (Point3D (-20) (0) (-7.5)) (RGB 255 255 255) intMxKd -- Fuera de la escena
 luz'' :: Luz
-luz'' = Luz (Point3D 8 3 (-12))  (RGB 255 255 255) intMxKd
+luz'' = Luz (Point3D 8 3 (-12))  (RGB 255 255 255) intMxKd -- Al lado de columna
+luz''' :: Luz
+luz''' = Luz (Point3D 0 0 (30))  (RGB 255 255 255) 1 -- Al lado de columna
 
 -- plano0 :: Shape
 -- plano0 = Plane (Plano (Point3D (-20) 0 0) (Direction 1 0 0) (RGB 250 255 10) (0.8,0,0) 0 0) --Izq
@@ -136,4 +138,4 @@ figuras = Set.fromList $ addFigMult [plano5] []
 -- figuras = addFigMult [a, b, c, plano3] []
 
 luces :: [Luz]
-luces = [luz, luz',luz'' ]
+luces = [{- luz''', -}luz]

@@ -1,17 +1,18 @@
+{-# LANGUAGE RecordWildCards #-}
 module Tone_map where
 import Elem3D ( RGB(..), elevateRGBPoint )
 
 {-# INLINE clamp #-}
 clamp :: Float -> [RGB] -> [RGB]
-clamp x = map (\(RGB a b c) -> RGB (min x a) (min x b) (min x c))
+clamp x = map (\(RGB {..}) -> RGB (min x red) (min x green) (min x blue))
 
 {-# INLINE ecualization #-}
 ecualization :: Float -> [RGB] -> [RGB]
-ecualization x = map (\(RGB a b c) -> RGB (a / x) (b / x) (c / x))
+ecualization x = map (\(RGB {..}) -> RGB (red / x) (green / x) (blue / x))
 
 {-# INLINE ecualization' #-}
 ecualization' :: Float -> [RGB] -> [RGB]
-ecualization' x = map (\(RGB a b c) -> RGB (a * x) (b * x) (c * x))
+ecualization' x = map (\(RGB {..}) -> RGB (red * x) (green * x) (blue * x))
 
 {-# INLINE elevateRGBPoints #-}
 elevateRGBPoints :: Float -> [RGB] -> [RGB]

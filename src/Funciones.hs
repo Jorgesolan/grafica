@@ -21,7 +21,8 @@ import Elem3D
       divRGB,
       scale,
       generateBase,
-      cambioBase, addPoints, pointDir, Foton, distFot, (#), escalatePoint, distPoint, movePoint, angleBetween )
+      cambioBase, addPoints, pointDir, Foton, distFot, (#), escalatePoint,
+      distPoint, movePoint, angleBetween )
 import Figuras
     ( oneCollision,
       Camara(..),
@@ -33,10 +34,9 @@ import Figuras
 import System.IO.Unsafe (unsafePerformIO)
 import Data.Ord (comparing)
 import Debug.Trace (trace)
-import Data.List (minimumBy,transpose,sort)
+import Data.List (transpose)
 import System.Random (randomR, StdGen, randomRs,split, mkStdGen)
 
-import Data.Either (fromRight)
 import Data.Binary (Word8)
 import Data.Number.Erf
 import Data.Foldable (toList)
@@ -319,8 +319,8 @@ fGaus photons obj fot = if isNaN result then 0 else result
 --       EXTRAS         --
 --------------------------
 {-# INLINE addNiebla #-}
-addNiebla :: Point3D -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
-addNiebla p obj x figuras rgb = newRGB + (rgb `modRGB` reducObj)
+addNiebla :: Luz -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
+addNiebla (Luz p _ _) obj x figuras rgb = if (mindObj obj ) < 0 then RGB 0 0 0 else newRGB + (rgb `modRGB` reducObj)
   where
     newRGB = RGB fact fact fact
     reducLuz = if zP closest < 0 then exp (x * zP closest / 10) else 1

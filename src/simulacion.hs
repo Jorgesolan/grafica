@@ -33,7 +33,7 @@ import Funciones
       generateRaysForPixels,
       obtenerPrimeraColision,
       listRay,
-      chunksOf, mulCam )
+      chunksOf, mulCam ,brdf)
 import PathTracer (pathTracer, luzDirecta, luzArea)
 import KdTest ( createKD )
 import PhotonMap ( photonMap )
@@ -44,7 +44,6 @@ import System.Random (StdGen, newStdGen, split)
 import Data.List (transpose)
 import System.CPUTime (getCPUTime)
 import System.Environment (getArgs)
-import Data.Maybe (listToMaybe)
 import System.Exit (exitFailure)
 import Text.Read (readMaybe)
 import qualified Data.DList as DL
@@ -58,15 +57,15 @@ antialiasing n rayos = map obtenerPrimeraColision $ map Set.fromList (chunksOf n
 
 {-# INLINE listRayToRGB #-}
 listRayToRGB :: [Luz] -> Set.Set Shape -> [Ray] -> StdGen -> Int -> [RGB]
-listRayToRGB luz figuras rayos gen nRay =  colorDirecto --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+listRayToRGB luz figuras rayos gen nRay = zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   -- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   where
-    !antial = map listRay $ parametricShapeCollision figuras rayos
+    antial = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay antial
     
     (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-    ppp = 10 -- Caminos por pixel
+    ppp = 200 -- Caminos por pixel
     colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
     colorDirecto = map (luzDirecta luz figuras) rayColisions
     colorArea = zipWith (luzArea figuras ppp) rayColisions gens
@@ -77,7 +76,7 @@ listRayPhoton kdt cam figuras rayos nRay = map (photonMap kdt radio figuras) ray
   where
     !raySMPP = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay raySMPP
-    radio = 8
+    radio = 3
 
 
 main :: IO ()
@@ -102,10 +101,11 @@ main = do
 
       let objFilePath1 = "../meshes/simplepalace.obj"  
       (vertices1, triangles1) <- loadObjFile objFilePath1
-      let vertices1' = map (escalatePointt (4).movePoint (Direction 7.5 (-2.5) (-9.75)). rotatePointt 'Y' (282.5) ) vertices1
+      let vertices1' = map (escalatePointt (4).movePoint (Direction 7.5 (-2.5) (-9.75)). rotatePointt 'Y' (287.5) ) vertices1
           customTriangles1 = convertToCustomFormat (vertices1', triangles1)
           boundingVol = buildBVH 4000 customTriangles1
           !figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol)] $ Set.toList figuras
+
       let objFilePath2 = "../meshes/simplehaskell.obj"  
       (vertices2, triangles2) <- loadObjFile objFilePath2
       let vertices2' = map (escalatePointt (1).movePoint (Direction (-5) (-5) (-28)). rotatePointt 'Y' (90)) vertices2
@@ -120,12 +120,12 @@ main = do
       let cams = mulCam camara 0 0.75-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
 
-          --a = map (\rayos -> listRayPhoton kdt cam figuras rayos nRay) rayitos -- Photon mapping
-          a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
+          --a = map (\rayos -> listRayPhoton kdt cam figuras'' rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayToRGB luces figuras'' rayos gen' nRay) rayitos -- Path tracing
           
           c = mediaLRGB a
           fin = concatMap rgbToString (gammaFunc fmx gamma c)
-
+      writePPM ("a" ++ show n ++ "_" ++ show etapaY ++ "_" ++ show etapaX ++ ".ppm") (round $ pix*aspectR) (round pix) fin
 
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Float

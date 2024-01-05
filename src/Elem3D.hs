@@ -1,10 +1,9 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE InstanceSigs #-}
+
 module Elem3D where
 import Data.Binary ( Binary(get, put) )
-import System.IO ()
-import Data.List (transpose)
 import Debug.Trace (trace)
 import qualified Data.Binary.Put
 import qualified Data.Binary as Data.Binary.Get.Internal
@@ -151,7 +150,7 @@ distPoint p p' = sqrt $ (xP p'-xP p)**2 + (yP p'-yP p)**2 + (zP p'-zP p)**2
 -- -- Resta de puntos -> Dirección del primero al segundo
 {-# INLINE (#) #-}
 (#) :: Point3D -> Point3D -> Point3D
-p # p'= Point3D (xP p'-xP p) (yP p'-yP p) (zP p'-zP p)
+p' # p= Point3D (xP p'-xP p) (yP p'-yP p) (zP p'-zP p)
 
 {-# INLINE addPoints #-}
 addPoints :: Point3D -> Point3D -> Point3D

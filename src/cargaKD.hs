@@ -29,7 +29,7 @@ import Funciones (sumFlLuz)
 import PathTracer (pathTracer)
 import PhotonMap (createPhoton)
 
-import System.Random (StdGen, newStdGen, split)
+import System.Random (StdGen, newStdGen)
 import System.CPUTime (getCPUTime)
 
 import qualified Data.DList as DL

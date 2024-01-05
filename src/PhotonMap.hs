@@ -37,10 +37,11 @@ import Funciones
       genPointTotal,
       obtenerPrimeraColision,
       colision,
-      brdf, sumRGB, ruletaRusa, mediaLRGB, objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla, dirEspejo)
+      brdf, sumRGB, ruletaRusa,
+      objEspejoRandom, media, desviacionEstandar, fGaus, addNiebla, dirEspejo)
 import Debug.Trace (trace)
 import qualified Data.DList as DL
-import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest )
+import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest)
 
 import qualified Data.DList as DL
 import qualified Data.Set as Set
@@ -48,15 +49,14 @@ import qualified Data.Set as Set
 createPhoton :: Float -> DL.DList Foton -> Int -> Int -> Set.Set Shape -> [Luz] -> StdGen -> Int -> DL.DList Foton
 createPhoton lzT fotones contador contMx figuras luces gen nRebotes
   | contador == contMx = fotones -- Devuelve la lista de fotones
-  | contador == contMx `div` round (lzT / intLuz) = createPhoton (lzT - intLuz) fotones' (contador+1) contMx figuras (tail luces) gen' nRebotes -- Cambio de luz
+  | contador == contMx `div` round (lzT / intLuz) = createPhoton (lzT - intLuz) fotones (contador+1) contMx figuras (tail luces) gen' nRebotes -- Cambio de luz
   | otherwise = createPhoton lzT newlisP (contador+1) contMx figuras luces gen' nRebotes -- Se vuelve a llamar con la nueva lista de fotones
   where
     (ray, Luz pointPapa rgbPadre intLuz) = selescLightSource luces contador contMx gen
-    newlisP = traceRay pointPapa ((4.0 * pi * intLuz) / fromIntegral contMx) rgbPadre fotones figuras nRebotes gen' nxtObj
+    !newlisP = traceRay pointPapa ((4.0 * pi * intLuz) / fromIntegral contMx) rgbPadre fotones figuras nRebotes gen' nxtObj
     nxtObj = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura ray) figuras -- Siguiente objeto que choca
 
     gen' = snd $ split gen
-    fotones' = DL.append fotones (DL.fromList (DL.toList fotones))
 
 {-# INLINE selescLightSource #-}
 selescLightSource :: [Luz] -> Int -> Int -> StdGen -> (Ray, Luz)

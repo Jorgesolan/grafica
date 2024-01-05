@@ -2,16 +2,19 @@
 
 module PathTracer where
 
-import Elem3D ( Luz(..), RGB(..), divRGB, scale, modRGB, (.*), Point3D (Point3D), normal,nanRGB )
+import Elem3D ( Luz(..), RGB(..), divRGB, scale, modRGB, (.*),
+       Point3D (Point3D), normal,nanRGB )
 import Figuras ( Obj(..), Shape, getShapeID )
 import System.Random (StdGen, split)
 import Funciones
-    ( objAleatorio, objEspejo, objCristal, formula, colision, brdf, ruletaRusa, addNiebla, dirEspejo)
+    ( objAleatorio, objEspejo, objCristal, formula, 
+    colision, brdf, ruletaRusa, addNiebla, dirEspejo)
 import Debug.Trace (trace)
 import qualified Data.Set as Set
 
 pathTracer :: Float -> [Luz] -> Set.Set Shape -> Int -> Obj -> StdGen -> RGB
 pathTracer rFl luz !figuras ppp obj gen
+  | mindObj obj < 0 = scale $ RGB 20 50 30
   | ppp == 1 = colorIndirecto
   | otherwise = colorIndirecto + pathTracer rFl luz figuras (ppp - 1) obj gen' -- Luz directa + indirecta
   where
@@ -21,7 +24,8 @@ pathTracer rFl luz !figuras ppp obj gen
 luzDirecta :: [Luz] -> Set.Set Shape -> Obj -> RGB
 luzDirecta luces figuras obj
   | null luces = RGB 0 0 0
-  | length luces == 1 = {- addNiebla (Point3D 0 0 (-8)) obj 0.8 figuras $ -} luzMono obj (head luces) figuras
+  | mindObj obj < 0 = scale $ RGB 20 40 50
+  | length luces == 1 = addNiebla (head luces) obj 0.8 figuras $ luzMono obj (head luces) figuras
   | length  luces > 1 = (luzMono obj (head luces) figuras + luzDirecta (tail luces) figuras obj) `divRGB` 2 -- Si todas pesaran igual que no es asi
 
 luzMono :: Obj -> Luz -> Set.Set Shape -> RGB
