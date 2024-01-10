@@ -41,7 +41,7 @@ nRebotes = 6
 aspectR :: Float
 aspectR = 1
 pix :: Float
-pix = 500
+pix = 1000
 piCam :: Float
 piCam = 12.5
 gamma :: Float

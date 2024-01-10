@@ -1,5 +1,5 @@
 #simplifica otros obj mas complejos al formato empleado
-NAME="palace"
+NAME="botijo"
 with open(f'../meshes/{NAME}.obj', 'r') as file:
     lines = file.readlines()
 
