@@ -25,7 +25,7 @@ luzDirecta :: [Luz] -> Set.Set Shape -> Obj -> RGB
 luzDirecta luces figuras obj
   | null luces = RGB 0 0 0
   | mindObj obj < 0 = scale $ RGB 20 40 50
-  | length luces == 1 = addNiebla (head luces) obj 0.8 figuras $ luzMono obj (head luces) figuras
+  | length luces == 1 = {- addNiebla (head luces) obj 0.8 figuras $ -} luzMono obj (head luces) figuras
   | length  luces > 1 = (luzMono obj (head luces) figuras + luzDirecta (tail luces) figuras obj) `divRGB` 2 -- Si todas pesaran igual que no es asi
 
 luzMono :: Obj -> Luz -> Set.Set Shape -> RGB

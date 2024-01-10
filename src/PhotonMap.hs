@@ -134,31 +134,32 @@ estDensPhoton photons obj figuras radio = newRGB
 --     !newRGB = estDensPhoton photons' obj figuras
 
 
-photonMap :: KdTree Float Foton -> Float -> Set.Set Shape -> Obj -> RGB
-photonMap kdt radio figuras obj
-  | kr == 0 && ke == 0 = difuso 
-  | otherwise = difuso + espejo + cristal
+photonMap :: KdTree Float Foton -> [Luz] -> Float -> Set.Set Shape -> Obj -> RGB
+photonMap kdt luces radio figuras obj
+  | mindObj obj < 0 = RGB 0 0 0
+  | otherwise = {- addNiebla (head luces) obj 0.9 figuras $ -} difuso + espejo + cristal
   where
 
-    difuso = kdToRGB kdt (radio * kd) figuras obj
-    espejo = rgbObj obj * scale colorEsp `modRGB` ke
-    cristal = rgbObj obj * scale colorCri `modRGB` kr
+    difuso = if kd == 0 then RGB 0 0 0 else kdToRGB kdt (radio * kd) figuras obj
+    espejo = if ke == 0 then RGB 0 0 0 else rgbObj obj * scale colorEsp `modRGB` ke
+    cristal = if kr == 0 then RGB 0 0 0 else rgbObj obj * scale colorCri `modRGB` kr
 
     (kd,kr,ke) = trObj obj
     figuras' = Set.filter (\shape -> idObj obj /= getShapeID shape) figuras
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj)
     (objCri,_) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
 
-    colorCri = photonMap kdt radio figuras objCri
-    colorEsp = photonMap kdt radio figuras objEsp
+    colorCri = photonMap kdt luces (radio * kr) figuras objCri
+    colorEsp = photonMap kdt luces (radio * ke) figuras objEsp
 
 
 kdToRGB :: KdTree Float Foton -> Float -> Set.Set Shape-> Obj -> RGB
 kdToRGB kdt 0 figuras obj = RGB 0 0 0
 kdToRGB kdt radio figuras obj = newRGB
   where
+
     photons = inRadius kdt radio (pointToPothon (colObj obj))
     -- photons = kNearest kdt (round radio) (pointToPothon (colObj obj)) -- Si quisieramos coger los k-fotones más cercanos
     photons' = filter (\fot -> idObj obj == idFot fot) photons -- Coger solo fotones del mismo objeto
     
-    !newRGB = if null photons' then RGB 0 0 0 else estDensPhoton photons' obj figuras radio --Si no hay fotones el color es 0, sino ecuación de estiamcion de densidad
+    !newRGB = if null photons' then RGB 0 0 0 else if radio < 0.05 then RGB 0 0 0 else estDensPhoton photons' obj figuras radio --Si no hay fotones el color es 0, sino ecuación de estiamcion de densidad

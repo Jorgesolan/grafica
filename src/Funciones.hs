@@ -150,7 +150,7 @@ generateRaysForPixels maxN etapasX n etapaX (Camara p (Base {..})) width height 
     startIdxy = n * yStep
     endIdxy = (n + 1) * yStep
     selectedYValues = take (endIdxy - startIdxy) (drop startIdxy yValues)
-    generateDirection !width !height !focal = normal $ pointDir $ Point3D width height (zD d2) # p
+    generateDirection !width !height !focal = normal $ pointDir $ Point3D (width - xP p) (height - yP p) (zD d2) 
     xValues = [(-px'), (-px' + piX) .. (px' - piX)]
     xStep = length xValues `div` etapasX
     startIdxx = etapaX * xStep

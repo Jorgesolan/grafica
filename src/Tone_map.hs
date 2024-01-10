@@ -21,3 +21,8 @@ elevateRGBPoints x = map (elevateRGBPoint x)
 {-# INLINE gammaFunc #-}
 gammaFunc :: Float -> Float -> [RGB] -> [RGB]
 gammaFunc x gamma = ecualization' 1 . elevateRGBPoints gamma . ecualization x
+
+{-# INLINE gammaFunc' #-}
+gammaFunc' :: Float -> Float -> [RGB] -> [RGB]
+gammaFunc' x gamma = ecualization' 1 . elevateRGBPoints (1 / gamma) . ecualization x
+

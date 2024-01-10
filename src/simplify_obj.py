@@ -1,12 +1,15 @@
 #simplifica otros obj mas complejos al formato empleado
-with open('../meshes/palace.obj', 'r') as file:
+NAME="palace"
+with open(f'../meshes/{NAME}.obj', 'r') as file:
     lines = file.readlines()
 
 vertices = []
 faces = []
-
-for line in lines:
-    if line.startswith('v ') or line.startswith('f '):
+vertList = []
+faceList = []
+print(lines[4:6])
+for line in lines[4:]:
+    if line.startswith('v ') or line.startswith('f ') or line.startswith('o '):
         if line.startswith('v '):
             vertices.append(line)
         elif line.startswith('f '):
@@ -17,13 +20,23 @@ for line in lines:
             elif len(face_indices) == 4:
                 faces.append("f " + " ".join(map(str, face_indices[:3])) + "\n")  # Reconstruct the face line
                 faces.append("f " + " ".join(map(str, face_indices[1:])) + "\n")  # Reconstruct the face line
+        elif line.startswith('o '):
+            vertList.append(vertices)
+            faceList.append(faces)
+            vertices = []
+            faces = []
+vertList.append(vertices)
+faceList.append(faces)
 
-with open('../meshes/simplepalace.obj', 'w') as file:
-    file.write("# Converted OBJ\n")
-    file.write("o ConvertedObject\n")
 
-    for vertex in vertices:
-        file.write(vertex)
+for i in range(len(vertList)):
+    print(i)
+    with open(f'../meshes/simple/{NAME}{i}.obj', 'w') as file:
+        file.write("# Converted OBJ\n")
+        file.write("o ConvertedObject\n")
+        # print(vertList)
+        for vertex in [element for sublist in vertList[:(i+1)] for element in sublist] :
+            file.write(''.join(vertex))
 
-    for face in faces:
-        file.write(face)
+        for face in faceList[i]:
+            file.write(''.join(face))

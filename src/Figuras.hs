@@ -365,11 +365,11 @@ vertexToPoint3D (Point3D x y z) = Point3D (realToFrac x) (realToFrac y) (realToF
 --   where
 --     resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
 -- Convert Triangle to Triangulo
-triangleToTriangulo :: ([Point3D], TrianglePos) -> Triangulo
-triangleToTriangulo (vertices, TrianglePos v1 v2 v3) =
+triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos) -> Triangulo
+triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3) =
     (Triangulo
         (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
-        (RGB 220 120 50) (0.9,0,0) 0 0
+        rgb (kd,ke,kr) reflec id
     )
     where
         v1' = vertices !! (v1 - 1)
@@ -377,8 +377,8 @@ triangleToTriangulo (vertices, TrianglePos v1 v2 v3) =
         v3' = vertices !! (v3 - 1)
         vNormal = normal $ (v2' #< v1') * (v3' #< v1')
 -- Convert loaded vertices and triangles to custom format
-convertToCustomFormat :: ([Point3D], [TrianglePos]) -> [Triangulo]
-convertToCustomFormat (vertices, triangles) = map (triangleToTriangulo.resolveVertices) triangles
+convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> ([Point3D], [TrianglePos]) -> [Triangulo]
+convertToCustomFormat rgb (kd,ke,kr) reflec (vertices, triangles) = map (triangleToTriangulo rgb (kd,ke,kr) reflec 0 .resolveVertices) triangles
   where
     resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
 

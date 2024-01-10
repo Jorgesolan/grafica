@@ -15,21 +15,15 @@ SRC9	= $(VPATH)/Escena.hs
 
 APP_0 = $(VPATH)/simulacion.hs
 APP0 = simulacion
-APP_1 = $(VPATH)/cargaKD.hs
-APP1 = cargaKD
 
 all: simulacion cargaKD
 simulacion:
 $(APP0): $(APP_0) $(SRC0) $(SRC1) $(SRC2) $(SRC3) $(SRC4) $(SRC6) $(SRC7) $(SRC8) $(SRC9)
+	python3 inject.py
 	$(HC) -static $(FLAGS) --make -i$(VPATH) $< -package random -static -o $@ 
 # strip $@
 	mv $(APP0) ./tmp/$(APP0)
 
-cargaKD:
-$(APP1): $(APP_1) $(SRC0) $(SRC1) $(SRC2) $(SRC3) $(SRC4) $(SRC6) $(SRC7) $(SRC8) $(SRC9)
-	$(HC) $(FLAGS) --make -i$(VPATH) $< -package random -o $@
-# strip $@
-	mv $(APP1) ./tmp/$(APP1)
 
 clean:
-	sudo rm -f ./tmp/$(APP0)* ./tmp/$(APP1)* ./tmp/resultados/* ./compil_files/*.hi ./compil_files/*.o ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.zip
+	sudo rm -f ./tmp/$(APP0)* ./tmp/resultados/* ./compil_files/*.hi ./compil_files/*.o ./tmp/*.zip ./tmp/*.bmp ./tmp/*.ppm *.zip

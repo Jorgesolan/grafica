@@ -55,4 +55,4 @@ def check_ppm_data(filename):
         else:
             print("Data check passed. No mismatch found.")
 
-check_ppm_data('output_filled.ppm')
+check_ppm_data('output.ppm')
