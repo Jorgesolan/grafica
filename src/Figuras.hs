@@ -31,6 +31,7 @@ data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: D
 
 data AABB = AABB {p0AB :: Point3D, p1AB ::  Point3D} deriving Show
 data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int} deriving Show
+data TrianglePos = TrianglePos { v1 :: Int, v2 :: Int, v3 :: Int } deriving Show
 
 -- data Rosquilla = Rosquilla Point3D Direction Float Float RGB Float Int
 
@@ -234,19 +235,6 @@ oneCollision (Acelerator (BVH {..})) ray =
                              in mindObj
         else (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
--- oneCollision ray@(Ray rayOrigin rayDir) (Acelerator (BVH bbox children triangles _)) =
---     if rayIntersectsAABB ray bbox
---         then
---             if null children
---                 then
---                     let (t, obj) = oneCollision ray (Triangle $ snd(closestIntersection ray triangles))
---                     in trace ("Leaf node hit. Closest intersection: " ++ show t ++ ", Object: " ++ show triangles) (t, obj)
---                 else
---                     let (t1, obj1) = oneCollision ray (Acelerator $ head children)
---                         (t2, obj2) = oneCollision ray (Acelerator $ children !! 1)
---                         result = if t1 < t2 then (t1, obj1) else (t2, obj2)
---                     in trace ("Intermediate node hit. T1: " ++ show t1 ++ ", Obj1: " ++ show obj1 ++ ", T2: " ++ show t2 ++ ", Obj2: " ++ show obj2) result
---         else trace "No intersection with AABB." (Obj (-1) (RGB 0 0 0) rayDir (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
 
 oneCollision  (Rectangle (Rectangulo {..})) (Ray {..})
   | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe dR (dirPoint collisionPoint) normRe' trRe reflRe idRe)
@@ -273,6 +261,8 @@ oneCollision (Triangle (Triangulo {..})) (Ray {..}) =
                 normalVec' = if (dR.*normalVec) > 0 then normal (escalateDir (-1) normalVec) else normal normalVec
             in (Obj t rgbTr dR intersectionPoint normalVec' trTr reflTr idTr)
         Nothing -> (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0)
+
+
 
 getShapeID :: Shape -> Int
 getShapeID (Sphere (Esfera{..})) = idEs
@@ -308,9 +298,32 @@ rap1TriangleIntersection orig dir v1 v2 v3 = do
                                 then Just (t, movePoint (escalateDir t dir) orig)
                                 else Nothing
 
-data TrianglePos = TrianglePos { v1 :: Int, v2 :: Int, v3 :: Int } deriving Show
 
+-- Convert Triangle to Triangulo
+triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos) -> Triangulo
+triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3) =
+    (Triangulo
+        (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
+        rgb (kd,ke,kr) reflec id
+    )
+    where
+        v1' = vertices !! (v1 - 1)
+        v2' = vertices !! (v2 - 1)
+        v3' = vertices !! (v3 - 1)
+        vNormal = normal $ (v2' #< v1') * (v3' #< v1')
 
+-- Convert loaded vertices and triangles to custom format
+convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> ([Point3D], [TrianglePos]) -> [Triangulo]
+convertToCustomFormat rgb (kd,ke,kr) reflec (vertices, triangles) = map (triangleToTriangulo rgb (kd,ke,kr) reflec 0 .resolveVertices) triangles
+  where
+    resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
+
+-- Parse a line of the .obj file into a Triangle
+{-# INLINE parseTriangle #-}
+parseTriangle :: String -> Maybe TrianglePos
+parseTriangle line = case words line of
+    ["f", v1Str, v2Str, v3Str] -> Just $ TrianglePos (read v1Str) (read v2Str) (read v3Str)
+    _ -> Nothing
 
 -- Parse a line of the .obj file into a Point3D
 {-# INLINE parsePoint3D #-}
@@ -319,12 +332,6 @@ parsePoint3D line = case words line of
     ["v", xStr, yStr, zStr] -> Just $ Point3D (read xStr) (read yStr) (read zStr)
     _ -> Nothing
 
--- Parse a line of the .obj file into a Triangle
-{-# INLINE parseTriangle #-}
-parseTriangle :: String -> Maybe TrianglePos
-parseTriangle line = case words line of
-    ["f", v1Str, v2Str, v3Str] -> Just $ TrianglePos (read v1Str) (read v2Str) (read v3Str)
-    _ -> Nothing
 
 -- Load the vertices and triangles from the .obj file
 loadObjFile :: FilePath -> IO ([Point3D], [TrianglePos])
@@ -346,42 +353,6 @@ loadObjFile filePath = do
 {-# INLINE vertexToPoint3D #-}
 vertexToPoint3D :: Point3D -> Point3D
 vertexToPoint3D (Point3D x y z) = Point3D (realToFrac x) (realToFrac y) (realToFrac z)
-
--- Convert Triangle to Triangulo
--- triangleToTriangulo :: ([Point3D], TrianglePos) -> Shape
--- triangleToTriangulo (vertices, TrianglePos v1 v2 v3) =
---     Triangle (Triangulo
---         (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
---         (RGB 255 255 255) (0.8,0,0) 0 0
---     )
---     where
---         v1' = vertices !! (v1 - 1)
---         v2' = vertices !! (v2 - 1)
---         v3' = vertices !! (v3 - 1)
---         vNormal = normal $ (v2' #< v1') * (v3' #< v1')
--- Convert loaded vertices and triangles to custom format
--- convertToCustomFormat :: ([Point3D], [TrianglePos]) -> [Shape]
--- convertToCustomFormat (vertices, triangles) = map (triangleToTriangulo.resolveVertices) triangles
---   where
---     resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
--- Convert Triangle to Triangulo
-triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos) -> Triangulo
-triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3) =
-    (Triangulo
-        (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1))
-        rgb (kd,ke,kr) reflec id
-    )
-    where
-        v1' = vertices !! (v1 - 1)
-        v2' = vertices !! (v2 - 1)
-        v3' = vertices !! (v3 - 1)
-        vNormal = normal $ (v2' #< v1') * (v3' #< v1')
--- Convert loaded vertices and triangles to custom format
-convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> ([Point3D], [TrianglePos]) -> [Triangulo]
-convertToCustomFormat rgb (kd,ke,kr) reflec (vertices, triangles) = map (triangleToTriangulo rgb (kd,ke,kr) reflec 0 .resolveVertices) triangles
-  where
-    resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
-
 
 findMinPositive :: Float -> Float -> Float
 findMinPositive x y

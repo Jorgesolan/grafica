@@ -9,7 +9,7 @@ SRC3  	= $(VPATH)/Files.hs
 SRC4 	= $(VPATH)/Tone_map.hs
 SRC5	= $(VPATH)/Figuras.hs
 SRC6	= $(VPATH)/PathTracer.hs
-SRC7	= $(VPATH)/KdTest.hs
+SRC7	= $(VPATH)/KdT.hs
 SRC8	= $(VPATH)/PhotonMap.hs
 SRC9	= $(VPATH)/Escena.hs
 

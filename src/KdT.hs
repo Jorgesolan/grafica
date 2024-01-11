@@ -1,5 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
-module KdTest where
+module KdT where
 import Data.KdTree.Static (build, KdTree)
 import Elem3D ( Foton(..), Point3D(..) )
 

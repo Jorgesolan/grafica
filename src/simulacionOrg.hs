@@ -35,7 +35,7 @@ import Funciones
       listRay,
       chunksOf, mulCam ,brdf, sumFlLuz)
 import PathTracer (pathTracer, luzDirecta, luzArea)
-import KdTest ( createKD )
+import KdT ( createKD )
 import PhotonMap ( photonMap )
 import Data.KdTree.Static ( KdTree )
 import Files (writeObject)
