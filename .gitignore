@@ -9,3 +9,8 @@ cargaKD
 cargaKD_*
 simulacion
 simulacion_*
+docs/*.html
+docs/*.css
+docs/*.js
+docs/*.json
+docs/*.png
