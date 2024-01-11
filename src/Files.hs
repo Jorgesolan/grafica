@@ -12,13 +12,15 @@ import Data.Binary ( Word8, decodeFile, encode, Binary )
 import qualified Data.ByteString.Lazy as B
 import qualified Data.DList as DL
 
+-- |Función básica, dado un objeto que instancie la clase Binary, escribe este en formato binario a un archivo en disco.
 writeObject :: Binary a => FilePath -> DL.DList a -> IO ()
 writeObject path obj = B.writeFile path (encode (DL.toList obj))
 
+-- |Función básica, dado un fichero binario, recupera el objeto que haya almacenado en este y lo devuelve.
 readObject :: Binary a => FilePath -> IO a
 readObject = decodeFile
 
--- Función para leer un archivo .ppm y almacenar los píxeles en una lista
+-- |Función auxiliar, para leer un archivo .ppm y almacenar los píxeles en una lista.
 leerPPM :: FilePath -> IO ([RGB], (Float, Float, Float, Float))
 leerPPM archivo = do
     contenido <- BS8.readFile archivo
@@ -30,12 +32,14 @@ leerPPM archivo = do
         pixelesParseados = concatMap (parsePixels . BS8.words) pixelLines
     return (pixelesParseados, (fst sizeLine, snd sizeLine, valueMax, ppMax))
 
+-- |Función auxiliar, para extraer el MAX dentro de un ppm.
 findMaxPPM :: [BS8.ByteString] -> Float
 findMaxPPM [] = 0.0
 findMaxPPM (linea:resto)
     | BS8.isPrefixOf (BS8.pack "#MAX=") linea = read (BS8.unpack $ BS8.drop 5 linea)
     | otherwise = findMaxPPM resto
 
+-- |Función auxiliar, extrae el tamaño de un ppm.
 findSizePPM :: [BS8.ByteString] -> (Float, Float)
 findSizePPM [] = (0,0)
 findSizePPM (linea:resto)
@@ -45,7 +49,7 @@ findSizePPM (linea:resto)
         _ -> findSizePPM resto
 
 
--- Función para analizar una línea de píxeles y convertirla en una lista de RGB
+-- |Función auxiliar, para analizar una línea de píxeles y convertirla en una lista de RGB.
 parsePixels :: [BS8.ByteString] -> [RGB]
 parsePixels [] = []
 parsePixels (r:g:b:resto) =
@@ -53,16 +57,17 @@ parsePixels (r:g:b:resto) =
     in rgb : parsePixels resto
 parsePixels _ = error "Formato incorrecto"
 
-
+-- |Función auxiliar, convierte una lista de RGBs en un string de pixeles.
 parsePixels' :: [RGB] -> String
 parsePixels' pixels = unwords $ map rgbToString pixels
 
 {-# INLINE rgbToString #-}
+-- |Función auxiliar, convierte un RGB a string.
 rgbToString :: RGB -> String
 rgbToString (RGB {..}) = show (round $ red * 255) ++ " " ++ show (round$  green * 255) ++ " " ++ show (round $ blue * 255) ++ " "
 
 
--- Function to write a 32-bit BMP file
+-- |Función auxiliar, escribe un 32-bit BMP file
 writeBMP :: FilePath -> Int -> Int -> BS.ByteString -> IO ()
 writeBMP filename width height customPixelData = do
     let fileSize = 54 + 4 * width * height
@@ -92,7 +97,7 @@ writeBMP filename width height customPixelData = do
         , customPixelData  -- White pixel data
         ]
 
--- Function to write a PPM file with custom pixel data in P3 format
+-- |Función principal, escibre en un archivo PPM la información de los pixels en formato P3.
 writePPM :: FilePath -> Int -> Int -> String -> IO ()
 writePPM filename width height customPixelData = do
     let maxColorValue = 255
@@ -108,56 +113,18 @@ writePPM filename width height customPixelData = do
         , BS8.pack customPixelData
         ]
 
--- Helper function to convert an Int to a ByteString of 4 bytes
+-- |Función auxiliar, convierte un entero a un ByteString de 4 Bytes.
 intTo4Bytes :: Int -> BS.ByteString
 intTo4Bytes n = BS.pack [fromIntegral (n .&. 0xFF), fromIntegral ((n `shiftR` 8) .&. 0xFF), fromIntegral ((n `shiftR` 16) .&. 0xFF), fromIntegral ((n `shiftR` 24) .&. 0xFF)]
 
--- Helper function to convert an Int to a ByteString of 2 bytes
+-- |Función auxiliar, convierte un entero a un ByteString de 2 Bytes.
 intTo2Bytes :: Int -> BS.ByteString
 intTo2Bytes n = BS.pack [fromIntegral (n .&. 0xFF), fromIntegral ((n `shiftR` 8) .&. 0xFF)]
 
--- Function to convert ordered RGB list to ByteString
+-- |Función auxiliar, convierte una lista ordenada de RGBs a BytseString.
 pixels2BMP :: [RGB] -> BS.ByteString
 pixels2BMP rgbList = BS.pack $ concatMap rgbToWord8 $ reverse rgbList
   where
-    -- Helper function to convert RGB to Word8 list
+    -- |Función auxiliar, convierte un RGB a una lista de Word8.
     rgbToWord8 :: RGB -> [Word8]
     rgbToWord8 (RGB r g b) = map (fromIntegral.round) [r, g, b, 255]
-
--- Function to generate custom pixel data for a checkerboard pattern
-generateBMPPixelData :: Int -> Int -> [(Int, Int)] -> BS.ByteString
-generateBMPPixelData width height filledpixels =
-    -- BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
-    BS.pack $ concatMap generateRow [0 .. height - 1]
-  where
-    generateRow :: Int -> [Word8]
-    generateRow row = concatMap generatePixel [0 .. width - 1]
-      where
-        generatePixel :: Int -> [Word8]
-        generatePixel col
-            | (col, row) `elem` filledpixels = [0, 255, 0, 255]
-            | otherwise = [0, 0, 0, 255]
-
--- Function to generate custom pixel data for a checkerboard pattern as a string
-generatePPMPixelData :: [Maybe(Float)]  -> String
-generatePPMPixelData [] = ""
-generatePPMPixelData (x:xs)
-  | isNothing x = " 0 0 0" ++ generatePPMPixelData xs
-  | otherwise   = " 0 0 255 " ++ generatePPMPixelData xs
-
-
--- Function to generate custom pixel data for a checkerboard pattern
-fromPixToList :: Int -> Int -> [(Int, Int)] -> String
-fromPixToList width height filledpixels =
-  -- concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]
-  concatMap generateRow [0 .. height - 1]
-
-  where
-    generateRow :: Int -> String
-    generateRow row = concatMap generatePixel [0 .. width - 1]
-      where
-        generatePixel :: Int -> String
-        generatePixel col
-            | (col, row) `elem` filledpixels = " 0 255 0"
-            | otherwise = " 0 0 0"
-
