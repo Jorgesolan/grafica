@@ -55,9 +55,9 @@
 </span><span id="line-55"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Main.html#antialiasing"><span class="hs-pragma hs-type">antialiasing</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
 </span><span id="line-56"></span><span class="annot"><a href="Main.html#antialiasing"><span class="hs-identifier hs-type">antialiasing</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Figuras.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Figuras.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-57"></span><span id="antialiasing"><span class="annot"><span class="annottext">antialiasing :: Int -&gt; [Obj] -&gt; [Obj]
-</span><a href="Main.html#antialiasing"><span class="hs-identifier hs-var hs-var">antialiasing</span></a></span></span><span> </span><span id="local-6989586621679079565"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079565"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679079564"><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079564"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
+</span><a href="Main.html#antialiasing"><span class="hs-identifier hs-var hs-var">antialiasing</span></a></span></span><span> </span><span id="local-6989586621679078597"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078597"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679078596"><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078596"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Set Obj -&gt; Obj
 </span><a href="Funciones.html#obtenerPrimeraColision"><span class="hs-identifier hs-var">obtenerPrimeraColision</span></a></span><span> </span><span class="annot"><span class="annottext">([Set Obj] -&gt; [Obj]) -&gt; [Set Obj] -&gt; [Obj]
@@ -69,23 +69,23 @@ forall a. Ord a =&gt; [a] -&gt; Set a
 </span><span class="hs-identifier hs-var">Set.fromList</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int -&gt; [Obj] -&gt; [[Obj]]
 forall e. Int -&gt; [e] -&gt; [[e]]
 </span><a href="Funciones.html#chunksOf"><span class="hs-identifier hs-var">chunksOf</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079565"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079564"><span class="hs-identifier hs-var">rayos</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">-- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing</span><span>
+</span><a href="#local-6989586621679078597"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078596"><span class="hs-identifier hs-var">rayos</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">-- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing</span><span>
 </span><span id="line-58"></span><span>
 </span><span id="line-59"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Main.html#listRayToRGB"><span class="hs-pragma hs-type">listRayToRGB</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
 </span><span id="line-60"></span><span class="annot"><a href="Main.html#listRayToRGB"><span class="hs-identifier hs-type">listRayToRGB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#Luz"><span class="hs-identifier hs-type">Luz</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Set.Set</span></span><span> </span><span class="annot"><a href="Figuras.html#Shape"><span class="hs-identifier hs-type">Shape</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#Ray"><span class="hs-identifier hs-type">Ray</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">StdGen</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-61"></span><span id="listRayToRGB"><span class="annot"><span class="annottext">listRayToRGB :: [Luz] -&gt; Set Shape -&gt; [Ray] -&gt; StdGen -&gt; Int -&gt; [RGB]
-</span><a href="Main.html#listRayToRGB"><span class="hs-identifier hs-var hs-var">listRayToRGB</span></a></span></span><span> </span><span id="local-6989586621679079561"><span class="annot"><span class="annottext">[Luz]
-</span><a href="#local-6989586621679079561"><span class="hs-identifier hs-var">luz</span></a></span></span><span> </span><span id="local-6989586621679079560"><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079560"><span class="hs-identifier hs-var">figuras</span></a></span></span><span> </span><span id="local-6989586621679079559"><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079559"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span id="local-6989586621679079558"><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079558"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span id="local-6989586621679079557"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079557"><span class="hs-identifier hs-var">nRay</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; RGB -&gt; RGB) -&gt; [RGB] -&gt; [RGB] -&gt; [RGB]
+</span><a href="Main.html#listRayToRGB"><span class="hs-identifier hs-var hs-var">listRayToRGB</span></a></span></span><span> </span><span id="local-6989586621679078593"><span class="annot"><span class="annottext">[Luz]
+</span><a href="#local-6989586621679078593"><span class="hs-identifier hs-var">luz</span></a></span></span><span> </span><span id="local-6989586621679078592"><span class="annot"><span class="annottext">Set Shape
+</span><a href="#local-6989586621679078592"><span class="hs-identifier hs-var">figuras</span></a></span></span><span> </span><span id="local-6989586621679078591"><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078591"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span id="local-6989586621679078590"><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078590"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span id="local-6989586621679078589"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078589"><span class="hs-identifier hs-var">nRay</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; RGB -&gt; RGB) -&gt; [RGB] -&gt; [RGB] -&gt; [RGB]
 forall a b c. (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 </span><span class="hs-identifier hs-var">zipWith</span></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; RGB -&gt; RGB
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">(+)</span></span><span> </span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679079554"><span class="hs-identifier hs-var">colorDirecto</span></a></span><span> </span><span class="annot"><span class="annottext">([RGB] -&gt; [RGB]) -&gt; [RGB] -&gt; [RGB]
+</span><a href="#local-6989586621679078586"><span class="hs-identifier hs-var">colorDirecto</span></a></span><span> </span><span class="annot"><span class="annottext">([RGB] -&gt; [RGB]) -&gt; [RGB] -&gt; [RGB]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; RGB) -&gt; [RGB] -&gt; [RGB]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
@@ -93,37 +93,37 @@ forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><a href="Elem3D.html#divRGB"><span class="hs-operator hs-var">`divRGB`</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Float
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079553"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679079552"><span class="hs-identifier hs-var">colorIndirecto</span></a></span><span>
+</span><a href="#local-6989586621679078585"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[RGB]
+</span><a href="#local-6989586621679078584"><span class="hs-identifier hs-var">colorIndirecto</span></a></span><span>
 </span><span id="line-62"></span><span>  </span><span class="hs-comment">-- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto</span><span>
 </span><span id="line-63"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-64"></span><span>    </span><span id="local-6989586621679079551"><span class="annot"><span class="annottext">antial :: [Obj]
-</span><a href="#local-6989586621679079551"><span class="hs-identifier hs-var hs-var">antial</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
+</span><span id="line-64"></span><span>    </span><span id="local-6989586621679078583"><span class="annot"><span class="annottext">antial :: [Obj]
+</span><a href="#local-6989586621679078583"><span class="hs-identifier hs-var hs-var">antial</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Set Obj -&gt; Obj
 </span><a href="Funciones.html#listRay"><span class="hs-identifier hs-var">listRay</span></a></span><span> </span><span class="annot"><span class="annottext">([Set Obj] -&gt; [Obj]) -&gt; [Set Obj] -&gt; [Obj]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Set Shape -&gt; [Ray] -&gt; [Set Obj]
 </span><a href="Figuras.html#parametricShapeCollision"><span class="hs-identifier hs-var">parametricShapeCollision</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079560"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079559"><span class="hs-identifier hs-var">rayos</span></a></span><span>
-</span><span id="line-65"></span><span>    </span><span id="local-6989586621679079550"><span class="annot"><span class="annottext">rayColisions :: [Obj]
-</span><a href="#local-6989586621679079550"><span class="hs-identifier hs-var hs-var">rayColisions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Obj] -&gt; [Obj]
+</span><a href="#local-6989586621679078592"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078591"><span class="hs-identifier hs-var">rayos</span></a></span><span>
+</span><span id="line-65"></span><span>    </span><span id="local-6989586621679078582"><span class="annot"><span class="annottext">rayColisions :: [Obj]
+</span><a href="#local-6989586621679078582"><span class="hs-identifier hs-var hs-var">rayColisions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Obj] -&gt; [Obj]
 </span><a href="Main.html#antialiasing"><span class="hs-identifier hs-var">antialiasing</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079557"><span class="hs-identifier hs-var">nRay</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079551"><span class="hs-identifier hs-var">antial</span></a></span><span>
+</span><a href="#local-6989586621679078589"><span class="hs-identifier hs-var">nRay</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078583"><span class="hs-identifier hs-var">antial</span></a></span><span>
 </span><span id="line-66"></span><span>    </span><span>
-</span><span id="line-67"></span><span>    </span><span class="hs-special">(</span><span id="local-6989586621679079543"><span class="annot"><span class="annottext">[StdGen]
-</span><a href="#local-6989586621679079543"><span class="hs-identifier hs-var">gens</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[StdGen]
+</span><span id="line-67"></span><span>    </span><span class="hs-special">(</span><span id="local-6989586621679078575"><span class="annot"><span class="annottext">[StdGen]
+</span><a href="#local-6989586621679078575"><span class="hs-identifier hs-var">gens</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[StdGen]
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [StdGen] -&gt; ([StdGen], [StdGen])
 forall a. Int -&gt; [a] -&gt; ([a], [a])
 </span><span class="hs-identifier hs-var">splitAt</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Obj] -&gt; Int
 forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
 </span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079550"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679078582"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079553"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([StdGen] -&gt; ([StdGen], [StdGen]))
+</span><a href="#local-6989586621679078585"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([StdGen] -&gt; ([StdGen], [StdGen]))
 -&gt; [StdGen] -&gt; ([StdGen], [StdGen])
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; [StdGen] -&gt; [StdGen]
@@ -141,77 +141,77 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">StdGen -&gt; (StdGen, StdGen)
 forall g. RandomGen g =&gt; g -&gt; (g, g)
 </span><span class="hs-identifier hs-var">split</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079558"><span class="hs-identifier hs-var">gen</span></a></span><span>  </span><span class="hs-comment">-- Semillas</span><span>
+</span><a href="#local-6989586621679078590"><span class="hs-identifier hs-var">gen</span></a></span><span>  </span><span class="hs-comment">-- Semillas</span><span>
 </span><span id="line-68"></span><span>
-</span><span id="line-69"></span><span>    </span><span id="local-6989586621679079553"><span class="annot"><span class="annottext">ppp :: Int
-</span><a href="#local-6989586621679079553"><span class="hs-identifier hs-var hs-var">ppp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">3</span></span><span> </span><span class="hs-comment">-- Caminos por pixel</span><span>
-</span><span id="line-70"></span><span>    </span><span id="local-6989586621679079552"><span class="annot"><span class="annottext">colorIndirecto :: [RGB]
-</span><a href="#local-6989586621679079552"><span class="hs-identifier hs-var hs-var">colorIndirecto</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; StdGen -&gt; RGB) -&gt; [Obj] -&gt; [StdGen] -&gt; [RGB]
+</span><span id="line-69"></span><span>    </span><span id="local-6989586621679078585"><span class="annot"><span class="annottext">ppp :: Int
+</span><a href="#local-6989586621679078585"><span class="hs-identifier hs-var hs-var">ppp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">256</span></span><span> </span><span class="hs-comment">-- Caminos por pixel</span><span>
+</span><span id="line-70"></span><span>    </span><span id="local-6989586621679078584"><span class="annot"><span class="annottext">colorIndirecto :: [RGB]
+</span><a href="#local-6989586621679078584"><span class="hs-identifier hs-var hs-var">colorIndirecto</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; StdGen -&gt; RGB) -&gt; [Obj] -&gt; [StdGen] -&gt; [RGB]
 forall a b c. (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 </span><span class="hs-identifier hs-var">zipWith</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; [Luz] -&gt; Set Shape -&gt; Int -&gt; Obj -&gt; StdGen -&gt; RGB
 </span><a href="PathTracer.html#pathTracer"><span class="hs-identifier hs-var">pathTracer</span></a></span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">1</span></span><span> </span><span class="annot"><span class="annottext">[Luz]
-</span><a href="#local-6989586621679079561"><span class="hs-identifier hs-var">luz</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079560"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079553"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079550"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">[StdGen]
-</span><a href="#local-6989586621679079543"><span class="hs-identifier hs-var">gens</span></a></span><span>
-</span><span id="line-71"></span><span>    </span><span id="local-6989586621679079554"><span class="annot"><span class="annottext">colorDirecto :: [RGB]
-</span><a href="#local-6989586621679079554"><span class="hs-identifier hs-var hs-var">colorDirecto</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; RGB) -&gt; [Obj] -&gt; [RGB]
+</span><a href="#local-6989586621679078593"><span class="hs-identifier hs-var">luz</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
+</span><a href="#local-6989586621679078592"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078585"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078582"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">[StdGen]
+</span><a href="#local-6989586621679078575"><span class="hs-identifier hs-var">gens</span></a></span><span>
+</span><span id="line-71"></span><span>    </span><span id="local-6989586621679078586"><span class="annot"><span class="annottext">colorDirecto :: [RGB]
+</span><a href="#local-6989586621679078586"><span class="hs-identifier hs-var hs-var">colorDirecto</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; RGB) -&gt; [Obj] -&gt; [RGB]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Luz] -&gt; Set Shape -&gt; Obj -&gt; RGB
 </span><a href="PathTracer.html#luzDirecta"><span class="hs-identifier hs-var">luzDirecta</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
-</span><a href="#local-6989586621679079561"><span class="hs-identifier hs-var">luz</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079560"><span class="hs-identifier hs-var">figuras</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079550"><span class="hs-identifier hs-var">rayColisions</span></a></span><span>
-</span><span id="line-72"></span><span>    </span><span id="local-6989586621679079535"><span class="annot"><span class="annottext">colorArea :: [RGB]
-</span><a href="#local-6989586621679079535"><span class="hs-identifier hs-var hs-var">colorArea</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; StdGen -&gt; RGB) -&gt; [Obj] -&gt; [StdGen] -&gt; [RGB]
+</span><a href="#local-6989586621679078593"><span class="hs-identifier hs-var">luz</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
+</span><a href="#local-6989586621679078592"><span class="hs-identifier hs-var">figuras</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078582"><span class="hs-identifier hs-var">rayColisions</span></a></span><span>
+</span><span id="line-72"></span><span>    </span><span id="local-6989586621679078567"><span class="annot"><span class="annottext">colorArea :: [RGB]
+</span><a href="#local-6989586621679078567"><span class="hs-identifier hs-var hs-var">colorArea</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; StdGen -&gt; RGB) -&gt; [Obj] -&gt; [StdGen] -&gt; [RGB]
 forall a b c. (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 </span><span class="hs-identifier hs-var">zipWith</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Set Shape -&gt; Int -&gt; Obj -&gt; StdGen -&gt; RGB
 </span><a href="PathTracer.html#luzArea"><span class="hs-identifier hs-var">luzArea</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079560"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079553"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079550"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">[StdGen]
-</span><a href="#local-6989586621679079543"><span class="hs-identifier hs-var">gens</span></a></span><span>
+</span><a href="#local-6989586621679078592"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078585"><span class="hs-identifier hs-var">ppp</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078582"><span class="hs-identifier hs-var">rayColisions</span></a></span><span> </span><span class="annot"><span class="annottext">[StdGen]
+</span><a href="#local-6989586621679078575"><span class="hs-identifier hs-var">gens</span></a></span><span>
 </span><span id="line-73"></span><span>
 </span><span id="line-74"></span><span>
 </span><span id="line-75"></span><span class="annot"><a href="Main.html#listRayPhoton"><span class="hs-identifier hs-type">listRayPhoton</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">KdTree</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span> </span><span class="annot"><a href="Elem3D.html#Foton"><span class="hs-identifier hs-type">Foton</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#Luz"><span class="hs-identifier hs-type">Luz</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span class="annot"><a href="Elem3D.html#Point3D"><span class="hs-identifier hs-type">Point3D</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Set.Set</span></span><span> </span><span class="annot"><a href="Figuras.html#Shape"><span class="hs-identifier hs-type">Shape</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#Ray"><span class="hs-identifier hs-type">Ray</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span>
 </span><span id="line-76"></span><span id="listRayPhoton"><span class="annot"><span class="annottext">listRayPhoton :: KdTree Float Foton
 -&gt; [Luz] -&gt; Point3D -&gt; Set Shape -&gt; [Ray] -&gt; Int -&gt; [RGB]
-</span><a href="Main.html#listRayPhoton"><span class="hs-identifier hs-var hs-var">listRayPhoton</span></a></span></span><span> </span><span id="local-6989586621679079533"><span class="annot"><span class="annottext">KdTree Float Foton
-</span><a href="#local-6989586621679079533"><span class="hs-identifier hs-var">kdt</span></a></span></span><span> </span><span id="local-6989586621679079532"><span class="annot"><span class="annottext">[Luz]
-</span><a href="#local-6989586621679079532"><span class="hs-identifier hs-var">luces</span></a></span></span><span> </span><span id="local-6989586621679079531"><span class="annot"><span class="annottext">Point3D
-</span><a href="#local-6989586621679079531"><span class="hs-identifier hs-var">cam</span></a></span></span><span> </span><span id="local-6989586621679079530"><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079530"><span class="hs-identifier hs-var">figuras</span></a></span></span><span> </span><span id="local-6989586621679079529"><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079529"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span id="local-6989586621679079528"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079528"><span class="hs-identifier hs-var">nRay</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; RGB) -&gt; [Obj] -&gt; [RGB]
+</span><a href="Main.html#listRayPhoton"><span class="hs-identifier hs-var hs-var">listRayPhoton</span></a></span></span><span> </span><span id="local-6989586621679078565"><span class="annot"><span class="annottext">KdTree Float Foton
+</span><a href="#local-6989586621679078565"><span class="hs-identifier hs-var">kdt</span></a></span></span><span> </span><span id="local-6989586621679078564"><span class="annot"><span class="annottext">[Luz]
+</span><a href="#local-6989586621679078564"><span class="hs-identifier hs-var">luces</span></a></span></span><span> </span><span id="local-6989586621679078563"><span class="annot"><span class="annottext">Point3D
+</span><a href="#local-6989586621679078563"><span class="hs-identifier hs-var">cam</span></a></span></span><span> </span><span id="local-6989586621679078562"><span class="annot"><span class="annottext">Set Shape
+</span><a href="#local-6989586621679078562"><span class="hs-identifier hs-var">figuras</span></a></span></span><span> </span><span id="local-6989586621679078561"><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078561"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span id="local-6989586621679078560"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078560"><span class="hs-identifier hs-var">nRay</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Obj -&gt; RGB) -&gt; [Obj] -&gt; [RGB]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">KdTree Float Foton -&gt; [Luz] -&gt; Float -&gt; Set Shape -&gt; Obj -&gt; RGB
 </span><a href="PhotonMap.html#photonMap"><span class="hs-identifier hs-var">photonMap</span></a></span><span> </span><span class="annot"><span class="annottext">KdTree Float Foton
-</span><a href="#local-6989586621679079533"><span class="hs-identifier hs-var">kdt</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
-</span><a href="#local-6989586621679079532"><span class="hs-identifier hs-var">luces</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679079527"><span class="hs-identifier hs-var">radio</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079530"><span class="hs-identifier hs-var">figuras</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079526"><span class="hs-identifier hs-var">rayColisions</span></a></span><span>
+</span><a href="#local-6989586621679078565"><span class="hs-identifier hs-var">kdt</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
+</span><a href="#local-6989586621679078564"><span class="hs-identifier hs-var">luces</span></a></span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679078559"><span class="hs-identifier hs-var">radio</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
+</span><a href="#local-6989586621679078562"><span class="hs-identifier hs-var">figuras</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078558"><span class="hs-identifier hs-var">rayColisions</span></a></span><span>
 </span><span id="line-77"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-78"></span><span>    </span><span class="hs-glyph">!</span><span id="local-6989586621679079525"><span class="annot"><span class="annottext">raySMPP :: [Obj]
-</span><a href="#local-6989586621679079525"><span class="hs-identifier hs-var hs-var">raySMPP</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
+</span><span id="line-78"></span><span>    </span><span class="hs-glyph">!</span><span id="local-6989586621679078557"><span class="annot"><span class="annottext">raySMPP :: [Obj]
+</span><a href="#local-6989586621679078557"><span class="hs-identifier hs-var hs-var">raySMPP</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Set Obj -&gt; Obj) -&gt; [Set Obj] -&gt; [Obj]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">Set Obj -&gt; Obj
 </span><a href="Funciones.html#listRay"><span class="hs-identifier hs-var">listRay</span></a></span><span> </span><span class="annot"><span class="annottext">([Set Obj] -&gt; [Obj]) -&gt; [Set Obj] -&gt; [Obj]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Set Shape -&gt; [Ray] -&gt; [Set Obj]
 </span><a href="Figuras.html#parametricShapeCollision"><span class="hs-identifier hs-var">parametricShapeCollision</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079530"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079529"><span class="hs-identifier hs-var">rayos</span></a></span><span>
-</span><span id="line-79"></span><span>    </span><span id="local-6989586621679079526"><span class="annot"><span class="annottext">rayColisions :: [Obj]
-</span><a href="#local-6989586621679079526"><span class="hs-identifier hs-var hs-var">rayColisions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Obj] -&gt; [Obj]
+</span><a href="#local-6989586621679078562"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078561"><span class="hs-identifier hs-var">rayos</span></a></span><span>
+</span><span id="line-79"></span><span>    </span><span id="local-6989586621679078558"><span class="annot"><span class="annottext">rayColisions :: [Obj]
+</span><a href="#local-6989586621679078558"><span class="hs-identifier hs-var hs-var">rayColisions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Obj] -&gt; [Obj]
 </span><a href="Main.html#antialiasing"><span class="hs-identifier hs-var">antialiasing</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079528"><span class="hs-identifier hs-var">nRay</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
-</span><a href="#local-6989586621679079525"><span class="hs-identifier hs-var">raySMPP</span></a></span><span>
-</span><span id="line-80"></span><span>    </span><span id="local-6989586621679079527"><span class="annot"><span class="annottext">radio :: Float
-</span><a href="#local-6989586621679079527"><span class="hs-identifier hs-var hs-var">radio</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679078560"><span class="hs-identifier hs-var">nRay</span></a></span><span> </span><span class="annot"><span class="annottext">[Obj]
+</span><a href="#local-6989586621679078557"><span class="hs-identifier hs-var">raySMPP</span></a></span><span>
+</span><span id="line-80"></span><span>    </span><span id="local-6989586621679078559"><span class="annot"><span class="annottext">radio :: Float
+</span><a href="#local-6989586621679078559"><span class="hs-identifier hs-var hs-var">radio</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">3</span></span><span>
 </span><span id="line-81"></span><span>
 </span><span id="line-82"></span><span>
@@ -219,629 +219,136 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span id="line-84"></span><span id="main"><span class="annot"><span class="annottext">IO ()
 </span><a href="Main.html#main"><span class="hs-identifier hs-var hs-var hs-var">main</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
 </span><span id="line-85"></span><span>
-</span><span id="line-86"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679079522"><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079522"><span class="hs-identifier hs-var">vertices1</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079521"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079521"><span class="hs-identifier hs-var">triangles7</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace7.obj&quot;</span></span><span>  </span><span>
-</span><span id="line-87"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079520"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079520"><span class="hs-identifier hs-var">triangles6</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace6.obj&quot;</span></span><span> </span><span>
-</span><span id="line-88"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079519"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079519"><span class="hs-identifier hs-var">triangles5</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace5.obj&quot;</span></span><span> </span><span>
-</span><span id="line-89"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079518"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079518"><span class="hs-identifier hs-var">triangles4</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace4.obj&quot;</span></span><span> </span><span>
-</span><span id="line-90"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079517"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079517"><span class="hs-identifier hs-var">triangles3</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace3.obj&quot;</span></span><span> </span><span>
-</span><span id="line-91"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079516"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079516"><span class="hs-identifier hs-var">triangles2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace2.obj&quot;</span></span><span> </span><span>
-</span><span id="line-92"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079515"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079515"><span class="hs-identifier hs-var">triangles1</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace1.obj&quot;</span></span><span> </span><span>
-</span><span id="line-93"></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><span class="hs-identifier">_</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079514"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079514"><span class="hs-identifier hs-var">triangles0</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/palace0.obj&quot;</span></span><span> </span><span>
+</span><span id="line-86"></span><span class="hs-comment">--   (vertices1, triangles7) &lt;- loadObjFile &quot;../meshes/simple/palace7.obj&quot;  </span><span>
+</span><span id="line-87"></span><span class="hs-comment">--   (_, triangles6) &lt;- loadObjFile &quot;../meshes/simple/palace6.obj&quot; </span><span>
+</span><span id="line-88"></span><span class="hs-comment">--   (_, triangles5) &lt;- loadObjFile &quot;../meshes/simple/palace5.obj&quot; </span><span>
+</span><span id="line-89"></span><span class="hs-comment">--   (_, triangles4) &lt;- loadObjFile &quot;../meshes/simple/palace4.obj&quot; </span><span>
+</span><span id="line-90"></span><span class="hs-comment">--   (_, triangles3) &lt;- loadObjFile &quot;../meshes/simple/palace3.obj&quot; </span><span>
+</span><span id="line-91"></span><span class="hs-comment">--   (_, triangles2) &lt;- loadObjFile &quot;../meshes/simple/palace2.obj&quot; </span><span>
+</span><span id="line-92"></span><span class="hs-comment">--   (_, triangles1) &lt;- loadObjFile &quot;../meshes/simple/palace1.obj&quot; </span><span>
+</span><span id="line-93"></span><span class="hs-comment">--   (_, triangles0) &lt;- loadObjFile &quot;../meshes/simple/palace0.obj&quot; </span><span>
 </span><span id="line-94"></span><span>
-</span><span id="line-95"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span class="hs-glyph">!</span><span id="local-6989586621679079508"><span class="annot"><span class="annottext">vertices1' :: [Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var hs-var">vertices1'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#escalatePointt"><span class="hs-identifier hs-var">escalatePointt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">4</span></span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">7.5</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">2.5</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">9.75</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#rotatePointt"><span class="hs-identifier hs-var">rotatePointt</span></a></span><span> </span><span class="annot"><span class="annottext">Char
-</span><span class="hs-char">'Y'</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">287.5</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079522"><span class="hs-identifier hs-var">vertices1</span></a></span><span>
-</span><span id="line-96"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079507"><span class="annot"><span class="annottext">customTriangles7 :: [Triangulo]
-</span><a href="#local-6989586621679079507"><span class="hs-identifier hs-var hs-var">customTriangles7</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079521"><span class="hs-identifier hs-var">triangles7</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-97"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079505"><span class="annot"><span class="annottext">customTriangles6 :: [Triangulo]
-</span><a href="#local-6989586621679079505"><span class="hs-identifier hs-var hs-var">customTriangles6</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079520"><span class="hs-identifier hs-var">triangles6</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-98"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079504"><span class="annot"><span class="annottext">customTriangles5 :: [Triangulo]
-</span><a href="#local-6989586621679079504"><span class="hs-identifier hs-var hs-var">customTriangles5</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079519"><span class="hs-identifier hs-var">triangles5</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-99"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079503"><span class="annot"><span class="annottext">customTriangles4 :: [Triangulo]
-</span><a href="#local-6989586621679079503"><span class="hs-identifier hs-var hs-var">customTriangles4</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079518"><span class="hs-identifier hs-var">triangles4</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-100"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079502"><span class="annot"><span class="annottext">customTriangles3 :: [Triangulo]
-</span><a href="#local-6989586621679079502"><span class="hs-identifier hs-var hs-var">customTriangles3</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079517"><span class="hs-identifier hs-var">triangles3</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-101"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079501"><span class="annot"><span class="annottext">customTriangles2 :: [Triangulo]
-</span><a href="#local-6989586621679079501"><span class="hs-identifier hs-var hs-var">customTriangles2</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079516"><span class="hs-identifier hs-var">triangles2</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-102"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079500"><span class="annot"><span class="annottext">customTriangles1 :: [Triangulo]
-</span><a href="#local-6989586621679079500"><span class="hs-identifier hs-var hs-var">customTriangles1</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079515"><span class="hs-identifier hs-var">triangles1</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-103"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079499"><span class="annot"><span class="annottext">customTriangles0 :: [Triangulo]
-</span><a href="#local-6989586621679079499"><span class="hs-identifier hs-var hs-var">customTriangles0</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079508"><span class="hs-identifier hs-var">vertices1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079514"><span class="hs-identifier hs-var">triangles0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-104"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079498"><span class="annot"><span class="annottext">boundingVol7 :: BVH
-</span><a href="#local-6989586621679079498"><span class="hs-identifier hs-var hs-var">boundingVol7</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079507"><span class="hs-identifier hs-var">customTriangles7</span></a></span><span>
-</span><span id="line-105"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079497"><span class="annot"><span class="annottext">boundingVol6 :: BVH
-</span><a href="#local-6989586621679079497"><span class="hs-identifier hs-var hs-var">boundingVol6</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">2000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079505"><span class="hs-identifier hs-var">customTriangles6</span></a></span><span>
-</span><span id="line-106"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079496"><span class="annot"><span class="annottext">boundingVol5 :: BVH
-</span><a href="#local-6989586621679079496"><span class="hs-identifier hs-var hs-var">boundingVol5</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">3000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079504"><span class="hs-identifier hs-var">customTriangles5</span></a></span><span>
-</span><span id="line-107"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079495"><span class="annot"><span class="annottext">boundingVol4 :: BVH
-</span><a href="#local-6989586621679079495"><span class="hs-identifier hs-var hs-var">boundingVol4</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">4000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079503"><span class="hs-identifier hs-var">customTriangles4</span></a></span><span>
-</span><span id="line-108"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079494"><span class="annot"><span class="annottext">boundingVol3 :: BVH
-</span><a href="#local-6989586621679079494"><span class="hs-identifier hs-var hs-var">boundingVol3</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">5000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079502"><span class="hs-identifier hs-var">customTriangles3</span></a></span><span>
-</span><span id="line-109"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079493"><span class="annot"><span class="annottext">boundingVol2 :: BVH
-</span><a href="#local-6989586621679079493"><span class="hs-identifier hs-var hs-var">boundingVol2</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">6000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079501"><span class="hs-identifier hs-var">customTriangles2</span></a></span><span>
-</span><span id="line-110"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079492"><span class="annot"><span class="annottext">boundingVol1 :: BVH
-</span><a href="#local-6989586621679079492"><span class="hs-identifier hs-var hs-var">boundingVol1</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">7000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079500"><span class="hs-identifier hs-var">customTriangles1</span></a></span><span>
-</span><span id="line-111"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079491"><span class="annot"><span class="annottext">boundingVol0 :: BVH
-</span><a href="#local-6989586621679079491"><span class="hs-identifier hs-var hs-var">boundingVol0</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">8000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079499"><span class="hs-identifier hs-var">customTriangles0</span></a></span><span>
+</span><span id="line-95"></span><span class="hs-comment">--   let !vertices1' = map (escalatePointt (4).movePoint (Direction 7.5 (-2.5) (-9.75)). rotatePointt 'Y' (287.5) ) vertices1</span><span>
+</span><span id="line-96"></span><span class="hs-comment">--       !customTriangles7 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles7)</span><span>
+</span><span id="line-97"></span><span class="hs-comment">--       !customTriangles6 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles6)</span><span>
+</span><span id="line-98"></span><span class="hs-comment">--       !customTriangles5 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles5)</span><span>
+</span><span id="line-99"></span><span class="hs-comment">--       !customTriangles4 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles4)</span><span>
+</span><span id="line-100"></span><span class="hs-comment">--       !customTriangles3 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles3)</span><span>
+</span><span id="line-101"></span><span class="hs-comment">--       !customTriangles2 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles2)</span><span>
+</span><span id="line-102"></span><span class="hs-comment">--       !customTriangles1 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles1)</span><span>
+</span><span id="line-103"></span><span class="hs-comment">--       !customTriangles0 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles0)</span><span>
+</span><span id="line-104"></span><span class="hs-comment">--       !boundingVol7 = buildBVH 1000 customTriangles7</span><span>
+</span><span id="line-105"></span><span class="hs-comment">--       !boundingVol6 = buildBVH 2000 customTriangles6</span><span>
+</span><span id="line-106"></span><span class="hs-comment">--       !boundingVol5 = buildBVH 3000 customTriangles5</span><span>
+</span><span id="line-107"></span><span class="hs-comment">--       !boundingVol4 = buildBVH 4000 customTriangles4</span><span>
+</span><span id="line-108"></span><span class="hs-comment">--       !boundingVol3 = buildBVH 5000 customTriangles3</span><span>
+</span><span id="line-109"></span><span class="hs-comment">--       !boundingVol2 = buildBVH 6000 customTriangles2</span><span>
+</span><span id="line-110"></span><span class="hs-comment">--       !boundingVol1 = buildBVH 7000 customTriangles1</span><span>
+</span><span id="line-111"></span><span class="hs-comment">--       !boundingVol0 = buildBVH 8000 customTriangles0</span><span>
 </span><span id="line-112"></span><span>
-</span><span id="line-113"></span><span>      </span><span id="local-6989586621679079488"><span class="annot"><span class="annottext">figuras' :: Set Shape
-</span><a href="#local-6989586621679079488"><span class="hs-identifier hs-var hs-var">figuras'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="annottext">[Shape] -&gt; Set Shape
-forall a. Ord a =&gt; [a] -&gt; Set a
-</span><span class="hs-identifier hs-var">Set.fromList</span></span><span> </span><span class="annot"><span class="annottext">([Shape] -&gt; Set Shape) -&gt; [Shape] -&gt; Set Shape
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[Shape] -&gt; [Shape] -&gt; [Shape]
-</span><a href="Figuras.html#addFigMult"><span class="hs-identifier hs-var">addFigMult</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079491"><span class="hs-identifier hs-var">boundingVol0</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079492"><span class="hs-identifier hs-var">boundingVol1</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079493"><span class="hs-identifier hs-var">boundingVol2</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079494"><span class="hs-identifier hs-var">boundingVol3</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079495"><span class="hs-identifier hs-var">boundingVol4</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079496"><span class="hs-identifier hs-var">boundingVol5</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079497"><span class="hs-identifier hs-var">boundingVol6</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079498"><span class="hs-identifier hs-var">boundingVol7</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">([Shape] -&gt; [Shape]) -&gt; [Shape] -&gt; [Shape]
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Set Shape -&gt; [Shape]
-forall a. Set a -&gt; [a]
-</span><span class="hs-identifier hs-var">Set.toList</span></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="Escena.html#figuras"><span class="hs-identifier hs-var">figuras</span></a></span><span>
+</span><span id="line-113"></span><span class="hs-comment">--       figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol0),(Acelerator boundingVol1) ,(Acelerator boundingVol2),(Acelerator boundingVol3),(Acelerator boundingVol4),(Acelerator boundingVol5),(Acelerator boundingVol6),(Acelerator boundingVol7) ] $ Set.toList figuras</span><span>
 </span><span id="line-114"></span><span>
-</span><span id="line-115"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679079485"><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079485"><span class="hs-identifier hs-var">verticesB1</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079484"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simple/botijo0.obj&quot;</span></span><span>  </span><span>
+</span><span id="line-115"></span><span class="hs-comment">--   (verticesB1, trianglesB0) &lt;- loadObjFile &quot;../meshes/simple/botijo0.obj&quot;  </span><span>
 </span><span id="line-116"></span><span>  </span><span>
 </span><span id="line-117"></span><span>
-</span><span id="line-118"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span class="hs-glyph">!</span><span id="local-6989586621679079481"><span class="annot"><span class="annottext">verticesB1' :: [Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var hs-var">verticesB1'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#escalatePointt"><span class="hs-identifier hs-var">escalatePointt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">4</span></span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">2</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#rotatePointt"><span class="hs-identifier hs-var">rotatePointt</span></a></span><span> </span><span class="annot"><span class="annottext">Char
-</span><span class="hs-char">'Y'</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079485"><span class="hs-identifier hs-var">verticesB1</span></a></span><span>
-</span><span id="line-119"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079480"><span class="annot"><span class="annottext">customTrianglesB0 :: [Triangulo]
-</span><a href="#local-6989586621679079480"><span class="hs-identifier hs-var hs-var">customTrianglesB0</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-120"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079479"><span class="annot"><span class="annottext">boundingVolB0 :: BVH
-</span><a href="#local-6989586621679079479"><span class="hs-identifier hs-var hs-var">boundingVolB0</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079480"><span class="hs-identifier hs-var">customTrianglesB0</span></a></span><span>
-</span><span id="line-121"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079476"><span class="annot"><span class="annottext">customTrianglesB1 :: [Triangulo]
-</span><a href="#local-6989586621679079476"><span class="hs-identifier hs-var hs-var">customTrianglesB1</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">8</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-122"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079475"><span class="annot"><span class="annottext">boundingVolB1 :: BVH
-</span><a href="#local-6989586621679079475"><span class="hs-identifier hs-var hs-var">boundingVolB1</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079476"><span class="hs-identifier hs-var">customTrianglesB1</span></a></span><span>
-</span><span id="line-123"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079472"><span class="annot"><span class="annottext">customTrianglesB2 :: [Triangulo]
-</span><a href="#local-6989586621679079472"><span class="hs-identifier hs-var hs-var">customTrianglesB2</span></a></span></span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">20</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">2</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">3</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-124"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079471"><span class="annot"><span class="annottext">boundingVolB2 :: BVH
-</span><a href="#local-6989586621679079471"><span class="hs-identifier hs-var hs-var">boundingVolB2</span></a></span></span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079472"><span class="hs-identifier hs-var">customTrianglesB2</span></a></span><span>
-</span><span id="line-125"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079468"><span class="annot"><span class="annottext">customTrianglesB3 :: [Triangulo]
-</span><a href="#local-6989586621679079468"><span class="hs-identifier hs-var hs-var">customTrianglesB3</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">50</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">4</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">3</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-126"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079467"><span class="annot"><span class="annottext">boundingVolB3 :: BVH
-</span><a href="#local-6989586621679079467"><span class="hs-identifier hs-var hs-var">boundingVolB3</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079468"><span class="hs-identifier hs-var">customTrianglesB3</span></a></span><span>
-</span><span id="line-127"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079464"><span class="annot"><span class="annottext">customTrianglesB4 :: [Triangulo]
-</span><a href="#local-6989586621679079464"><span class="hs-identifier hs-var hs-var">customTrianglesB4</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">100</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">120</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">200</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">5</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">8</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-128"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079463"><span class="annot"><span class="annottext">boundingVolB4 :: BVH
-</span><a href="#local-6989586621679079463"><span class="hs-identifier hs-var hs-var">boundingVolB4</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079464"><span class="hs-identifier hs-var">customTrianglesB4</span></a></span><span>
-</span><span id="line-129"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079460"><span class="annot"><span class="annottext">customTrianglesB5 :: [Triangulo]
-</span><a href="#local-6989586621679079460"><span class="hs-identifier hs-var hs-var">customTrianglesB5</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">220</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">15</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">)</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079481"><span class="hs-identifier hs-var">verticesB1'</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079484"><span class="hs-identifier hs-var">trianglesB0</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-130"></span><span>      </span><span class="hs-glyph">!</span><span id="local-6989586621679079459"><span class="annot"><span class="annottext">boundingVolB5 :: BVH
-</span><a href="#local-6989586621679079459"><span class="hs-identifier hs-var hs-var">boundingVolB5</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079460"><span class="hs-identifier hs-var">customTrianglesB5</span></a></span><span>
-</span><span id="line-131"></span><span>      </span><span id="local-6989586621679079457"><span class="annot"><span class="annottext">figuras'' :: Set Shape
-</span><a href="#local-6989586621679079457"><span class="hs-identifier hs-var hs-var">figuras''</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="annottext">[Shape] -&gt; Set Shape
-forall a. Ord a =&gt; [a] -&gt; Set a
-</span><span class="hs-identifier hs-var">Set.fromList</span></span><span> </span><span class="annot"><span class="annottext">([Shape] -&gt; Set Shape) -&gt; [Shape] -&gt; Set Shape
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[Shape] -&gt; [Shape] -&gt; [Shape]
-</span><a href="Figuras.html#addFigMult"><span class="hs-identifier hs-var">addFigMult</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079479"><span class="hs-identifier hs-var">boundingVolB0</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079475"><span class="hs-identifier hs-var">boundingVolB1</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079471"><span class="hs-identifier hs-var">boundingVolB2</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079467"><span class="hs-identifier hs-var">boundingVolB3</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079463"><span class="hs-identifier hs-var">boundingVolB4</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079459"><span class="hs-identifier hs-var">boundingVolB5</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">([Shape] -&gt; [Shape]) -&gt; [Shape] -&gt; [Shape]
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Set Shape -&gt; [Shape]
-forall a. Set a -&gt; [a]
-</span><span class="hs-identifier hs-var">Set.toList</span></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079488"><span class="hs-identifier hs-var">figuras'</span></a></span><span>
+</span><span id="line-118"></span><span class="hs-comment">--   let !verticesB1' = map (escalatePointt (4).movePoint (Direction 0 (-2) (0)). rotatePointt 'Y' (0) ) verticesB1</span><span>
+</span><span id="line-119"></span><span class="hs-comment">--       !customTrianglesB0 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (verticesB1', trianglesB0)</span><span>
+</span><span id="line-120"></span><span class="hs-comment">--       !boundingVolB0 = buildBVH 1000 customTrianglesB0</span><span>
+</span><span id="line-121"></span><span class="hs-comment">--       !customTrianglesB1 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 ((map (movePoint (Direction (-8) (0) (0)) ) verticesB1'), trianglesB0)</span><span>
+</span><span id="line-122"></span><span class="hs-comment">--       !boundingVolB1 = buildBVH 1000 customTrianglesB1</span><span>
+</span><span id="line-123"></span><span class="hs-comment">--       !customTrianglesB2= convertToCustomFormat (RGB 20 120 220) (0.85, 0,0) 0 ((map (movePoint (Direction (-2) (0) (3)) ) verticesB1'), trianglesB0)</span><span>
+</span><span id="line-124"></span><span class="hs-comment">--       !boundingVolB2= buildBVH 1000 customTrianglesB2</span><span>
+</span><span id="line-125"></span><span class="hs-comment">--       !customTrianglesB3 = convertToCustomFormat (RGB 120 220 50) (0.85, 0,0) 0 ((map (movePoint (Direction 4 (0) ((-3))) )verticesB1'), trianglesB0)</span><span>
+</span><span id="line-126"></span><span class="hs-comment">--       !boundingVolB3 = buildBVH 1000 customTrianglesB3</span><span>
+</span><span id="line-127"></span><span class="hs-comment">--       !customTrianglesB4 = convertToCustomFormat (RGB 100 120 200) (0.85, 0,0) 0 ((map (movePoint (Direction 0 (5) (-8)) )verticesB1'), trianglesB0)</span><span>
+</span><span id="line-128"></span><span class="hs-comment">--       !boundingVolB4 = buildBVH 1000 customTrianglesB4</span><span>
+</span><span id="line-129"></span><span class="hs-comment">--       !customTrianglesB5 = convertToCustomFormat (RGB 0 220 0) (0.85, 0,0) 0 ((map (movePoint (Direction 0 (0) (-15)) )verticesB1'), trianglesB0)</span><span>
+</span><span id="line-130"></span><span class="hs-comment">--       !boundingVolB5 = buildBVH 1000 customTrianglesB5</span><span>
+</span><span id="line-131"></span><span class="hs-comment">--       figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVolB0),(Acelerator boundingVolB1),(Acelerator boundingVolB2),(Acelerator boundingVolB3),(Acelerator boundingVolB4),(Acelerator boundingVolB5)] $ Set.toList figuras'</span><span>
 </span><span id="line-132"></span><span>
-</span><span id="line-133"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079456"><span class="annot"><span class="annottext">objFilePath2 :: FilePath
-</span><a href="#local-6989586621679079456"><span class="hs-identifier hs-var hs-var">objFilePath2</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;../meshes/simplehaskell.obj&quot;</span></span><span>  </span><span>
-</span><span id="line-134"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679079455"><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079455"><span class="hs-identifier hs-var">vertices2</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679079454"><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079454"><span class="hs-identifier hs-var">trianglesH2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ([Point3D], [TrianglePos])
-</span><a href="Figuras.html#loadObjFile"><span class="hs-identifier hs-var">loadObjFile</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679079456"><span class="hs-identifier hs-var">objFilePath2</span></a></span><span>
-</span><span id="line-135"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079447"><span class="annot"><span class="annottext">vertices2' :: [Point3D]
-</span><a href="#local-6989586621679079447"><span class="hs-identifier hs-var hs-var">vertices2'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; [Point3D] -&gt; [Point3D]
-forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#escalatePointt"><span class="hs-identifier hs-var">escalatePointt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span class="annot"><span class="annottext">Direction -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#movePoint"><span class="hs-identifier hs-var">movePoint</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; Direction
-</span><a href="Elem3D.html#Direction"><span class="hs-identifier hs-var">Direction</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">5</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">5</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">28</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="annot"><span class="annottext">(Point3D -&gt; Point3D) -&gt; (Point3D -&gt; Point3D) -&gt; Point3D -&gt; Point3D
-forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
-</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Char -&gt; Float -&gt; Point3D -&gt; Point3D
-</span><a href="Elem3D.html#rotatePointt"><span class="hs-identifier hs-var">rotatePointt</span></a></span><span> </span><span class="annot"><span class="annottext">Char
-</span><span class="hs-char">'Y'</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">90</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079455"><span class="hs-identifier hs-var">vertices2</span></a></span><span>
-</span><span id="line-136"></span><span>      </span><span id="local-6989586621679079446"><span class="annot"><span class="annottext">customTrianglesH2 :: [Triangulo]
-</span><a href="#local-6989586621679079446"><span class="hs-identifier hs-var hs-var">customTrianglesH2</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">RGB
--&gt; (Float, Float, Float)
--&gt; Float
--&gt; ([Point3D], [TrianglePos])
--&gt; [Triangulo]
-</span><a href="Figuras.html#convertToCustomFormat"><span class="hs-identifier hs-var">convertToCustomFormat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
-</span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">122</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">10</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">255</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0.85</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Point3D]
-</span><a href="#local-6989586621679079447"><span class="hs-identifier hs-var">vertices2'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[TrianglePos]
-</span><a href="#local-6989586621679079454"><span class="hs-identifier hs-var">trianglesH2</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-137"></span><span>      </span><span id="local-6989586621679079445"><span class="annot"><span class="annottext">boundingVol'' :: BVH
-</span><a href="#local-6989586621679079445"><span class="hs-identifier hs-var hs-var">boundingVol''</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Triangulo] -&gt; BVH
-</span><a href="Figuras.html#buildBVH"><span class="hs-identifier hs-var">buildBVH</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">4000</span></span><span> </span><span class="annot"><span class="annottext">[Triangulo]
-</span><a href="#local-6989586621679079446"><span class="hs-identifier hs-var">customTrianglesH2</span></a></span><span>
-</span><span id="line-138"></span><span>      </span><span id="local-6989586621679079443"><span class="annot"><span class="annottext">figuras''' :: Set Shape
-</span><a href="#local-6989586621679079443"><span class="hs-identifier hs-var hs-var">figuras'''</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="annottext">[Shape] -&gt; Set Shape
-forall a. Ord a =&gt; [a] -&gt; Set a
-</span><span class="hs-identifier hs-var">Set.fromList</span></span><span> </span><span class="annot"><span class="annottext">([Shape] -&gt; Set Shape) -&gt; [Shape] -&gt; Set Shape
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[Shape] -&gt; [Shape] -&gt; [Shape]
-</span><a href="Figuras.html#addFigMult"><span class="hs-identifier hs-var">addFigMult</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">BVH -&gt; Shape
-</span><a href="Figuras.html#Acelerator"><span class="hs-identifier hs-var">Acelerator</span></a></span><span> </span><span class="annot"><span class="annottext">BVH
-</span><a href="#local-6989586621679079445"><span class="hs-identifier hs-var">boundingVol''</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Set Shape -&gt; [Shape]
-forall a. Set a -&gt; [a]
-</span><span class="hs-identifier hs-var">Set.toList</span></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079457"><span class="hs-identifier hs-var">figuras''</span></a></span><span class="hs-special">)</span><span>    </span><span>
+</span><span id="line-133"></span><span class="hs-comment">--   let objFilePath2 = &quot;../meshes/simplehaskell.obj&quot;  </span><span>
+</span><span id="line-134"></span><span class="hs-comment">--   (vertices2, trianglesH2) &lt;- loadObjFile objFilePath2</span><span>
+</span><span id="line-135"></span><span class="hs-comment">--   let vertices2' = map (escalatePointt (1).movePoint (Direction (-5) (-5) (-28)). rotatePointt 'Y' (90)) vertices2</span><span>
+</span><span id="line-136"></span><span class="hs-comment">--       customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (vertices2', trianglesH2)</span><span>
+</span><span id="line-137"></span><span class="hs-comment">--       boundingVol'' = buildBVH 4000 customTrianglesH2</span><span>
+</span><span id="line-138"></span><span class="hs-comment">--       figuras''' =  Set.fromList $ addFigMult [(Acelerator boundingVol'')] (Set.toList figuras'')    </span><span>
 </span><span id="line-139"></span><span>    </span><span>
 </span><span id="line-140"></span><span>
-</span><span id="line-141"></span><span>  </span><span>
-</span><span id="line-142"></span><span>  </span><span id="local-6989586621679079442"><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679079442"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO [FilePath]
+</span><span id="line-141"></span><span>  </span><span id="local-6989586621679078554"><span class="annot"><span class="annottext">[String]
+</span><a href="#local-6989586621679078554"><span class="hs-identifier hs-var">args</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO [String]
 </span><span class="hs-identifier hs-var">getArgs</span></span><span>
-</span><span id="line-143"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Maybe Int) -&gt; [FilePath] -&gt; [Maybe Int]
+</span><span id="line-142"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">(String -&gt; Maybe Int) -&gt; [String] -&gt; [Maybe Int]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Maybe Int
-forall a. Read a =&gt; FilePath -&gt; Maybe a
-</span><span class="hs-identifier hs-var">readMaybe</span></span><span> </span><span class="annot"><span class="annottext">[FilePath]
-</span><a href="#local-6989586621679079442"><span class="hs-identifier hs-var">args</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-144"></span><span>    </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679079441"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079441"><span class="hs-identifier hs-var">nStr</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679079440"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079440"><span class="hs-identifier hs-var">mStr</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679079439"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079439"><span class="hs-identifier hs-var">oStr</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-145"></span><span>      </span><span id="local-6989586621679079438"><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079438"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; Maybe Int
+forall a. Read a =&gt; String -&gt; Maybe a
+</span><span class="hs-identifier hs-var">readMaybe</span></span><span> </span><span class="annot"><span class="annottext">[String]
+</span><a href="#local-6989586621679078554"><span class="hs-identifier hs-var">args</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-143"></span><span>    </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679078553"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078553"><span class="hs-identifier hs-var">nStr</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679078552"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078552"><span class="hs-identifier hs-var">mStr</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679078551"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078551"><span class="hs-identifier hs-var">oStr</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-144"></span><span>      </span><span id="local-6989586621679078550"><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078550"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
 forall (m :: * -&gt; *). MonadIO m =&gt; m StdGen
 </span><span class="hs-identifier hs-var">newStdGen</span></span><span>
-</span><span id="line-146"></span><span>      </span><span id="local-6989586621679079437"><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079437"><span class="hs-identifier hs-var">gen'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span id="line-145"></span><span>      </span><span id="local-6989586621679078549"><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078549"><span class="hs-identifier hs-var">gen'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
 forall (m :: * -&gt; *). MonadIO m =&gt; m StdGen
 </span><span class="hs-identifier hs-var">newStdGen</span></span><span>
-</span><span id="line-147"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079436"><span class="annot"><span class="annottext">n :: Int
-</span><a href="#local-6989586621679079436"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079441"><span class="hs-identifier hs-var">nStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
-</span><span id="line-148"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079435"><span class="annot"><span class="annottext">etapaY :: Int
-</span><a href="#local-6989586621679079435"><span class="hs-identifier hs-var hs-var">etapaY</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079440"><span class="hs-identifier hs-var">mStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
-</span><span id="line-149"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079434"><span class="annot"><span class="annottext">etapaX :: Int
-</span><a href="#local-6989586621679079434"><span class="hs-identifier hs-var hs-var">etapaX</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079439"><span class="hs-identifier hs-var">oStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
-</span><span id="line-150"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079431"><span class="annot"><span class="annottext">n' :: Int
-</span><a href="#local-6989586621679079431"><span class="hs-identifier hs-var hs-var">n'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079436"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><span id="line-146"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078548"><span class="annot"><span class="annottext">n :: Int
+</span><a href="#local-6989586621679078548"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078553"><span class="hs-identifier hs-var">nStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
+</span><span id="line-147"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078547"><span class="annot"><span class="annottext">etapaY :: Int
+</span><a href="#local-6989586621679078547"><span class="hs-identifier hs-var hs-var">etapaY</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078552"><span class="hs-identifier hs-var">mStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
+</span><span id="line-148"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078546"><span class="annot"><span class="annottext">etapaX :: Int
+</span><a href="#local-6989586621679078546"><span class="hs-identifier hs-var hs-var">etapaX</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078551"><span class="hs-identifier hs-var">oStr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>
+</span><span id="line-149"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078543"><span class="annot"><span class="annottext">n' :: Int
+</span><a href="#local-6989586621679078543"><span class="hs-identifier hs-var hs-var">n'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078548"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">+</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079435"><span class="hs-identifier hs-var">etapaY</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679078547"><span class="hs-identifier hs-var">etapaY</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#maxN"><span class="hs-identifier hs-var">maxN</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-151"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; IO ()
-</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; IO ()) -&gt; FilePath -&gt; IO ()
+</span><span id="line-150"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; IO ()) -&gt; String -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;The value of 'n' is: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;The value of 'n' is: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079431"><span class="hs-identifier hs-var">n'</span></a></span><span>
-</span><span id="line-152"></span><span>      </span><span id="local-6989586621679079427"><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079427"><span class="hs-identifier hs-var">start</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
+</span><a href="#local-6989586621679078543"><span class="hs-identifier hs-var">n'</span></a></span><span>
+</span><span id="line-151"></span><span>      </span><span id="local-6989586621679078539"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679078539"><span class="hs-identifier hs-var">start</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
 </span><span class="hs-identifier hs-var">getCPUTime</span></span><span>
+</span><span id="line-152"></span><span>      </span><span>
 </span><span id="line-153"></span><span>      </span><span>
-</span><span id="line-154"></span><span>      </span><span>
-</span><span id="line-155"></span><span>      </span><span id="local-6989586621679079426"><span class="annot"><span class="annottext">[Foton]
-</span><a href="#local-6989586621679079426"><span class="hs-identifier hs-var">notkdt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO [Foton]
-forall a. Binary a =&gt; FilePath -&gt; IO a
-</span><a href="Files.html#readObject"><span class="hs-identifier hs-var">readObject</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-154"></span><span>      </span><span id="local-6989586621679078538"><span class="annot"><span class="annottext">[Foton]
+</span><a href="#local-6989586621679078538"><span class="hs-identifier hs-var">notkdt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO [Foton]
+forall a. Binary a =&gt; String -&gt; IO a
+</span><a href="Files.html#readObject"><span class="hs-identifier hs-var">readObject</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;./kd.bin&quot;</span></span><span> </span><span class="hs-comment">-- Carga la lista de fotones del binario</span><span>
-</span><span id="line-156"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079425"><span class="annot"><span class="annottext">kdt :: KdTree Float Foton
-</span><a href="#local-6989586621679079425"><span class="hs-identifier hs-var hs-var">kdt</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Foton] -&gt; KdTree Float Foton
+</span><span id="line-155"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078537"><span class="annot"><span class="annottext">kdt :: KdTree Float Foton
+</span><a href="#local-6989586621679078537"><span class="hs-identifier hs-var hs-var">kdt</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Foton] -&gt; KdTree Float Foton
 </span><a href="KdT.html#createKD"><span class="hs-identifier hs-var">createKD</span></a></span><span> </span><span class="annot"><span class="annottext">[Foton]
-</span><a href="#local-6989586621679079426"><span class="hs-identifier hs-var">notkdt</span></a></span><span> </span><span class="hs-comment">-- Crea el kdtree</span><span>
-</span><span id="line-157"></span><span>
-</span><span id="line-158"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079424"><span class="annot"><span class="annottext">cams :: [Camara]
-</span><a href="#local-6989586621679079424"><span class="hs-identifier hs-var hs-var">cams</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Camara -&gt; Int -&gt; Float -&gt; [Camara]
+</span><a href="#local-6989586621679078538"><span class="hs-identifier hs-var">notkdt</span></a></span><span> </span><span class="hs-comment">-- Crea el kdtree</span><span>
+</span><span id="line-156"></span><span>
+</span><span id="line-157"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078536"><span class="annot"><span class="annottext">cams :: [Camara]
+</span><a href="#local-6989586621679078536"><span class="hs-identifier hs-var hs-var">cams</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Camara -&gt; Int -&gt; Float -&gt; [Camara]
 </span><a href="Funciones.html#mulCam"><span class="hs-identifier hs-var">mulCam</span></a></span><span> </span><span class="annot"><span class="annottext">Camara
 </span><a href="Escena.html#camara"><span class="hs-identifier hs-var">camara</span></a></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">0.75</span></span><span class="hs-comment">-- El primer n&#250;mero indica el n&#250;mero de muestras que se toman desde la c&#225;mara, el segundo el radio de apertura</span><span>
-</span><span id="line-159"></span><span>          </span><span id="local-6989586621679079420"><span class="annot"><span class="annottext">rayitos :: [[Ray]]
-</span><a href="#local-6989586621679079420"><span class="hs-identifier hs-var hs-var">rayitos</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Camara -&gt; [Ray]) -&gt; [Camara] -&gt; [[Ray]]
+</span><span id="line-158"></span><span>          </span><span id="local-6989586621679078532"><span class="annot"><span class="annottext">rayitos :: [[Ray]]
+</span><a href="#local-6989586621679078532"><span class="hs-identifier hs-var hs-var">rayitos</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Camara -&gt; [Ray]) -&gt; [Camara] -&gt; [[Ray]]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679079419"><span class="annot"><span class="annottext">Camara
-</span><a href="#local-6989586621679079419"><span class="hs-identifier hs-var">camara</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679078531"><span class="annot"><span class="annottext">Camara
+</span><a href="#local-6989586621679078531"><span class="hs-identifier hs-var">camara</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Int
 -&gt; Int
 -&gt; Int
 -&gt; Int
@@ -857,73 +364,71 @@ forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#etapasY"><span class="hs-identifier hs-var">etapasY</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#etapasX"><span class="hs-identifier hs-var">etapasX</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079431"><span class="hs-identifier hs-var">n'</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079434"><span class="hs-identifier hs-var">etapaX</span></a></span><span> </span><span class="annot"><span class="annottext">Camara
-</span><a href="#local-6989586621679079419"><span class="hs-identifier hs-var">camara</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679078543"><span class="hs-identifier hs-var">n'</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078546"><span class="hs-identifier hs-var">etapaX</span></a></span><span> </span><span class="annot"><span class="annottext">Camara
+</span><a href="#local-6989586621679078531"><span class="hs-identifier hs-var">camara</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#pix"><span class="hs-identifier hs-var">pix</span></a></span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#aspectR"><span class="hs-identifier hs-var">aspectR</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#pix"><span class="hs-identifier hs-var">pix</span></a></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#nRay"><span class="hs-identifier hs-var">nRay</span></a></span><span> </span><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079438"><span class="hs-identifier hs-var">gen</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Camara]
-</span><a href="#local-6989586621679079424"><span class="hs-identifier hs-var">cams</span></a></span><span> </span><span class="hs-comment">-- Genera los rayos para cada pixel</span><span>
-</span><span id="line-160"></span><span>
-</span><span id="line-161"></span><span>          </span><span id="local-6989586621679079413"><span class="annot"><span class="annottext">a :: [[RGB]]
-</span><a href="#local-6989586621679079413"><span class="hs-identifier hs-var hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">([Ray] -&gt; [RGB]) -&gt; [[Ray]] -&gt; [[RGB]]
+</span><a href="#local-6989586621679078550"><span class="hs-identifier hs-var">gen</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Camara]
+</span><a href="#local-6989586621679078536"><span class="hs-identifier hs-var">cams</span></a></span><span> </span><span class="hs-comment">-- Genera los rayos para cada pixel</span><span>
+</span><span id="line-159"></span><span>
+</span><span id="line-160"></span><span>          </span><span class="hs-comment">-- a = map (\rayos -&gt; listRayPhoton kdt luces cam figuras rayos nRay) rayitos -- Photon mapping</span><span>
+</span><span id="line-161"></span><span>          </span><span id="local-6989586621679078525"><span class="annot"><span class="annottext">a :: [[RGB]]
+</span><a href="#local-6989586621679078525"><span class="hs-identifier hs-var hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">([Ray] -&gt; [RGB]) -&gt; [[Ray]] -&gt; [[RGB]]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
-</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679079412"><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079412"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">KdTree Float Foton
--&gt; [Luz] -&gt; Point3D -&gt; Set Shape -&gt; [Ray] -&gt; Int -&gt; [RGB]
-</span><a href="Main.html#listRayPhoton"><span class="hs-identifier hs-var">listRayPhoton</span></a></span><span> </span><span class="annot"><span class="annottext">KdTree Float Foton
-</span><a href="#local-6989586621679079425"><span class="hs-identifier hs-var">kdt</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
-</span><a href="Escena.html#luces"><span class="hs-identifier hs-var">luces</span></a></span><span> </span><span class="annot"><span class="annottext">Point3D
-</span><a href="Escena.html#cam"><span class="hs-identifier hs-var">cam</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079443"><span class="hs-identifier hs-var">figuras'''</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
-</span><a href="#local-6989586621679079412"><span class="hs-identifier hs-var">rayos</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679078524"><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078524"><span class="hs-identifier hs-var">rayos</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">[Luz] -&gt; Set Shape -&gt; [Ray] -&gt; StdGen -&gt; Int -&gt; [RGB]
+</span><a href="Main.html#listRayToRGB"><span class="hs-identifier hs-var">listRayToRGB</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
+</span><a href="Escena.html#luces"><span class="hs-identifier hs-var">luces</span></a></span><span> </span><span class="annot"><span class="annottext">Set Shape
+</span><a href="Escena.html#figuras"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Ray]
+</span><a href="#local-6989586621679078524"><span class="hs-identifier hs-var">rayos</span></a></span><span> </span><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078549"><span class="hs-identifier hs-var">gen'</span></a></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#nRay"><span class="hs-identifier hs-var">nRay</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[[Ray]]
-</span><a href="#local-6989586621679079420"><span class="hs-identifier hs-var">rayitos</span></a></span><span> </span><span class="hs-comment">-- Photon mapping</span><span>
-</span><span id="line-162"></span><span>          </span><span class="hs-comment">-- a = map (\rayos -&gt; listRayToRGB luces figuras'' rayos gen' nRay) rayitos -- Path tracing</span><span>
-</span><span id="line-163"></span><span>          </span><span>
-</span><span id="line-164"></span><span>          </span><span id="local-6989586621679079409"><span class="annot"><span class="annottext">c :: [RGB]
-</span><a href="#local-6989586621679079409"><span class="hs-identifier hs-var hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[[RGB]] -&gt; [RGB]
+</span><a href="#local-6989586621679078532"><span class="hs-identifier hs-var">rayitos</span></a></span><span> </span><span class="hs-comment">-- Path tracing</span><span>
+</span><span id="line-162"></span><span>          </span><span>
+</span><span id="line-163"></span><span>          </span><span id="local-6989586621679078521"><span class="annot"><span class="annottext">c :: [RGB]
+</span><a href="#local-6989586621679078521"><span class="hs-identifier hs-var hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[[RGB]] -&gt; [RGB]
 </span><a href="Funciones.html#mediaLRGB"><span class="hs-identifier hs-var">mediaLRGB</span></a></span><span> </span><span class="annot"><span class="annottext">[[RGB]]
-</span><a href="#local-6989586621679079413"><span class="hs-identifier hs-var">a</span></a></span><span>
-</span><span id="line-165"></span><span>          </span><span id="local-6989586621679079407"><span class="annot"><span class="annottext">fin :: FilePath
-</span><a href="#local-6989586621679079407"><span class="hs-identifier hs-var hs-var">fin</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; FilePath) -&gt; [RGB] -&gt; FilePath
+</span><a href="#local-6989586621679078525"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-164"></span><span>          </span><span id="local-6989586621679078519"><span class="annot"><span class="annottext">fin :: String
+</span><a href="#local-6989586621679078519"><span class="hs-identifier hs-var hs-var">fin</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; String) -&gt; [RGB] -&gt; String
 forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
-</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; FilePath
+</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; String
 </span><a href="Files.html#rgbToString"><span class="hs-identifier hs-var">rgbToString</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; [RGB] -&gt; [RGB]
 </span><a href="Tone_map.html#gammaFunc"><span class="hs-identifier hs-var">gammaFunc</span></a></span><span> </span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#fmx"><span class="hs-identifier hs-var">fmx</span></a></span><span> </span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#gamma"><span class="hs-identifier hs-var">gamma</span></a></span><span> </span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679079409"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-166"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; Int -&gt; Int -&gt; FilePath -&gt; IO ()
-</span><a href="Files.html#writePPM"><span class="hs-identifier hs-var">writePPM</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;a&quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078521"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-165"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; Int -&gt; Int -&gt; String -&gt; IO ()
+</span><a href="Files.html#writePPM"><span class="hs-identifier hs-var">writePPM</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;a&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079436"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078548"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;_&quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;_&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079435"><span class="hs-identifier hs-var">etapaY</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078547"><span class="hs-identifier hs-var">etapaY</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;_&quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;_&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679079434"><span class="hs-identifier hs-var">etapaX</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078546"><span class="hs-identifier hs-var">etapaX</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;.ppm&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Int
 forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span> </span><span class="annot"><span class="annottext">(Float -&gt; Int) -&gt; Float -&gt; Int
@@ -935,57 +440,57 @@ forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><a href="Escena.html#aspectR"><span class="hs-identifier hs-var">aspectR</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float -&gt; Int
 forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="Escena.html#pix"><span class="hs-identifier hs-var">pix</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679079407"><span class="hs-identifier hs-var">fin</span></a></span><span>
-</span><span id="line-167"></span><span>
-</span><span id="line-168"></span><span>      </span><span id="local-6989586621679079402"><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079402"><span class="hs-identifier hs-var">end</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
+</span><a href="Escena.html#pix"><span class="hs-identifier hs-var">pix</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679078519"><span class="hs-identifier hs-var">fin</span></a></span><span>
+</span><span id="line-166"></span><span>
+</span><span id="line-167"></span><span>      </span><span id="local-6989586621679078514"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679078514"><span class="hs-identifier hs-var">end</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
 </span><span class="hs-identifier hs-var">getCPUTime</span></span><span>
-</span><span id="line-169"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079391"><span class="annot"><span class="annottext">diff :: Float
-</span><a href="#local-6989586621679079391"><span class="hs-identifier hs-var hs-var">diff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Float
+</span><span id="line-168"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078502"><span class="annot"><span class="annottext">diff :: Float
+</span><a href="#local-6989586621679078502"><span class="hs-identifier hs-var hs-var">diff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Float
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079402"><span class="hs-identifier hs-var">end</span></a></span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Integer
+</span><a href="#local-6989586621679078514"><span class="hs-identifier hs-var">end</span></a></span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Integer
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079427"><span class="hs-identifier hs-var">start</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
+</span><a href="#local-6989586621679078539"><span class="hs-identifier hs-var">start</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Fractional a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">/</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">10</span></span><span class="annot"><span class="annottext">Float -&gt; Integer -&gt; Float
 forall a b. (Num a, Integral b) =&gt; a -&gt; b -&gt; a
 </span><span class="hs-operator hs-var">^</span></span><span class="annot"><span class="annottext">Integer
 </span><span class="hs-number">12</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span>
-</span><span id="line-170"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; IO ()
-</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; IO ()) -&gt; FilePath -&gt; IO ()
+</span><span id="line-169"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; IO ()) -&gt; String -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;Tiempo de procesado de la imagen: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Tiempo de procesado de la imagen: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Float -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Float -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679079391"><span class="hs-identifier hs-var">diff</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078502"><span class="hs-identifier hs-var">diff</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot; segundos&quot;</span></span><span>
-</span><span id="line-171"></span><span>
-</span><span id="line-172"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; IO ()
-</span><span class="hs-identifier hs-var">traceEventIO</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-170"></span><span>
+</span><span id="line-171"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">traceEventIO</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;END&quot;</span></span><span>
-</span><span id="line-173"></span><span>    </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-174"></span><span>      </span><span id="local-6989586621679079388"><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079388"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span id="line-172"></span><span>    </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-173"></span><span>      </span><span id="local-6989586621679078499"><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078499"><span class="hs-identifier hs-var">gen</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
 forall (m :: * -&gt; *). MonadIO m =&gt; m StdGen
 </span><span class="hs-identifier hs-var">newStdGen</span></span><span>
-</span><span id="line-175"></span><span>      </span><span id="local-6989586621679079387"><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079387"><span class="hs-identifier hs-var">gen'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
+</span><span id="line-174"></span><span>      </span><span id="local-6989586621679078498"><span class="annot"><span class="annottext">StdGen
+</span><a href="#local-6989586621679078498"><span class="hs-identifier hs-var">gen'</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO StdGen
 forall (m :: * -&gt; *). MonadIO m =&gt; m StdGen
 </span><span class="hs-identifier hs-var">newStdGen</span></span><span>
-</span><span id="line-176"></span><span>      </span><span id="local-6989586621679079386"><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079386"><span class="hs-identifier hs-var">start</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
+</span><span id="line-175"></span><span>      </span><span id="local-6989586621679078497"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679078497"><span class="hs-identifier hs-var">start</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
 </span><span class="hs-identifier hs-var">getCPUTime</span></span><span>
-</span><span id="line-177"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span class="hs-glyph">!</span><span id="local-6989586621679079383"><span class="annot"><span class="annottext">kdt :: DList Foton
-</span><a href="#local-6989586621679079383"><span class="hs-identifier hs-var hs-var">kdt</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="annottext">Float
+</span><span id="line-176"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span class="hs-glyph">!</span><span id="local-6989586621679078494"><span class="annot"><span class="annottext">kdt :: DList Foton
+</span><a href="#local-6989586621679078494"><span class="hs-identifier hs-var hs-var">kdt</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>  </span><span class="annot"><span class="annottext">Float
 -&gt; DList Foton
 -&gt; Int
 -&gt; Int
@@ -1003,59 +508,59 @@ forall a. [a] -&gt; DList a
 forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span> </span><span class="annot"><span class="annottext">Float
 </span><a href="Escena.html#n"><span class="hs-identifier hs-var">n</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Set Shape
-</span><a href="#local-6989586621679079443"><span class="hs-identifier hs-var">figuras'''</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
+</span><a href="Escena.html#figuras"><span class="hs-identifier hs-var">figuras</span></a></span><span> </span><span class="annot"><span class="annottext">[Luz]
 </span><a href="Escena.html#luces"><span class="hs-identifier hs-var">luces</span></a></span><span> </span><span class="annot"><span class="annottext">StdGen
-</span><a href="#local-6989586621679079387"><span class="hs-identifier hs-var">gen'</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679078498"><span class="hs-identifier hs-var">gen'</span></a></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="Escena.html#nRebotes"><span class="hs-identifier hs-var">nRebotes</span></a></span><span>
-</span><span id="line-178"></span><span>      </span><span class="annot"><span class="annottext">Int -&gt; IO ()
+</span><span id="line-177"></span><span>      </span><span class="annot"><span class="annottext">Int -&gt; IO ()
 forall a. Show a =&gt; a -&gt; IO ()
 </span><span class="hs-identifier hs-var">print</span></span><span> </span><span class="annot"><span class="annottext">(Int -&gt; IO ()) -&gt; Int -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">DList Foton -&gt; Int
 forall (t :: * -&gt; *) a. Foldable t =&gt; t a -&gt; Int
 </span><span class="hs-identifier hs-var">length</span></span><span> </span><span class="annot"><span class="annottext">DList Foton
-</span><a href="#local-6989586621679079383"><span class="hs-identifier hs-var">kdt</span></a></span><span>
-</span><span id="line-179"></span><span>      </span><span id="local-6989586621679079379"><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079379"><span class="hs-identifier hs-var">end</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
+</span><a href="#local-6989586621679078494"><span class="hs-identifier hs-var">kdt</span></a></span><span>
+</span><span id="line-178"></span><span>      </span><span id="local-6989586621679078490"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679078490"><span class="hs-identifier hs-var">end</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO Integer
 </span><span class="hs-identifier hs-var">getCPUTime</span></span><span>
-</span><span id="line-180"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679079370"><span class="annot"><span class="annottext">diff :: Float
-</span><a href="#local-6989586621679079370"><span class="hs-identifier hs-var hs-var">diff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Float
+</span><span id="line-179"></span><span>      </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679078481"><span class="annot"><span class="annottext">diff :: Float
+</span><a href="#local-6989586621679078481"><span class="hs-identifier hs-var hs-var">diff</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Float
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079379"><span class="hs-identifier hs-var">end</span></a></span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Integer
+</span><a href="#local-6989586621679078490"><span class="hs-identifier hs-var">end</span></a></span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Integer
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679079386"><span class="hs-identifier hs-var">start</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
+</span><a href="#local-6989586621679078497"><span class="hs-identifier hs-var">start</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Fractional a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">/</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">10</span></span><span class="annot"><span class="annottext">Float -&gt; Integer -&gt; Float
 forall a b. (Num a, Integral b) =&gt; a -&gt; b -&gt; a
 </span><span class="hs-operator hs-var">^</span></span><span class="annot"><span class="annottext">Integer
 </span><span class="hs-number">12</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span>
-</span><span id="line-181"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; IO ()
-</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; IO ()) -&gt; FilePath -&gt; IO ()
+</span><span id="line-180"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; IO ()) -&gt; String -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;Tiempo de creacion del kdt: &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Tiempo de creacion del kdt: &quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Float -&gt; FilePath
-forall a. Show a =&gt; a -&gt; FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Float -&gt; String
+forall a. Show a =&gt; a -&gt; String
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679079370"><span class="hs-identifier hs-var">diff</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679078481"><span class="hs-identifier hs-var">diff</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
 forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot; segundos&quot;</span></span><span>
-</span><span id="line-182"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; DList Foton -&gt; IO ()
-forall a. Binary a =&gt; FilePath -&gt; DList a -&gt; IO ()
-</span><a href="Files.html#writeObject"><span class="hs-identifier hs-var">writeObject</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-181"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; DList Foton -&gt; IO ()
+forall a. Binary a =&gt; String -&gt; DList a -&gt; IO ()
+</span><a href="Files.html#writeObject"><span class="hs-identifier hs-var">writeObject</span></a></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;./kd.bin&quot;</span></span><span> </span><span class="annot"><span class="annottext">DList Foton
-</span><a href="#local-6989586621679079383"><span class="hs-identifier hs-var">kdt</span></a></span><span>
-</span><span id="line-183"></span><span>    </span><span class="annot"><span class="annottext">[Maybe Int]
+</span><a href="#local-6989586621679078494"><span class="hs-identifier hs-var">kdt</span></a></span><span>
+</span><span id="line-182"></span><span>    </span><span class="annot"><span class="annottext">[Maybe Int]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-184"></span><span>      </span><span class="annot"><span class="annottext">FilePath -&gt; IO ()
-</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-183"></span><span>      </span><span class="annot"><span class="annottext">String -&gt; IO ()
+</span><span class="hs-identifier hs-var">putStrLn</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Please provide an integer as the first argument.&quot;</span></span><span>
-</span><span id="line-185"></span><span>      </span><span class="annot"><span class="annottext">IO ()
+</span><span id="line-184"></span><span>      </span><span class="annot"><span class="annottext">IO ()
 forall a. IO a
 </span><span class="hs-identifier hs-var">exitFailure</span></span><span>
-</span><span id="line-186"></span></pre></body></html>
+</span><span id="line-185"></span></pre></body></html>

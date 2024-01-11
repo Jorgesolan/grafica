@@ -2,12 +2,14 @@
 N=10
 pix=1000
 piy=1000
-etapasY=1
-etapasX=1  # You can change this value to the desired number of iterations per barrier
+etapasY=10
+etapasX=10  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
 # Calculate the number of iterations per barrier
 iterations_per_barrier=$((N / etapasY))
+
+time1=$(date +%s)
 
 for ((etapaY = 0; etapaY < etapasY; etapaY++)); do
   for ((etapaX = 0; etapaX < etapasX; etapaX++)); do
@@ -42,5 +44,10 @@ for ((etapaY = 0; etapaY < etapasY; etapaY++)); do
   done
 done
 echo >> output.ppm
+time2=$(date +%s)
+time_diff=$((time2 - time1))
 
+
+# Display the time difference
+echo "Time difference: $time_diff minutes"
 echo "All processes have finished."

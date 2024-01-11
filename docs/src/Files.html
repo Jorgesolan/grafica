@@ -12,48 +12,50 @@
 </span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Lazy</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">B</span></span><span>
 </span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.DList</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">DL</span></span><span>
 </span><span id="line-14"></span><span>
-</span><span id="line-15"></span><span id="local-6989586621679077983"><span class="annot"><a href="Files.html#writeObject"><span class="hs-identifier hs-type">writeObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679077983"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DL.DList</span></span><span> </span><span class="annot"><a href="#local-6989586621679077983"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span></span><span>
-</span><span id="line-16"></span><span id="writeObject"><span class="annot"><span class="annottext">writeObject :: forall a. Binary a =&gt; FilePath -&gt; DList a -&gt; IO ()
-</span><a href="Files.html#writeObject"><span class="hs-identifier hs-var hs-var">writeObject</span></a></span></span><span> </span><span id="local-6989586621679077819"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077819"><span class="hs-identifier hs-var">path</span></a></span></span><span> </span><span id="local-6989586621679077818"><span class="annot"><span class="annottext">DList a
-</span><a href="#local-6989586621679077818"><span class="hs-identifier hs-var">obj</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
+</span><span id="line-15"></span><span class="hs-comment">-- |Funci&#243;n b&#225;sica, dado un objeto que instancie la clase Binary, escribe este en formato binario a un archivo en disco.</span><span>
+</span><span id="line-16"></span><span id="local-6989586621679077092"><span class="annot"><a href="Files.html#writeObject"><span class="hs-identifier hs-type">writeObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679077092"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DL.DList</span></span><span> </span><span class="annot"><a href="#local-6989586621679077092"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span></span><span>
+</span><span id="line-17"></span><span id="writeObject"><span class="annot"><span class="annottext">writeObject :: forall a. Binary a =&gt; FilePath -&gt; DList a -&gt; IO ()
+</span><a href="Files.html#writeObject"><span class="hs-identifier hs-var hs-var">writeObject</span></a></span></span><span> </span><span id="local-6989586621679076968"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679076968"><span class="hs-identifier hs-var">path</span></a></span></span><span> </span><span id="local-6989586621679076967"><span class="annot"><span class="annottext">DList a
+</span><a href="#local-6989586621679076967"><span class="hs-identifier hs-var">obj</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
 </span><span class="hs-identifier hs-var">B.writeFile</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077819"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a] -&gt; ByteString
+</span><a href="#local-6989586621679076968"><span class="hs-identifier hs-var">path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a] -&gt; ByteString
 forall a. Binary a =&gt; a -&gt; ByteString
 </span><span class="hs-identifier hs-var">encode</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">DList a -&gt; [a]
 forall a. DList a -&gt; [a]
 </span><span class="hs-identifier hs-var">DL.toList</span></span><span> </span><span class="annot"><span class="annottext">DList a
-</span><a href="#local-6989586621679077818"><span class="hs-identifier hs-var">obj</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-17"></span><span>
-</span><span id="line-18"></span><span id="local-6989586621679077974"><span class="annot"><a href="Files.html#readObject"><span class="hs-identifier hs-type">readObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679077974"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679077974"><span class="hs-identifier hs-type">a</span></a></span></span><span>
-</span><span id="line-19"></span><span id="readObject"><span class="annot"><span class="annottext">readObject :: forall a. Binary a =&gt; FilePath -&gt; IO a
+</span><a href="#local-6989586621679076967"><span class="hs-identifier hs-var">obj</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="hs-comment">-- |Funci&#243;n b&#225;sica, dado un fichero binario, recupera el objeto que haya almacenado en este y lo devuelve.</span><span>
+</span><span id="line-20"></span><span id="local-6989586621679077083"><span class="annot"><a href="Files.html#readObject"><span class="hs-identifier hs-type">readObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Binary</span></span><span> </span><span class="annot"><a href="#local-6989586621679077083"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="#local-6989586621679077083"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-21"></span><span id="readObject"><span class="annot"><span class="annottext">readObject :: forall a. Binary a =&gt; FilePath -&gt; IO a
 </span><a href="Files.html#readObject"><span class="hs-identifier hs-var hs-var">readObject</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO a
 forall a. Binary a =&gt; FilePath -&gt; IO a
 </span><span class="hs-identifier hs-var">decodeFile</span></span><span>
-</span><span id="line-20"></span><span>
-</span><span id="line-21"></span><span class="hs-comment">-- Funci&#243;n para leer un archivo .ppm y almacenar los p&#237;xeles en una lista</span><span>
-</span><span id="line-22"></span><span class="annot"><a href="Files.html#leerPPM"><span class="hs-identifier hs-type">leerPPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-23"></span><span id="leerPPM"><span class="annot"><span class="annottext">leerPPM :: FilePath -&gt; IO ([RGB], (Float, Float, Float, Float))
-</span><a href="Files.html#leerPPM"><span class="hs-identifier hs-var hs-var">leerPPM</span></a></span></span><span> </span><span id="local-6989586621679077811"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077811"><span class="hs-identifier hs-var">archivo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-24"></span><span>    </span><span id="local-6989586621679077810"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077810"><span class="hs-identifier hs-var">contenido</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ByteString
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, para leer un archivo .ppm y almacenar los p&#237;xeles en una lista.</span><span>
+</span><span id="line-24"></span><span class="annot"><a href="Files.html#leerPPM"><span class="hs-identifier hs-type">leerPPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-25"></span><span id="leerPPM"><span class="annot"><span class="annottext">leerPPM :: FilePath -&gt; IO ([RGB], (Float, Float, Float, Float))
+</span><a href="Files.html#leerPPM"><span class="hs-identifier hs-var hs-var">leerPPM</span></a></span></span><span> </span><span id="local-6989586621679076960"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679076960"><span class="hs-identifier hs-var">archivo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-26"></span><span>    </span><span id="local-6989586621679076959"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076959"><span class="hs-identifier hs-var">contenido</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO ByteString
 </span><span class="hs-identifier hs-var">BS8.readFile</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077811"><span class="hs-identifier hs-var">archivo</span></a></span><span>
-</span><span id="line-25"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077808"><span class="annot"><span class="annottext">lineas :: [ByteString]
-</span><a href="#local-6989586621679077808"><span class="hs-identifier hs-var hs-var">lineas</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [ByteString]
+</span><a href="#local-6989586621679076960"><span class="hs-identifier hs-var">archivo</span></a></span><span>
+</span><span id="line-27"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076957"><span class="annot"><span class="annottext">lineas :: [ByteString]
+</span><a href="#local-6989586621679076957"><span class="hs-identifier hs-var hs-var">lineas</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [ByteString]
 </span><span class="hs-identifier hs-var">BS8.lines</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077810"><span class="hs-identifier hs-var">contenido</span></a></span><span>
-</span><span id="line-26"></span><span>        </span><span id="local-6989586621679077806"><span class="annot"><span class="annottext">ppMax :: Float
-</span><a href="#local-6989586621679077806"><span class="hs-identifier hs-var hs-var">ppMax</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; Float
+</span><a href="#local-6989586621679076959"><span class="hs-identifier hs-var">contenido</span></a></span><span>
+</span><span id="line-28"></span><span>        </span><span id="local-6989586621679076955"><span class="annot"><span class="annottext">ppMax :: Float
+</span><a href="#local-6989586621679076955"><span class="hs-identifier hs-var hs-var">ppMax</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; Float
 </span><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-var">findMaxPPM</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077808"><span class="hs-identifier hs-var">lineas</span></a></span><span>
-</span><span id="line-27"></span><span>        </span><span id="local-6989586621679077804"><span class="annot"><span class="annottext">sizeLine :: (Float, Float)
-</span><a href="#local-6989586621679077804"><span class="hs-identifier hs-var hs-var">sizeLine</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; (Float, Float)
+</span><a href="#local-6989586621679076957"><span class="hs-identifier hs-var">lineas</span></a></span><span>
+</span><span id="line-29"></span><span>        </span><span id="local-6989586621679076953"><span class="annot"><span class="annottext">sizeLine :: (Float, Float)
+</span><a href="#local-6989586621679076953"><span class="hs-identifier hs-var hs-var">sizeLine</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; (Float, Float)
 </span><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var">findSizePPM</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077808"><span class="hs-identifier hs-var">lineas</span></a></span><span>
-</span><span id="line-28"></span><span>        </span><span id="local-6989586621679077801"><span class="annot"><span class="annottext">valueMax :: Float
-</span><a href="#local-6989586621679077801"><span class="hs-identifier hs-var hs-var">valueMax</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076957"><span class="hs-identifier hs-var">lineas</span></a></span><span>
+</span><span id="line-30"></span><span>        </span><span id="local-6989586621679076950"><span class="annot"><span class="annottext">valueMax :: Float
+</span><a href="#local-6989586621679076950"><span class="hs-identifier hs-var hs-var">valueMax</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float)
 -&gt; (ByteString -&gt; FilePath) -&gt; ByteString -&gt; Float
@@ -62,18 +64,18 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; Float) -&gt; ByteString -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077808"><span class="hs-identifier hs-var">lineas</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; Int -&gt; ByteString
+</span><a href="#local-6989586621679076957"><span class="hs-identifier hs-var">lineas</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; Int -&gt; ByteString
 forall a. [a] -&gt; Int -&gt; a
 </span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">4</span></span><span>
-</span><span id="line-29"></span><span>        </span><span id="local-6989586621679077796"><span class="annot"><span class="annottext">pixelLines :: [ByteString]
-</span><a href="#local-6989586621679077796"><span class="hs-identifier hs-var hs-var">pixelLines</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [ByteString] -&gt; [ByteString]
+</span><span id="line-31"></span><span>        </span><span id="local-6989586621679076945"><span class="annot"><span class="annottext">pixelLines :: [ByteString]
+</span><a href="#local-6989586621679076945"><span class="hs-identifier hs-var hs-var">pixelLines</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int -&gt; [ByteString] -&gt; [ByteString]
 forall a. Int -&gt; [a] -&gt; [a]
 </span><span class="hs-identifier hs-var">drop</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">5</span></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077808"><span class="hs-identifier hs-var">lineas</span></a></span><span>
-</span><span id="line-30"></span><span>        </span><span id="local-6989586621679077793"><span class="annot"><span class="annottext">pixelesParseados :: [RGB]
-</span><a href="#local-6989586621679077793"><span class="hs-identifier hs-var hs-var">pixelesParseados</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; [RGB]) -&gt; [ByteString] -&gt; [RGB]
+</span><a href="#local-6989586621679076957"><span class="hs-identifier hs-var">lineas</span></a></span><span>
+</span><span id="line-32"></span><span>        </span><span id="local-6989586621679076942"><span class="annot"><span class="annottext">pixelesParseados :: [RGB]
+</span><a href="#local-6989586621679076942"><span class="hs-identifier hs-var hs-var">pixelesParseados</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; [RGB]) -&gt; [ByteString] -&gt; [RGB]
 forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
 </span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[ByteString] -&gt; [RGB]
 </span><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="annot"><span class="annottext">([ByteString] -&gt; [RGB])
@@ -81,33 +83,34 @@ forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [ByteString]
 </span><span class="hs-identifier hs-var">BS8.words</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077796"><span class="hs-identifier hs-var">pixelLines</span></a></span><span>
-</span><span id="line-31"></span><span>    </span><span class="annot"><span class="annottext">([RGB], (Float, Float, Float, Float))
+</span><a href="#local-6989586621679076945"><span class="hs-identifier hs-var">pixelLines</span></a></span><span>
+</span><span id="line-33"></span><span>    </span><span class="annot"><span class="annottext">([RGB], (Float, Float, Float, Float))
 -&gt; IO ([RGB], (Float, Float, Float, Float))
 forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679077793"><span class="hs-identifier hs-var">pixelesParseados</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Float, Float) -&gt; Float
+</span><a href="#local-6989586621679076942"><span class="hs-identifier hs-var">pixelesParseados</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Float, Float) -&gt; Float
 forall a b. (a, b) -&gt; a
 </span><span class="hs-identifier hs-var">fst</span></span><span> </span><span class="annot"><span class="annottext">(Float, Float)
-</span><a href="#local-6989586621679077804"><span class="hs-identifier hs-var">sizeLine</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(Float, Float) -&gt; Float
+</span><a href="#local-6989586621679076953"><span class="hs-identifier hs-var">sizeLine</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(Float, Float) -&gt; Float
 forall a b. (a, b) -&gt; b
 </span><span class="hs-identifier hs-var">snd</span></span><span> </span><span class="annot"><span class="annottext">(Float, Float)
-</span><a href="#local-6989586621679077804"><span class="hs-identifier hs-var">sizeLine</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077801"><span class="hs-identifier hs-var">valueMax</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077806"><span class="hs-identifier hs-var">ppMax</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
-</span><span id="line-32"></span><span>
-</span><span id="line-33"></span><span class="annot"><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-type">findMaxPPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span>
-</span><span id="line-34"></span><span id="findMaxPPM"><span class="annot"><span class="annottext">findMaxPPM :: [ByteString] -&gt; Float
+</span><a href="#local-6989586621679076953"><span class="hs-identifier hs-var">sizeLine</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076950"><span class="hs-identifier hs-var">valueMax</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076955"><span class="hs-identifier hs-var">ppMax</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, para extraer el MAX dentro de un ppm.</span><span>
+</span><span id="line-36"></span><span class="annot"><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-type">findMaxPPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span>
+</span><span id="line-37"></span><span id="findMaxPPM"><span class="annot"><span class="annottext">findMaxPPM :: [ByteString] -&gt; Float
 </span><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-var hs-var">findMaxPPM</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">0.0</span></span><span>
-</span><span id="line-35"></span><span class="annot"><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-var">findMaxPPM</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679077789"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077789"><span class="hs-identifier hs-var">linea</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077788"><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077788"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span>
-</span><span id="line-36"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; Bool
+</span><span id="line-38"></span><span class="annot"><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-var">findMaxPPM</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679076938"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076938"><span class="hs-identifier hs-var">linea</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679076937"><span class="annot"><span class="annottext">[ByteString]
+</span><a href="#local-6989586621679076937"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; Bool
 </span><span class="hs-identifier hs-var">BS8.isPrefixOf</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;#MAX=&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077789"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076938"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; FilePath) -&gt; ByteString -&gt; FilePath
@@ -115,111 +118,113 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.drop</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">5</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077789"><span class="hs-identifier hs-var">linea</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-37"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679076938"><span class="hs-identifier hs-var">linea</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-40"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; Float
 </span><a href="Files.html#findMaxPPM"><span class="hs-identifier hs-var">findMaxPPM</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077788"><span class="hs-identifier hs-var">resto</span></a></span><span>
-</span><span id="line-38"></span><span>
-</span><span id="line-39"></span><span class="annot"><a href="Files.html#findSizePPM"><span class="hs-identifier hs-type">findSizePPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">)</span><span>
-</span><span id="line-40"></span><span id="findSizePPM"><span class="annot"><span class="annottext">findSizePPM :: [ByteString] -&gt; (Float, Float)
+</span><a href="#local-6989586621679076937"><span class="hs-identifier hs-var">resto</span></a></span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, extrae el tama&#241;o de un ppm.</span><span>
+</span><span id="line-43"></span><span class="annot"><a href="Files.html#findSizePPM"><span class="hs-identifier hs-type">findSizePPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">)</span><span>
+</span><span id="line-44"></span><span id="findSizePPM"><span class="annot"><span class="annottext">findSizePPM :: [ByteString] -&gt; (Float, Float)
 </span><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var hs-var">findSizePPM</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">0</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">0</span></span><span class="hs-special">)</span><span>
-</span><span id="line-41"></span><span class="annot"><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var">findSizePPM</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679077784"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077784"><span class="hs-identifier hs-var">linea</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077783"><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077783"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span>
-</span><span id="line-42"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; Bool
+</span><span id="line-45"></span><span class="annot"><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var">findSizePPM</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679076933"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076933"><span class="hs-identifier hs-var">linea</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679076932"><span class="annot"><span class="annottext">[ByteString]
+</span><a href="#local-6989586621679076932"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-46"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; ByteString -&gt; Bool
 </span><span class="hs-identifier hs-var">BS8.isPrefixOf</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;#&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077784"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; (Float, Float)
+</span><a href="#local-6989586621679076933"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; (Float, Float)
 </span><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var">findSizePPM</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077783"><span class="hs-identifier hs-var">resto</span></a></span><span>
-</span><span id="line-43"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679076932"><span class="hs-identifier hs-var">resto</span></a></span><span>
+</span><span id="line-47"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; [ByteString]
 </span><span class="hs-identifier hs-var">BS8.words</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077784"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-44"></span><span>        </span><span class="hs-special">[</span><span id="local-6989586621679077782"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077782"><span class="hs-identifier hs-var">num1</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679077781"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077781"><span class="hs-identifier hs-var">num2</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076933"><span class="hs-identifier hs-var">linea</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-48"></span><span>        </span><span class="hs-special">[</span><span id="local-6989586621679076931"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076931"><span class="hs-identifier hs-var">num1</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679076930"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076930"><span class="hs-identifier hs-var">num2</span></a></span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float) -&gt; FilePath -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077782"><span class="hs-identifier hs-var">num1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076931"><span class="hs-identifier hs-var">num1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float) -&gt; FilePath -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077781"><span class="hs-identifier hs-var">num2</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-45"></span><span>        </span><span class="annot"><span class="annottext">[ByteString]
+</span><a href="#local-6989586621679076930"><span class="hs-identifier hs-var">num2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span><span>        </span><span class="annot"><span class="annottext">[ByteString]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; (Float, Float)
 </span><a href="Files.html#findSizePPM"><span class="hs-identifier hs-var">findSizePPM</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077783"><span class="hs-identifier hs-var">resto</span></a></span><span>
-</span><span id="line-46"></span><span>
-</span><span id="line-47"></span><span>
-</span><span id="line-48"></span><span class="hs-comment">-- Funci&#243;n para analizar una l&#237;nea de p&#237;xeles y convertirla en una lista de RGB</span><span>
-</span><span id="line-49"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-type">parsePixels</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-50"></span><span id="parsePixels"><span class="annot"><span class="annottext">parsePixels :: [ByteString] -&gt; [RGB]
+</span><a href="#local-6989586621679076932"><span class="hs-identifier hs-var">resto</span></a></span><span>
+</span><span id="line-50"></span><span>
+</span><span id="line-51"></span><span>
+</span><span id="line-52"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, para analizar una l&#237;nea de p&#237;xeles y convertirla en una lista de RGB.</span><span>
+</span><span id="line-53"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-type">parsePixels</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">BS8.ByteString</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-54"></span><span id="parsePixels"><span class="annot"><span class="annottext">parsePixels :: [ByteString] -&gt; [RGB]
 </span><a href="Files.html#parsePixels"><span class="hs-identifier hs-var hs-var">parsePixels</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
-</span><span id="line-51"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679077780"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077780"><span class="hs-identifier hs-var">r</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077779"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077779"><span class="hs-identifier hs-var">g</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077778"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077778"><span class="hs-identifier hs-var">b</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077777"><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077777"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-52"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077773"><span class="annot"><span class="annottext">rgb :: RGB
-</span><a href="#local-6989586621679077773"><span class="hs-identifier hs-var hs-var">rgb</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
+</span><span id="line-55"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679076929"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076929"><span class="hs-identifier hs-var">r</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679076928"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076928"><span class="hs-identifier hs-var">g</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679076927"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076927"><span class="hs-identifier hs-var">b</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679076926"><span class="annot"><span class="annottext">[ByteString]
+</span><a href="#local-6989586621679076926"><span class="hs-identifier hs-var">resto</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-56"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076922"><span class="annot"><span class="annottext">rgb :: RGB
+</span><a href="#local-6989586621679076922"><span class="hs-identifier hs-var hs-var">rgb</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float -&gt; RGB
 </span><a href="Elem3D.html#RGB"><span class="hs-identifier hs-var">RGB</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float) -&gt; FilePath -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077780"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076929"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float) -&gt; FilePath -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077779"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
+</span><a href="#local-6989586621679076928"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">FilePath -&gt; Float
 forall a. Read a =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">read</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; Float) -&gt; FilePath -&gt; Float
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
 </span><span class="hs-identifier hs-var">BS8.unpack</span></span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077778"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-53"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">RGB
-</span><a href="#local-6989586621679077773"><span class="hs-identifier hs-var">rgb</span></a></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; [RGB] -&gt; [RGB]
+</span><a href="#local-6989586621679076927"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-57"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">RGB
+</span><a href="#local-6989586621679076922"><span class="hs-identifier hs-var">rgb</span></a></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; [RGB] -&gt; [RGB]
 forall a. a -&gt; [a] -&gt; [a]
 </span><span class="hs-glyph hs-var">:</span></span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; [RGB]
 </span><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
-</span><a href="#local-6989586621679077777"><span class="hs-identifier hs-var">resto</span></a></span><span>
-</span><span id="line-54"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
+</span><a href="#local-6989586621679076926"><span class="hs-identifier hs-var">resto</span></a></span><span>
+</span><span id="line-58"></span><span class="annot"><a href="Files.html#parsePixels"><span class="hs-identifier hs-var">parsePixels</span></a></span><span> </span><span class="annot"><span class="annottext">[ByteString]
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; [RGB]
 forall a. HasCallStack =&gt; FilePath -&gt; a
 </span><span class="hs-identifier hs-var">error</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;Formato incorrecto&quot;</span></span><span>
-</span><span id="line-55"></span><span>
-</span><span id="line-56"></span><span>
-</span><span id="line-57"></span><span class="annot"><a href="Files.html#parsePixels%27"><span class="hs-identifier hs-type">parsePixels'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-58"></span><span id="parsePixels%27"><span class="annot"><span class="annottext">parsePixels' :: [RGB] -&gt; FilePath
-</span><a href="Files.html#parsePixels%27"><span class="hs-identifier hs-var hs-var">parsePixels'</span></a></span></span><span> </span><span id="local-6989586621679077769"><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679077769"><span class="hs-identifier hs-var">pixels</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FilePath] -&gt; FilePath
+</span><span id="line-59"></span><span>
+</span><span id="line-60"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte una lista de RGBs en un string de pixeles.</span><span>
+</span><span id="line-61"></span><span class="annot"><a href="Files.html#parsePixels%27"><span class="hs-identifier hs-type">parsePixels'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-62"></span><span id="parsePixels%27"><span class="annot"><span class="annottext">parsePixels' :: [RGB] -&gt; FilePath
+</span><a href="Files.html#parsePixels%27"><span class="hs-identifier hs-var hs-var">parsePixels'</span></a></span></span><span> </span><span id="local-6989586621679076918"><span class="annot"><span class="annottext">[RGB]
+</span><a href="#local-6989586621679076918"><span class="hs-identifier hs-var">pixels</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FilePath] -&gt; FilePath
 </span><span class="hs-identifier hs-var">unwords</span></span><span> </span><span class="annot"><span class="annottext">([FilePath] -&gt; FilePath) -&gt; [FilePath] -&gt; FilePath
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; FilePath) -&gt; [RGB] -&gt; [FilePath]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; FilePath
 </span><a href="Files.html#rgbToString"><span class="hs-identifier hs-var">rgbToString</span></a></span><span> </span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679077769"><span class="hs-identifier hs-var">pixels</span></a></span><span>
-</span><span id="line-59"></span><span>
-</span><span id="line-60"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Files.html#rgbToString"><span class="hs-pragma hs-type">rgbToString</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
-</span><span id="line-61"></span><span class="annot"><a href="Files.html#rgbToString"><span class="hs-identifier hs-type">rgbToString</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-62"></span><span id="rgbToString"><span class="annot"><span class="annottext">rgbToString :: RGB -&gt; FilePath
-</span><a href="Files.html#rgbToString"><span class="hs-identifier hs-var hs-var">rgbToString</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679077764"><span id="local-6989586621679077765"><span id="local-6989586621679077766"><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076918"><span class="hs-identifier hs-var">pixels</span></a></span><span>
+</span><span id="line-63"></span><span>
+</span><span id="line-64"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Files.html#rgbToString"><span class="hs-pragma hs-type">rgbToString</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-65"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte un RGB a string.</span><span>
+</span><span id="line-66"></span><span class="annot"><a href="Files.html#rgbToString"><span class="hs-identifier hs-type">rgbToString</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-67"></span><span id="rgbToString"><span class="annot"><span class="annottext">rgbToString :: RGB -&gt; FilePath
+</span><a href="Files.html#rgbToString"><span class="hs-identifier hs-var hs-var">rgbToString</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679076913"><span id="local-6989586621679076914"><span id="local-6989586621679076915"><span class="annot"><span class="annottext">Float
 blue :: RGB -&gt; Float
 green :: RGB -&gt; Float
 red :: RGB -&gt; Float
@@ -233,7 +238,7 @@ forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span> </span><span class="annot"><span class="annottext">(Float -&gt; Integer) -&gt; Float -&gt; Integer
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077766"><span class="hs-identifier hs-var">red</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
+</span><a href="#local-6989586621679076915"><span class="hs-identifier hs-var">red</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">255</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
@@ -248,7 +253,7 @@ forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span class="annot"><span class="annottext">(Float -&gt; Integer) -&gt; Float -&gt; Integer
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span>  </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077765"><span class="hs-identifier hs-var">green</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
+</span><a href="#local-6989586621679076914"><span class="hs-identifier hs-var">green</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">255</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
@@ -263,144 +268,144 @@ forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span> </span><span class="annot"><span class="annottext">(Float -&gt; Integer) -&gt; Float -&gt; Integer
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077764"><span class="hs-identifier hs-var">blue</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
+</span><a href="#local-6989586621679076913"><span class="hs-identifier hs-var">blue</span></a></span><span> </span><span class="annot"><span class="annottext">Float -&gt; Float -&gt; Float
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Float
 </span><span class="hs-number">255</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
 forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot; &quot;</span></span><span>
-</span><span id="line-63"></span><span>
-</span><span id="line-64"></span><span>
-</span><span id="line-65"></span><span class="hs-comment">-- Function to write a 32-bit BMP file</span><span>
-</span><span id="line-66"></span><span class="annot"><a href="Files.html#writeBMP"><span class="hs-identifier hs-type">writeBMP</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-67"></span><span id="writeBMP"><span class="annot"><span class="annottext">writeBMP :: FilePath -&gt; Int -&gt; Int -&gt; ByteString -&gt; IO ()
-</span><a href="Files.html#writeBMP"><span class="hs-identifier hs-var hs-var">writeBMP</span></a></span></span><span> </span><span id="local-6989586621679077756"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077756"><span class="hs-identifier hs-var">filename</span></a></span></span><span> </span><span id="local-6989586621679077755"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077755"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679077754"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077754"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679077753"><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077753"><span class="hs-identifier hs-var">customPixelData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-68"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077747"><span class="annot"><span class="annottext">fileSize :: Int
-</span><a href="#local-6989586621679077747"><span class="hs-identifier hs-var hs-var">fileSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-68"></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, escribe un 32-bit BMP file</span><span>
+</span><span id="line-71"></span><span class="annot"><a href="Files.html#writeBMP"><span class="hs-identifier hs-type">writeBMP</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-72"></span><span id="writeBMP"><span class="annot"><span class="annottext">writeBMP :: FilePath -&gt; Int -&gt; Int -&gt; ByteString -&gt; IO ()
+</span><a href="Files.html#writeBMP"><span class="hs-identifier hs-var hs-var">writeBMP</span></a></span></span><span> </span><span id="local-6989586621679076905"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679076905"><span class="hs-identifier hs-var">filename</span></a></span></span><span> </span><span id="local-6989586621679076904"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076904"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679076903"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076903"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679076902"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076902"><span class="hs-identifier hs-var">customPixelData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-73"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076896"><span class="annot"><span class="annottext">fileSize :: Int
+</span><a href="#local-6989586621679076896"><span class="hs-identifier hs-var hs-var">fileSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">54</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">+</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">4</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077755"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076904"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077754"><span class="hs-identifier hs-var">height</span></a></span><span>
-</span><span id="line-69"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077744"><span class="annot"><span class="annottext">pixelDataOffset :: Int
-</span><a href="#local-6989586621679077744"><span class="hs-identifier hs-var hs-var">pixelDataOffset</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076903"><span class="hs-identifier hs-var">height</span></a></span><span>
+</span><span id="line-74"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076893"><span class="annot"><span class="annottext">pixelDataOffset :: Int
+</span><a href="#local-6989586621679076893"><span class="hs-identifier hs-var hs-var">pixelDataOffset</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">54</span></span><span>
-</span><span id="line-70"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077742"><span class="annot"><span class="annottext">dibHeaderSize :: Int
-</span><a href="#local-6989586621679077742"><span class="hs-identifier hs-var hs-var">dibHeaderSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-75"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076891"><span class="annot"><span class="annottext">dibHeaderSize :: Int
+</span><a href="#local-6989586621679076891"><span class="hs-identifier hs-var hs-var">dibHeaderSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">40</span></span><span>
-</span><span id="line-71"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077740"><span class="annot"><span class="annottext">bitsPerPixel :: Int
-</span><a href="#local-6989586621679077740"><span class="hs-identifier hs-var hs-var">bitsPerPixel</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-76"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076889"><span class="annot"><span class="annottext">bitsPerPixel :: Int
+</span><a href="#local-6989586621679076889"><span class="hs-identifier hs-var hs-var">bitsPerPixel</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">32</span></span><span>
-</span><span id="line-72"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077738"><span class="annot"><span class="annottext">compressionMethod :: Int
-</span><a href="#local-6989586621679077738"><span class="hs-identifier hs-var hs-var">compressionMethod</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-77"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076887"><span class="annot"><span class="annottext">compressionMethod :: Int
+</span><a href="#local-6989586621679076887"><span class="hs-identifier hs-var hs-var">compressionMethod</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0</span></span><span>
-</span><span id="line-73"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077734"><span class="annot"><span class="annottext">imageSize :: Int
-</span><a href="#local-6989586621679077734"><span class="hs-identifier hs-var hs-var">imageSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-78"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076883"><span class="annot"><span class="annottext">imageSize :: Int
+</span><a href="#local-6989586621679076883"><span class="hs-identifier hs-var hs-var">imageSize</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">4</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077755"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076904"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Num a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">*</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077754"><span class="hs-identifier hs-var">height</span></a></span><span>
-</span><span id="line-74"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077732"><span class="annot"><span class="annottext">xPixelsPerMeter :: Int
-</span><a href="#local-6989586621679077732"><span class="hs-identifier hs-var hs-var">xPixelsPerMeter</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076903"><span class="hs-identifier hs-var">height</span></a></span><span>
+</span><span id="line-79"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076881"><span class="annot"><span class="annottext">xPixelsPerMeter :: Int
+</span><a href="#local-6989586621679076881"><span class="hs-identifier hs-var hs-var">xPixelsPerMeter</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">2835</span></span><span> </span><span class="hs-comment">-- 72 DPI</span><span>
-</span><span id="line-75"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077730"><span class="annot"><span class="annottext">yPixelsPerMeter :: Int
-</span><a href="#local-6989586621679077730"><span class="hs-identifier hs-var hs-var">yPixelsPerMeter</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span id="line-80"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076879"><span class="annot"><span class="annottext">yPixelsPerMeter :: Int
+</span><a href="#local-6989586621679076879"><span class="hs-identifier hs-var hs-var">yPixelsPerMeter</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">2835</span></span><span> </span><span class="hs-comment">-- 72 DPI</span><span>
-</span><span id="line-76"></span><span>
-</span><span id="line-77"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
+</span><span id="line-81"></span><span>
+</span><span id="line-82"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
 </span><span class="hs-identifier hs-var">BS.writeFile</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077756"><span class="hs-identifier hs-var">filename</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; IO ()) -&gt; ByteString -&gt; IO ()
+</span><a href="#local-6989586621679076905"><span class="hs-identifier hs-var">filename</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; IO ()) -&gt; ByteString -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.concat</span></span><span>
-</span><span id="line-78"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span id="line-83"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Word8
 </span><span class="hs-number">66</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
 </span><span class="hs-number">77</span></span><span class="hs-special">]</span><span>                      </span><span class="hs-comment">-- Signature (&quot;BM&quot;)</span><span>
-</span><span id="line-79"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077747"><span class="hs-identifier hs-var">fileSize</span></a></span><span>                 </span><span class="hs-comment">-- File size</span><span>
-</span><span id="line-80"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">0</span></span><span>                        </span><span class="hs-comment">-- Reserved</span><span>
-</span><span id="line-81"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077744"><span class="hs-identifier hs-var">pixelDataOffset</span></a></span><span>           </span><span class="hs-comment">-- Pixel data offset</span><span>
-</span><span id="line-82"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077742"><span class="hs-identifier hs-var">dibHeaderSize</span></a></span><span>             </span><span class="hs-comment">-- DIB header size</span><span>
-</span><span id="line-83"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077755"><span class="hs-identifier hs-var">width</span></a></span><span>                    </span><span class="hs-comment">-- Image width</span><span>
 </span><span id="line-84"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
 </span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077754"><span class="hs-identifier hs-var">height</span></a></span><span>                   </span><span class="hs-comment">-- Image height</span><span>
+</span><a href="#local-6989586621679076896"><span class="hs-identifier hs-var">fileSize</span></a></span><span>                 </span><span class="hs-comment">-- File size</span><span>
 </span><span id="line-85"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var">intTo2Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1</span></span><span>                        </span><span class="hs-comment">-- Number of color planes</span><span>
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span>                        </span><span class="hs-comment">-- Reserved</span><span>
 </span><span id="line-86"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
-</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var">intTo2Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077740"><span class="hs-identifier hs-var">bitsPerPixel</span></a></span><span>             </span><span class="hs-comment">-- Bits per pixel</span><span>
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076893"><span class="hs-identifier hs-var">pixelDataOffset</span></a></span><span>           </span><span class="hs-comment">-- Pixel data offset</span><span>
 </span><span id="line-87"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
 </span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077738"><span class="hs-identifier hs-var">compressionMethod</span></a></span><span>        </span><span class="hs-comment">-- Compression method</span><span>
+</span><a href="#local-6989586621679076891"><span class="hs-identifier hs-var">dibHeaderSize</span></a></span><span>             </span><span class="hs-comment">-- DIB header size</span><span>
 </span><span id="line-88"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
 </span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077734"><span class="hs-identifier hs-var">imageSize</span></a></span><span>                </span><span class="hs-comment">-- Image size</span><span>
+</span><a href="#local-6989586621679076904"><span class="hs-identifier hs-var">width</span></a></span><span>                    </span><span class="hs-comment">-- Image width</span><span>
 </span><span id="line-89"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
 </span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077732"><span class="hs-identifier hs-var">xPixelsPerMeter</span></a></span><span>          </span><span class="hs-comment">-- Horizontal resolution (pixels per meter)</span><span>
+</span><a href="#local-6989586621679076903"><span class="hs-identifier hs-var">height</span></a></span><span>                   </span><span class="hs-comment">-- Image height</span><span>
 </span><span id="line-90"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
+</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var">intTo2Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span>                        </span><span class="hs-comment">-- Number of color planes</span><span>
+</span><span id="line-91"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
+</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var">intTo2Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076889"><span class="hs-identifier hs-var">bitsPerPixel</span></a></span><span>             </span><span class="hs-comment">-- Bits per pixel</span><span>
+</span><span id="line-92"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
 </span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077730"><span class="hs-identifier hs-var">yPixelsPerMeter</span></a></span><span>          </span><span class="hs-comment">-- Vertical resolution (pixels per meter)</span><span>
-</span><span id="line-91"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8 -&gt; ByteString
+</span><a href="#local-6989586621679076887"><span class="hs-identifier hs-var">compressionMethod</span></a></span><span>        </span><span class="hs-comment">-- Compression method</span><span>
+</span><span id="line-93"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076883"><span class="hs-identifier hs-var">imageSize</span></a></span><span>                </span><span class="hs-comment">-- Image size</span><span>
+</span><span id="line-94"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076881"><span class="hs-identifier hs-var">xPixelsPerMeter</span></a></span><span>          </span><span class="hs-comment">-- Horizontal resolution (pixels per meter)</span><span>
+</span><span id="line-95"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; ByteString
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var">intTo4Bytes</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076879"><span class="hs-identifier hs-var">yPixelsPerMeter</span></a></span><span>          </span><span class="hs-comment">-- Vertical resolution (pixels per meter)</span><span>
+</span><span id="line-96"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8 -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.replicate</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">8</span></span><span> </span><span class="annot"><span class="annottext">Word8
 </span><span class="hs-number">0</span></span><span>                     </span><span class="hs-comment">-- Reserved</span><span>
-</span><span id="line-92"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">ByteString
-</span><a href="#local-6989586621679077753"><span class="hs-identifier hs-var">customPixelData</span></a></span><span>  </span><span class="hs-comment">-- White pixel data</span><span>
-</span><span id="line-93"></span><span>        </span><span class="hs-special">]</span><span>
-</span><span id="line-94"></span><span>
-</span><span id="line-95"></span><span class="hs-comment">-- Function to write a PPM file with custom pixel data in P3 format</span><span>
-</span><span id="line-96"></span><span class="annot"><a href="Files.html#writePPM"><span class="hs-identifier hs-type">writePPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
-</span><span id="line-97"></span><span id="writePPM"><span class="annot"><span class="annottext">writePPM :: FilePath -&gt; Int -&gt; Int -&gt; FilePath -&gt; IO ()
-</span><a href="Files.html#writePPM"><span class="hs-identifier hs-var hs-var">writePPM</span></a></span></span><span> </span><span id="local-6989586621679077722"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077722"><span class="hs-identifier hs-var">filename</span></a></span></span><span> </span><span id="local-6989586621679077721"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077721"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679077720"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077720"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679077719"><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077719"><span class="hs-identifier hs-var">customPixelData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-98"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077716"><span class="annot"><span class="annottext">maxColorValue :: Integer
-</span><a href="#local-6989586621679077716"><span class="hs-identifier hs-var hs-var">maxColorValue</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer
+</span><span id="line-97"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679076902"><span class="hs-identifier hs-var">customPixelData</span></a></span><span>  </span><span class="hs-comment">-- White pixel data</span><span>
+</span><span id="line-98"></span><span>        </span><span class="hs-special">]</span><span>
+</span><span id="line-99"></span><span>
+</span><span id="line-100"></span><span class="hs-comment">-- |Funci&#243;n principal, escibre en un archivo PPM la informaci&#243;n de los pixels en formato P3.</span><span>
+</span><span id="line-101"></span><span class="annot"><a href="Files.html#writePPM"><span class="hs-identifier hs-type">writePPM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FilePath</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-102"></span><span id="writePPM"><span class="annot"><span class="annottext">writePPM :: FilePath -&gt; Int -&gt; Int -&gt; FilePath -&gt; IO ()
+</span><a href="Files.html#writePPM"><span class="hs-identifier hs-var hs-var">writePPM</span></a></span></span><span> </span><span id="local-6989586621679076871"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679076871"><span class="hs-identifier hs-var">filename</span></a></span></span><span> </span><span id="local-6989586621679076870"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076870"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679076869"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076869"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679076868"><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679076868"><span class="hs-identifier hs-var">customPixelData</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-103"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076865"><span class="annot"><span class="annottext">maxColorValue :: Integer
+</span><a href="#local-6989586621679076865"><span class="hs-identifier hs-var hs-var">maxColorValue</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer
 </span><span class="hs-number">255</span></span><span>
-</span><span id="line-99"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679077711"><span class="annot"><span class="annottext">header :: FilePath
-</span><a href="#local-6989586621679077711"><span class="hs-identifier hs-var hs-var">header</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FilePath] -&gt; FilePath
+</span><span id="line-104"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679076860"><span class="annot"><span class="annottext">header :: FilePath
+</span><a href="#local-6989586621679076860"><span class="hs-identifier hs-var hs-var">header</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[FilePath] -&gt; FilePath
 </span><span class="hs-identifier hs-var">unlines</span></span><span>
-</span><span id="line-100"></span><span>            </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-105"></span><span>            </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;P3&quot;</span></span><span>
-</span><span id="line-101"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-106"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;#MAX=255&quot;</span></span><span>
-</span><span id="line-102"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><span id="line-107"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot;# &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
 forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077722"><span class="hs-identifier hs-var">filename</span></a></span><span>
-</span><span id="line-103"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
+</span><a href="#local-6989586621679076871"><span class="hs-identifier hs-var">filename</span></a></span><span>
+</span><span id="line-108"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
 forall a. Show a =&gt; a -&gt; FilePath
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077721"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
+</span><a href="#local-6989586621679076870"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
 forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">FilePath
 </span><span class="hs-string">&quot; &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
@@ -408,41 +413,41 @@ forall a. [a] -&gt; [a] -&gt; [a]
 </span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
 forall a. Show a =&gt; a -&gt; FilePath
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077720"><span class="hs-identifier hs-var">height</span></a></span><span>
-</span><span id="line-104"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; FilePath
+</span><a href="#local-6989586621679076869"><span class="hs-identifier hs-var">height</span></a></span><span>
+</span><span id="line-109"></span><span>            </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; FilePath
 forall a. Show a =&gt; a -&gt; FilePath
 </span><span class="hs-identifier hs-var">show</span></span><span> </span><span class="annot"><span class="annottext">Integer
-</span><a href="#local-6989586621679077716"><span class="hs-identifier hs-var">maxColorValue</span></a></span><span>
-</span><span id="line-105"></span><span>            </span><span class="hs-special">]</span><span>
-</span><span id="line-106"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
+</span><a href="#local-6989586621679076865"><span class="hs-identifier hs-var">maxColorValue</span></a></span><span>
+</span><span id="line-110"></span><span>            </span><span class="hs-special">]</span><span>
+</span><span id="line-111"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString -&gt; IO ()
 </span><span class="hs-identifier hs-var">BS8.writeFile</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077722"><span class="hs-identifier hs-var">filename</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; IO ()) -&gt; ByteString -&gt; IO ()
+</span><a href="#local-6989586621679076871"><span class="hs-identifier hs-var">filename</span></a></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; IO ()) -&gt; ByteString -&gt; IO ()
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[ByteString] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.unlines</span></span><span>
-</span><span id="line-107"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
+</span><span id="line-112"></span><span>        </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077711"><span class="hs-identifier hs-var">header</span></a></span><span>
-</span><span id="line-108"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
+</span><a href="#local-6989586621679076860"><span class="hs-identifier hs-var">header</span></a></span><span>
+</span><span id="line-113"></span><span>        </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS8.pack</span></span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><a href="#local-6989586621679077719"><span class="hs-identifier hs-var">customPixelData</span></a></span><span>
-</span><span id="line-109"></span><span>        </span><span class="hs-special">]</span><span>
-</span><span id="line-110"></span><span>
-</span><span id="line-111"></span><span class="hs-comment">-- Helper function to convert an Int to a ByteString of 4 bytes</span><span>
-</span><span id="line-112"></span><span class="annot"><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-type">intTo4Bytes</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
-</span><span id="line-113"></span><span id="intTo4Bytes"><span class="annot"><span class="annottext">intTo4Bytes :: Int -&gt; ByteString
-</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var hs-var">intTo4Bytes</span></a></span></span><span> </span><span id="local-6989586621679077708"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077708"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><a href="#local-6989586621679076868"><span class="hs-identifier hs-var">customPixelData</span></a></span><span>
+</span><span id="line-114"></span><span>        </span><span class="hs-special">]</span><span>
+</span><span id="line-115"></span><span>
+</span><span id="line-116"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte un entero a un ByteString de 4 Bytes.</span><span>
+</span><span id="line-117"></span><span class="annot"><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-type">intTo4Bytes</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
+</span><span id="line-118"></span><span id="intTo4Bytes"><span class="annot"><span class="annottext">intTo4Bytes :: Int -&gt; ByteString
+</span><a href="Files.html#intTo4Bytes"><span class="hs-identifier hs-var hs-var">intTo4Bytes</span></a></span></span><span> </span><span id="local-6989586621679076857"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076857"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077708"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076857"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">.&amp;.</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077708"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076857"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; Int -&gt; a
 </span><span class="hs-operator hs-var">`shiftR`</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">8</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
@@ -451,7 +456,7 @@ forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077708"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076857"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; Int -&gt; a
 </span><span class="hs-operator hs-var">`shiftR`</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">16</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
@@ -460,60 +465,60 @@ forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077708"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076857"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; Int -&gt; a
 </span><span class="hs-operator hs-var">`shiftR`</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">24</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">.&amp;.</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
-</span><span id="line-114"></span><span>
-</span><span id="line-115"></span><span class="hs-comment">-- Helper function to convert an Int to a ByteString of 2 bytes</span><span>
-</span><span id="line-116"></span><span class="annot"><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-type">intTo2Bytes</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
-</span><span id="line-117"></span><span id="intTo2Bytes"><span class="annot"><span class="annottext">intTo2Bytes :: Int -&gt; ByteString
-</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var hs-var">intTo2Bytes</span></a></span></span><span> </span><span id="local-6989586621679077707"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077707"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span id="line-119"></span><span>
+</span><span id="line-120"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte un entero a un ByteString de 2 Bytes.</span><span>
+</span><span id="line-121"></span><span class="annot"><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-type">intTo2Bytes</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
+</span><span id="line-122"></span><span id="intTo2Bytes"><span class="annot"><span class="annottext">intTo2Bytes :: Int -&gt; ByteString
+</span><a href="Files.html#intTo2Bytes"><span class="hs-identifier hs-var hs-var">intTo2Bytes</span></a></span></span><span> </span><span id="local-6989586621679076856"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679076856"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077707"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076856"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">.&amp;.</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077707"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679076856"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; Int -&gt; a
 </span><span class="hs-operator hs-var">`shiftR`</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">8</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
 forall a. Bits a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">.&amp;.</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><span class="hs-number">0xFF</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
-</span><span id="line-118"></span><span>
-</span><span id="line-119"></span><span class="hs-comment">-- Function to convert ordered RGB list to ByteString</span><span>
-</span><span id="line-120"></span><span class="annot"><a href="Files.html#pixels2BMP"><span class="hs-identifier hs-type">pixels2BMP</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
-</span><span id="line-121"></span><span id="pixels2BMP"><span class="annot"><span class="annottext">pixels2BMP :: [RGB] -&gt; ByteString
-</span><a href="Files.html#pixels2BMP"><span class="hs-identifier hs-var hs-var">pixels2BMP</span></a></span></span><span> </span><span id="local-6989586621679077705"><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679077705"><span class="hs-identifier hs-var">rgbList</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
+</span><span id="line-123"></span><span>
+</span><span id="line-124"></span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte una lista ordenada de RGBs a BytseString.</span><span>
+</span><span id="line-125"></span><span class="annot"><a href="Files.html#pixels2BMP"><span class="hs-identifier hs-type">pixels2BMP</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
+</span><span id="line-126"></span><span id="pixels2BMP"><span class="annot"><span class="annottext">pixels2BMP :: [RGB] -&gt; ByteString
+</span><a href="Files.html#pixels2BMP"><span class="hs-identifier hs-var hs-var">pixels2BMP</span></a></span></span><span> </span><span id="local-6989586621679076854"><span class="annot"><span class="annottext">[RGB]
+</span><a href="#local-6989586621679076854"><span class="hs-identifier hs-var">rgbList</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
 </span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; ByteString) -&gt; [Word8] -&gt; ByteString
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(RGB -&gt; [Word8]) -&gt; [RGB] -&gt; [Word8]
 forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
 </span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">RGB -&gt; [Word8]
-</span><a href="#local-6989586621679077704"><span class="hs-identifier hs-var">rgbToWord8</span></a></span><span> </span><span class="annot"><span class="annottext">([RGB] -&gt; [Word8]) -&gt; [RGB] -&gt; [Word8]
+</span><a href="#local-6989586621679076853"><span class="hs-identifier hs-var">rgbToWord8</span></a></span><span> </span><span class="annot"><span class="annottext">([RGB] -&gt; [Word8]) -&gt; [RGB] -&gt; [Word8]
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[RGB] -&gt; [RGB]
 forall a. [a] -&gt; [a]
 </span><span class="hs-identifier hs-var">reverse</span></span><span> </span><span class="annot"><span class="annottext">[RGB]
-</span><a href="#local-6989586621679077705"><span class="hs-identifier hs-var">rgbList</span></a></span><span>
-</span><span id="line-122"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-123"></span><span>    </span><span class="hs-comment">-- Helper function to convert RGB to Word8 list</span><span>
-</span><span id="line-124"></span><span>    </span><span class="annot"><a href="#local-6989586621679077704"><span class="hs-identifier hs-type">rgbToWord8</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Word8</span></span><span class="hs-special">]</span><span>
-</span><span id="line-125"></span><span>    </span><span id="local-6989586621679077704"><span class="annot"><span class="annottext">rgbToWord8 :: RGB -&gt; [Word8]
-</span><a href="#local-6989586621679077704"><span class="hs-identifier hs-var hs-var">rgbToWord8</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span id="local-6989586621679077702"><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077702"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679077701"><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077701"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679077700"><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077700"><span class="hs-identifier hs-var">b</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Float -&gt; Word8) -&gt; [Float] -&gt; [Word8]
+</span><a href="#local-6989586621679076854"><span class="hs-identifier hs-var">rgbList</span></a></span><span>
+</span><span id="line-127"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-128"></span><span>    </span><span class="hs-comment">-- |Funci&#243;n auxiliar, convierte un RGB a una lista de Word8.</span><span>
+</span><span id="line-129"></span><span>    </span><span class="annot"><a href="#local-6989586621679076853"><span class="hs-identifier hs-type">rgbToWord8</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Word8</span></span><span class="hs-special">]</span><span>
+</span><span id="line-130"></span><span>    </span><span id="local-6989586621679076853"><span class="annot"><span class="annottext">rgbToWord8 :: RGB -&gt; [Word8]
+</span><a href="#local-6989586621679076853"><span class="hs-identifier hs-var hs-var">rgbToWord8</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Elem3D.html#RGB"><span class="hs-identifier hs-type">RGB</span></a></span><span> </span><span id="local-6989586621679076851"><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076851"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679076850"><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076850"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679076849"><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076849"><span class="hs-identifier hs-var">b</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Float -&gt; Word8) -&gt; [Float] -&gt; [Word8]
 forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 </span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Integer -&gt; Word8
 forall a b. (Integral a, Num b) =&gt; a -&gt; b
@@ -522,137 +527,7 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><span class="hs-operator hs-var">.</span></span><span class="annot"><span class="annottext">Float -&gt; Integer
 forall a b. (RealFrac a, Integral b) =&gt; a -&gt; b
 </span><span class="hs-identifier hs-var">round</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077702"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077701"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><a href="#local-6989586621679077700"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
-</span><span class="hs-number">255</span></span><span class="hs-special">]</span><span>
-</span><span id="line-126"></span><span>
-</span><span id="line-127"></span><span class="hs-comment">-- Function to generate custom pixel data for a checkerboard pattern</span><span>
-</span><span id="line-128"></span><span class="annot"><a href="Files.html#generateBMPPixelData"><span class="hs-identifier hs-type">generateBMPPixelData</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BS.ByteString</span></span><span>
-</span><span id="line-129"></span><span id="generateBMPPixelData"><span class="annot"><span class="annottext">generateBMPPixelData :: Int -&gt; Int -&gt; [(Int, Int)] -&gt; ByteString
-</span><a href="Files.html#generateBMPPixelData"><span class="hs-identifier hs-var hs-var">generateBMPPixelData</span></a></span></span><span> </span><span id="local-6989586621679077698"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077698"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679077697"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077697"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679077696"><span class="annot"><span class="annottext">[(Int, Int)]
-</span><a href="#local-6989586621679077696"><span class="hs-identifier hs-var">filledpixels</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-130"></span><span>    </span><span class="hs-comment">-- BS.pack $ concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]</span><span>
-</span><span id="line-131"></span><span>    </span><span class="annot"><span class="annottext">[Word8] -&gt; ByteString
-</span><span class="hs-identifier hs-var">BS.pack</span></span><span> </span><span class="annot"><span class="annottext">([Word8] -&gt; ByteString) -&gt; [Word8] -&gt; ByteString
-forall a b. (a -&gt; b) -&gt; a -&gt; b
-</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(Int -&gt; [Word8]) -&gt; [Int] -&gt; [Word8]
-forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
-</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Word8]
-</span><a href="#local-6989586621679077695"><span class="hs-identifier hs-var">generateRow</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">..</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077697"><span class="hs-identifier hs-var">height</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
-forall a. Num a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1</span></span><span class="hs-special">]</span><span>
-</span><span id="line-132"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-133"></span><span>    </span><span class="annot"><a href="#local-6989586621679077695"><span class="hs-identifier hs-type">generateRow</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Word8</span></span><span class="hs-special">]</span><span>
-</span><span id="line-134"></span><span>    </span><span id="local-6989586621679077695"><span class="annot"><span class="annottext">generateRow :: Int -&gt; [Word8]
-</span><a href="#local-6989586621679077695"><span class="hs-identifier hs-var hs-var">generateRow</span></a></span></span><span> </span><span id="local-6989586621679077694"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077694"><span class="hs-identifier hs-var">row</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; [Word8]) -&gt; [Int] -&gt; [Word8]
-forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
-</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; [Word8]
-</span><a href="#local-6989586621679077693"><span class="hs-identifier hs-var">generatePixel</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">..</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077698"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
-forall a. Num a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1</span></span><span class="hs-special">]</span><span>
-</span><span id="line-135"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-136"></span><span>        </span><span class="annot"><a href="#local-6989586621679077693"><span class="hs-identifier hs-type">generatePixel</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Word8</span></span><span class="hs-special">]</span><span>
-</span><span id="line-137"></span><span>        </span><span id="local-6989586621679077693"><span class="annot"><span class="annottext">generatePixel :: Int -&gt; [Word8]
-</span><a href="#local-6989586621679077693"><span class="hs-identifier hs-var hs-var">generatePixel</span></a></span></span><span> </span><span id="local-6989586621679077692"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077692"><span class="hs-identifier hs-var">col</span></a></span></span><span>
-</span><span id="line-138"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077692"><span class="hs-identifier hs-var">col</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077694"><span class="hs-identifier hs-var">row</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(Int, Int) -&gt; [(Int, Int)] -&gt; Bool
-forall (t :: * -&gt; *) a. (Foldable t, Eq a) =&gt; a -&gt; t a -&gt; Bool
-</span><span class="hs-operator hs-var">`elem`</span></span><span> </span><span class="annot"><span class="annottext">[(Int, Int)]
-</span><a href="#local-6989586621679077696"><span class="hs-identifier hs-var">filledpixels</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">255</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">255</span></span><span class="hs-special">]</span><span>
-</span><span id="line-139"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">0</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Word8
-</span><span class="hs-number">255</span></span><span class="hs-special">]</span><span>
-</span><span id="line-140"></span><span>
-</span><span id="line-141"></span><span class="hs-comment">-- Function to generate custom pixel data for a checkerboard pattern as a string</span><span>
-</span><span id="line-142"></span><span class="annot"><a href="Files.html#generatePPMPixelData"><span class="hs-identifier hs-type">generatePPMPixelData</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Float</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span>  </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-143"></span><span id="generatePPMPixelData"><span class="annot"><span class="annottext">generatePPMPixelData :: [Maybe Float] -&gt; FilePath
-</span><a href="Files.html#generatePPMPixelData"><span class="hs-identifier hs-var hs-var">generatePPMPixelData</span></a></span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot;&quot;</span></span><span>
-</span><span id="line-144"></span><span class="annot"><a href="Files.html#generatePPMPixelData"><span class="hs-identifier hs-var">generatePPMPixelData</span></a></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679077689"><span class="annot"><span class="annottext">Maybe Float
-</span><a href="#local-6989586621679077689"><span class="hs-identifier hs-var">x</span></a></span></span><span class="annot"><span class="hs-glyph hs-type">:</span></span><span id="local-6989586621679077688"><span class="annot"><span class="annottext">[Maybe Float]
-</span><a href="#local-6989586621679077688"><span class="hs-identifier hs-var">xs</span></a></span></span><span class="hs-special">)</span><span>
-</span><span id="line-145"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Maybe Float -&gt; Bool
-forall a. Maybe a -&gt; Bool
-</span><span class="hs-identifier hs-var">isNothing</span></span><span> </span><span class="annot"><span class="annottext">Maybe Float
-</span><a href="#local-6989586621679077689"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot; 0 0 0&quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
-forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">[Maybe Float] -&gt; FilePath
-</span><a href="Files.html#generatePPMPixelData"><span class="hs-identifier hs-var">generatePPMPixelData</span></a></span><span> </span><span class="annot"><span class="annottext">[Maybe Float]
-</span><a href="#local-6989586621679077688"><span class="hs-identifier hs-var">xs</span></a></span><span>
-</span><span id="line-146"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">otherwise</span></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot; 0 0 255 &quot;</span></span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; FilePath -&gt; FilePath
-forall a. [a] -&gt; [a] -&gt; [a]
-</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="annot"><span class="annottext">[Maybe Float] -&gt; FilePath
-</span><a href="Files.html#generatePPMPixelData"><span class="hs-identifier hs-var">generatePPMPixelData</span></a></span><span> </span><span class="annot"><span class="annottext">[Maybe Float]
-</span><a href="#local-6989586621679077688"><span class="hs-identifier hs-var">xs</span></a></span><span>
-</span><span id="line-147"></span><span>
-</span><span id="line-148"></span><span>
-</span><span id="line-149"></span><span class="hs-comment">-- Function to generate custom pixel data for a checkerboard pattern</span><span>
-</span><span id="line-150"></span><span class="annot"><a href="Files.html#fromPixToList"><span class="hs-identifier hs-type">fromPixToList</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-151"></span><span id="fromPixToList"><span class="annot"><span class="annottext">fromPixToList :: Int -&gt; Int -&gt; [(Int, Int)] -&gt; FilePath
-</span><a href="Files.html#fromPixToList"><span class="hs-identifier hs-var hs-var">fromPixToList</span></a></span></span><span> </span><span id="local-6989586621679077686"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077686"><span class="hs-identifier hs-var">width</span></a></span></span><span> </span><span id="local-6989586621679077685"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077685"><span class="hs-identifier hs-var">height</span></a></span></span><span> </span><span id="local-6989586621679077684"><span class="annot"><span class="annottext">[(Int, Int)]
-</span><a href="#local-6989586621679077684"><span class="hs-identifier hs-var">filledpixels</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-152"></span><span>  </span><span class="hs-comment">-- concat $ runEval $ parListChunk 32 rseq $ map generateRow [0 .. height - 1]</span><span>
-</span><span id="line-153"></span><span>  </span><span class="annot"><span class="annottext">(Int -&gt; FilePath) -&gt; [Int] -&gt; FilePath
-forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
-</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-</span><a href="#local-6989586621679077683"><span class="hs-identifier hs-var">generateRow</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">..</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077685"><span class="hs-identifier hs-var">height</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
-forall a. Num a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1</span></span><span class="hs-special">]</span><span>
-</span><span id="line-154"></span><span>
-</span><span id="line-155"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-156"></span><span>    </span><span class="annot"><a href="#local-6989586621679077683"><span class="hs-identifier hs-type">generateRow</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-157"></span><span>    </span><span id="local-6989586621679077683"><span class="annot"><span class="annottext">generateRow :: Int -&gt; FilePath
-</span><a href="#local-6989586621679077683"><span class="hs-identifier hs-var hs-var">generateRow</span></a></span></span><span> </span><span id="local-6989586621679077682"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077682"><span class="hs-identifier hs-var">row</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Int -&gt; FilePath) -&gt; [Int] -&gt; FilePath
-forall (t :: * -&gt; *) a b. Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
-</span><span class="hs-identifier hs-var">concatMap</span></span><span> </span><span class="annot"><span class="annottext">Int -&gt; FilePath
-</span><a href="#local-6989586621679077681"><span class="hs-identifier hs-var">generatePixel</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">..</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077686"><span class="hs-identifier hs-var">width</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int -&gt; Int
-forall a. Num a =&gt; a -&gt; a -&gt; a
-</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Int
-</span><span class="hs-number">1</span></span><span class="hs-special">]</span><span>
-</span><span id="line-158"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-159"></span><span>        </span><span class="annot"><a href="#local-6989586621679077681"><span class="hs-identifier hs-type">generatePixel</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
-</span><span id="line-160"></span><span>        </span><span id="local-6989586621679077681"><span class="annot"><span class="annottext">generatePixel :: Int -&gt; FilePath
-</span><a href="#local-6989586621679077681"><span class="hs-identifier hs-var hs-var">generatePixel</span></a></span></span><span> </span><span id="local-6989586621679077680"><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077680"><span class="hs-identifier hs-var">col</span></a></span></span><span>
-</span><span id="line-161"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077680"><span class="hs-identifier hs-var">col</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int
-</span><a href="#local-6989586621679077682"><span class="hs-identifier hs-var">row</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(Int, Int) -&gt; [(Int, Int)] -&gt; Bool
-forall (t :: * -&gt; *) a. (Foldable t, Eq a) =&gt; a -&gt; t a -&gt; Bool
-</span><span class="hs-operator hs-var">`elem`</span></span><span> </span><span class="annot"><span class="annottext">[(Int, Int)]
-</span><a href="#local-6989586621679077684"><span class="hs-identifier hs-var">filledpixels</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot; 0 255 0&quot;</span></span><span>
-</span><span id="line-162"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
-</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FilePath
-</span><span class="hs-string">&quot; 0 0 0&quot;</span></span><span>
-</span><span id="line-163"></span><span>
-</span><span id="line-164"></span></pre></body></html>
+</span><a href="#local-6989586621679076851"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076850"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
+</span><a href="#local-6989586621679076849"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Float
+</span><span class="hs-number">255</span></span><span class="hs-special">]</span></pre></body></html>

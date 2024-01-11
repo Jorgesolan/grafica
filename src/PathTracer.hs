@@ -85,9 +85,9 @@ luzAreaRec figuras obj gen = rgbFin
   where
     rgbFin = if idObj obj == 4 then RGB 1 1 1 else if rgbObj rndObj == RGB 0 0 0 then RGB 0 0 0 else if nanRGB result then RGB 0 0 0 else result
     result = case caso of
-        0 -> rgbNew rndObj (brdf obj figuras) `modRGB`( pi * por)
-        -- 1 -> colorIndirecto objCr `modRGB` por
-        -- 2 -> colorIndirecto objEsp `modRGB` por
+        0 -> rgbNew rndObj (brdf obj figuras) `modRGB`(pi * por)
+        1 -> luzAreaRec figuras objCr gen' `modRGB` por
+        2 -> luzAreaRec figuras objEsp gen' `modRGB` por
         _ -> RGB 0 0 0
     
     (caso, por) = ruletaRusa (trObj obj) gen

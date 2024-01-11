@@ -59,14 +59,14 @@ antialiasing n rayos = map obtenerPrimeraColision $ map Set.fromList (chunksOf n
 {-# INLINE listRayToRGB #-}
 listRayToRGB :: [Luz] -> Set.Set Shape -> [Ray] -> StdGen -> Int -> [RGB]
 listRayToRGB luz figuras rayos gen nRay = zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
-  -- map (`divRGB` fromIntegral ppp) colorArea --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+  -- map (`divRGB` fromIntegral ppp) colorArea 
   where
     antial = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay antial
     
     (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-    ppp = 3 -- Caminos por pixel
+    ppp = 256 -- Caminos por pixel
     colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
     colorDirecto = map (luzDirecta luz figuras) rayColisions
     colorArea = zipWith (luzArea figuras ppp) rayColisions gens
@@ -85,7 +85,6 @@ main = do
 
 $%$%$%$%  
 
-  
   args <- getArgs
   case map readMaybe args of
     [Just nStr, Just mStr, Just oStr] -> do
@@ -105,8 +104,8 @@ $%$%$%$%
       let cams = mulCam camara 0 0.75-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
 
-          a = map (\rayos -> listRayPhoton kdt luces cam figuras''' rayos nRay) rayitos -- Photon mapping
-          -- a = map (\rayos -> listRayToRGB luces figuras'' rayos gen' nRay) rayitos -- Path tracing
+          -- a = map (\rayos -> listRayPhoton kdt luces cam figuras rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
           
           c = mediaLRGB a
           fin = concatMap rgbToString (gammaFunc fmx gamma c)
@@ -121,7 +120,7 @@ $%$%$%$%
       gen <- newStdGen
       gen' <- newStdGen
       start <- getCPUTime
-      let !kdt =  createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras''' luces gen' nRebotes
+      let !kdt =  createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras luces gen' nRebotes
       print $ length kdt
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Float

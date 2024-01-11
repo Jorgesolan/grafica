@@ -116,8 +116,8 @@ sumRGB xs = foldr (+) (head xs) (tail xs)
 formula :: RGB -> Float -> Point3D -> Point3D -> Direction -> RGB -> RGB
 formula rgbLuz intLuz pointLuz p vNormal rgbObj
   | (vNormal .* normal (pointLuz #< p)) < 0 = RGB 0 0 0
-  | p == pointLuz = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/10.0))**2)) * rgbObj
-  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/10.0))**2)) * rgbObj `modRGB` (vNormal .* normal (pointLuz #< p))
+  | p == pointLuz = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/30))**2)) * rgbObj
+  | otherwise = modRGB rgbLuz (intLuz / ((1+(modd (pointLuz #< p)/30))**2)) * rgbObj `modRGB` (vNormal .* normal (pointLuz #< p))
 
 --------------------------
 -- FUNCIONES DE CAMARA  --
@@ -175,10 +175,12 @@ genPointTotal gen = polarToCartesian (acos randIncl) (2.0 * pi * randAz) randInc
 
 {-# INLINE genPoint #-}    
 genPoint :: StdGen -> Point3D
-genPoint gen = polarToCartesian (acos randIncl) (2 * pi * randAz) (sqrt randIncl) -- (1 - randIncl)
+genPoint gen = polarToCartesian (acos randIncl') (2 * pi * randAz) randIncl' 
   where
     !(randIncl, gen') = randomR (0.0, 1.0) gen :: (Float, StdGen)
     !(randAz, _) = randomR (0.0, 1.0) gen' :: (Float, StdGen)
+    --randIncl' = sqrt(1 - randIncl) -- Luz Area
+    randIncl' = randIncl -- Luz Puntual
 
 
 --------------------------
