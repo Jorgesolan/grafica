@@ -19,7 +19,7 @@ data Base = Base {d0 :: Direction, d1 :: Direction, d2 :: Direction} deriving (S
 -- |Tipo básico, representa la tripleta de color RGB, la conforman por tres valores float(uno para cada canal de color) que pertenecen al rango [0,1]
 data RGB = RGB {red :: Float, green :: Float, blue :: Float} deriving (Eq)
 -- |Tipo compuesto, representa una fuente de luz, esta se encuentra en un punto del espacio por lo que tiene un punto3D, emite una cierta tonalidad de luz por lo que tiene un RGB y emite una cierta intensidad de luz por lo que tiene el Float.
-data Luz = Luz Point3D RGB Float
+data Luz = Luz {luzP :: Point3D, luzRGB :: RGB, luzPot :: Float}
 -- |Tipo compuesto, representa una partícula de fotón, esta tiene un punto3D, una intensidad(float), una tonalidad(RGB), por último tiene un id(Entero) para identificarlo.
 data Foton = Foton {pFot :: Point3D, iFot :: Float, rgbFot :: RGB, idFot :: Int}
 
@@ -349,6 +349,10 @@ prodRGB r0 r1 = modRGB (scale r0 * r1)
 nanRGB :: RGB -> Bool
 nanRGB (RGB {..}) = isNaN red || isNaN green || isNaN blue
 
+-- |Función auxiliar, Convierte un RGB a un Float.
+{-# INLINE rgbFloat #-}
+rgbFloat :: RGB -> Float
+rgbFloat (RGB {..}) = (red + green + blue) / 3
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 --Bases y Matrices

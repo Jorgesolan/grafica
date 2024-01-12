@@ -46,6 +46,7 @@ import Data.KdTree.Static ( kNearest, KdTree, inRadius, nearest)
 import qualified Data.DList as DL
 import qualified Data.Set as Set
 
+
 createPhoton :: Float -> DL.DList Foton -> Int -> Int -> Set.Set Shape -> [Luz] -> StdGen -> Int -> DL.DList Foton
 createPhoton lzT fotones contador contMx figuras luces gen nRebotes
   | contador == contMx = fotones -- Devuelve la lista de fotones
@@ -64,6 +65,7 @@ selescLightSource luces contador contMx gen = (Ray pLuz (movePoint (pointDir pLu
   where
     luz@(Luz pLuz _ _) = head luces
 
+{-# INLINE traceRay #-}
 traceRay :: Point3D -> Float -> RGB -> DL.DList Foton -> Set.Set Shape -> Int -> StdGen -> Obj -> DL.DList Foton
 traceRay p pot rgb fotones figuras n gen obj
   | n == 0 || rgb == RGB 0 0 0 = fotones
@@ -153,6 +155,7 @@ photonMap kdt luces radio figuras obj
     colorEsp = photonMap kdt luces (radio * ke) figuras objEsp
 
 
+{-# INLINE kdToRGB #-}
 kdToRGB :: KdTree Float Foton -> Float -> Set.Set Shape-> Obj -> RGB
 kdToRGB kdt 0 figuras obj = RGB 0 0 0
 kdToRGB kdt radio figuras obj = newRGB

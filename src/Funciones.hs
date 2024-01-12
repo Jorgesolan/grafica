@@ -28,7 +28,8 @@ import Figuras
       Camara(..),
       Obj(..),
       Rectangulo(Rectangulo),
-      Shape(Rectangle), getShapeID, getUV )
+      Shape(Null,Triangle),
+       getShapeID, getUV )
 
 --import Math.Erf (erf)
 import System.IO.Unsafe (unsafePerformIO)
@@ -192,7 +193,7 @@ genPoint gen = polarToCartesian (acos randIncl') (2 * pi * randAz) randIncl'
 obtenerPrimeraColision :: Set.Set Obj -> Obj
 obtenerPrimeraColision xs =
   case Set.lookupMin $ Set.filter (\obj -> mindObj obj >= 0) xs of
-    Nothing -> (Obj (-1) (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0, 0, 0) 0 0)
+    Nothing -> (Obj (-1) (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0, 0, 0) 0 0 Null)
     Just obj -> obj
 
 -- dada la lista de listas de colisiones, devuelve la lista de la primera colisión de cada rayo
@@ -248,20 +249,24 @@ ruletaRusa (a,b,c) gen = (i, p')
 
 {-# INLINE brdf #-}
 brdf :: Obj -> Set.Set Shape-> RGB
-brdf (Obj {..}) figuras
-  | idObj == 4 = scale rgbObj -- rgbTxt
+brdf obj@(Obj {..}) figuras
+  | idObj == 7 = rgbTxt "../meshes/algo.png"
   | kd == 0 = RGB 1 1 1 -- Que a los cristales o espejos sin difusa no le afecte un color que le hayas puesto
   | otherwise = scale rgbObj
   where
       (kd, ke, kr) = trObj
-      (x', y') = ((xP colObj + 10) / 50, (yP colObj + 10) / 50)
-      textureImage = loadTexture "../meshes/algo.png"
+      rgbTxt path = getRGBTexture path obj
+
+{-# INLINE getRGBTexture #-}
+getRGBTexture :: String -> Obj -> RGB
+getRGBTexture path (Obj {..}) = newRGB
+  where
+      textureImage = loadTexture path
       (texWidth, texHeight)
         = (fromIntegral $ imageWidth textureImage,
-           fromIntegral $ imageHeight textureImage)
-      rgbTxt = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth - 1)) (round $  v * (texHeight - 1))
-      fig = head $ filter (\shape -> idObj == getShapeID shape) (Set.toList figuras)
-      (u,v) = getUV fig colObj
+          fromIntegral $ imageHeight textureImage)
+      newRGB = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth - 1)) (round $  v * (texHeight - 1))
+      (u,v) = getUV shObj colObj
 
 
 loadTexture :: FilePath -> Image PixelRGB8
@@ -322,17 +327,17 @@ fGaus photons obj fot = if isNaN result then 0 else result
 --------------------------
 {-# INLINE addNiebla #-}
 addNiebla :: Luz -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
-addNiebla (Luz p _ _) obj x figuras rgb = if (mindObj obj ) < 0 then RGB 0 0 0 else newRGB + (rgb `modRGB` reducObj)
+addNiebla (Luz {..}) (Obj{..}) x figuras rgb = if mindObj < 0 then RGB 0 0 0 else newRGB + (rgb `modRGB` reducObj)
   where
     newRGB = RGB fact fact fact
     reducLuz = if zP closest < 0 then exp (x * zP closest / 10) else 1
-    reducObj = if zP (colObj obj) < 0 then exp ((1-x) * zP (colObj obj) / 10) else 1 -- Como le afecta la niebla de lejos a los objetos
+    reducObj = if zP colObj  < 0 then exp ((1-x) * zP colObj  / 10) else 1 -- Como le afecta la niebla de lejos a los objetos
 
     camP = Point3D 0 0 10 -- Comienzo de la camara
     cam = Ray camP dir
-    dir = normal $ colObj obj #< camP
-    closest = distanceToRay p cam
-    fact = (1-x) * reducLuz * (distPoint p closest ** (-1.75)) -- Como afecta la luz a los objetos
+    dir = normal $ colObj #< camP
+    closest = distanceToRay luzP cam
+    fact = (1-x) * reducLuz * (distPoint luzP closest ** (-1.75)) -- Como afecta la luz a los objetos
 
 {-# INLINE distanceToRay #-}
 distanceToRay :: Point3D -> Ray -> Point3D -- Punto más cercano al rayo

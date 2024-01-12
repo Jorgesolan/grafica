@@ -12,6 +12,7 @@ import Funciones
 import Debug.Trace (trace)
 import qualified Data.Set as Set
 
+{-# INLINE pathTracer #-}
 pathTracer :: Float -> [Luz] -> Set.Set Shape -> Int -> Obj -> StdGen -> RGB
 pathTracer rFl luz !figuras ppp obj gen
   | mindObj obj < 0 = scale $ RGB 20 50 30
@@ -21,6 +22,7 @@ pathTracer rFl luz !figuras ppp obj gen
     colorIndirecto = luzIndirecta obj luz figuras gen''
     (gen',gen'') = split gen
 
+{-# INLINE luzDirecta #-}
 luzDirecta :: [Luz] -> Set.Set Shape -> Obj -> RGB
 luzDirecta luces figuras obj
   | null luces = RGB 0 0 0
@@ -28,6 +30,7 @@ luzDirecta luces figuras obj
   | length luces == 1 = {- addNiebla (head luces) obj 0.8 figuras $ -} luzMono obj (head luces) figuras
   | length  luces > 1 = (luzMono obj (head luces) figuras + luzDirecta (tail luces) figuras obj) `divRGB` 2 -- Si todas pesaran igual que no es asi
 
+{-# INLINE luzMono #-}
 luzMono :: Obj -> Luz -> Set.Set Shape -> RGB
 luzMono obj (Luz pointLuz rgbLuz intLuz) figuras = difuso + espejo +cristal
   where
@@ -50,6 +53,7 @@ luzMono obj (Luz pointLuz rgbLuz intLuz) figuras = difuso + espejo +cristal
     -- micro = microfacet wH (normObj obj) 0.4
     -- shadow = shadowing (w0Obj obj) (normObj obj) 0.4
 
+{-# INLINE luzIndirecta #-}
 luzIndirecta :: Obj -> [Luz] -> Set.Set Shape -> StdGen -> RGB
 luzIndirecta obj luz figuras gen = result where
     result = case caso of
@@ -74,12 +78,14 @@ luzIndirecta obj luz figuras gen = result where
     (objCr, rFlNew) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj) -- Multiplicarlo por el coseno de donde sale * 2pi por el monteCarlo
 
+{-# INLINE luzArea #-}
 luzArea :: Set.Set Shape -> Int -> Obj -> StdGen -> RGB
 luzArea figuras 0 obj gen = luzAreaRec figuras obj gen
 luzArea figuras p obj gen = luzArea figuras (p-1) obj gen' + luzAreaRec figuras obj gen''
   where
     (gen',gen'') =split gen
 
+{-# INLINE luzAreaRec #-}
 luzAreaRec :: Set.Set Shape -> Obj -> StdGen -> RGB
 luzAreaRec figuras obj gen = rgbFin
   where

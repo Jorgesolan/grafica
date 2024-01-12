@@ -51,14 +51,13 @@ import qualified Data.DList as DL
 import qualified Data.Set as Set
 
 -- make clean && make simulacion && cd ./tmp && ./simulacion && ./run.sh && cd .. && convert ./tmp/output.ppm a.bmp
-
 {-# INLINE antialiasing #-}
 antialiasing :: Int -> [Obj] -> [Obj]
 antialiasing n rayos = map obtenerPrimeraColision $ map Set.fromList (chunksOf n rayos) -- Obtiene la colision mas cercana de cada lista de colisiones dependiendo del numero de rayos del antialiasing
 
 {-# INLINE listRayToRGB #-}
 listRayToRGB :: [Luz] -> Set.Set Shape -> [Ray] -> StdGen -> Int -> [RGB]
-listRayToRGB luz figuras rayos gen nRay = zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
+listRayToRGB luz figuras rayos gen nRay = colorDirecto --zipWith (+) colorDirecto $ map (`divRGB` fromIntegral ppp) colorIndirecto
   -- map (`divRGB` fromIntegral ppp) colorArea 
   where
     antial = map listRay $ parametricShapeCollision figuras rayos
@@ -66,12 +65,12 @@ listRayToRGB luz figuras rayos gen nRay = zipWith (+) colorDirecto $ map (`divRG
     
     (gens, _) = splitAt (length rayColisions * ppp) $ drop 1 $ iterate (snd . split) gen  -- Semillas
 
-    ppp = 256 -- Caminos por pixel
+    ppp = 10 -- Caminos por pixel
     colorIndirecto = zipWith (pathTracer 1 luz figuras ppp) rayColisions gens
     colorDirecto = map (luzDirecta luz figuras) rayColisions
     colorArea = zipWith (luzArea figuras ppp) rayColisions gens
 
-
+{-# INLINE listRayPhoton #-}
 listRayPhoton :: KdTree Float Foton -> [Luz] ->Point3D -> Set.Set Shape -> [Ray] -> Int -> [RGB]
 listRayPhoton kdt luces cam figuras rayos nRay = map (photonMap kdt luces radio figuras) rayColisions
   where
@@ -98,8 +97,8 @@ $%$%$%$%
       start <- getCPUTime
       
       
-      notkdt <- readObject "./kd.bin" -- Carga la lista de fotones del binario
-      let kdt = createKD notkdt -- Crea el kdtree
+      --notkdt <- readObject "./kd.bin" -- Carga la lista de fotones del binario
+      --let kdt = createKD notkdt -- Crea el kdtree
 
       let cams = mulCam camara 0 0.75-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel

@@ -14,13 +14,15 @@ import Elem3D
     )
 
 import Figuras
-    ( Obj,
-      Shape(Sphere, Plane, Cylinder,Rectangle),
+    ( Obj, Point2D(..),
+      Shape(Sphere, Plane, Cylinder,Rectangle,Cone,Triangle),
       Plano(Plano),
       Esfera(Esfera),
       Cilindro(Cilindro),
       Rectangulo(Rectangulo),
       Camara(Camara),
+      Cono(Cono),
+      Triangulo(Triangulo),
       addFigMult,
       parametricShapeCollision,
       loadObjFile,
@@ -41,19 +43,19 @@ nRebotes = 6
 aspectR :: Float
 aspectR = 1
 pix :: Float
-pix = 1000
+pix = 256
 piCam :: Float
 piCam = 15
 gamma :: Float
 gamma = 2.4
 maxN :: Int
-maxN = 10
+maxN = 8
 etapasY :: Int
-etapasY = 10
+etapasY = 1
 etapasX:: Int
-etapasX = 10
+etapasX = 1
 nRay :: Int
-nRay = 200
+nRay = 1
 intMxSim :: Float
 intMxSim = 1.0
 
@@ -94,9 +96,9 @@ plano4 =  Plane (Plano (Point3D 0 (-15) 0) (Direction 0 1 0) (RGB 100 100 100) (
 plano5 :: Shape
 plano5 =  Plane (Plano (Point3D 0 0 50.5) (Direction 0 0 1) (RGB 1 1 1) (0.9,0,0) 0 0) -- Detras Camara
 bola :: Shape
-bola =  Sphere (Esfera centr 5 (RGB 250 10 208) (0, 0.9, 0) 1.5 0)
+bola =  Sphere (Esfera centr 5 (RGB 250 10 208) (0.9, 0,0) 1.5 0)
 bola' :: Shape
-bola' =  Sphere (Esfera centr' 4 (RGB 10 250 200) (0, 0.9, 0) 1.5 0)
+bola' =  Sphere (Esfera centr' 4 (RGB 10 250 200) (0.9, 0,0) 1.5 0)
 -- bola'' :: Shape
 -- bola'' =  Sphere (Esfera centr'' 4 (RGB 150 0 0 ) (0.8, 0, 0) 0 0)
 -- bola''' :: Shape
@@ -112,6 +114,8 @@ rect3 = Rectangle (Rectangulo (Point3D 0 15 (-0)) (Direction 0 (-1) 0) (Directio
 -- Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
 cilindro :: Shape
 cilindro = Cylinder (Cilindro centr (Direction 0 1 0) 5 (RGB 200 0 200) (0, 0.0, 0.0) 0 0)
+cono = Cone(Cono (Point3D 0 0 (-8)) 1 1 (RGB 200 0 200) (0.9, 0.0, 0.0) 0 0)
+tri = Triangle(Triangulo (Point3D (-2) 0 (-8)) (Point3D 0 4 (-8)) (Point3D (2) 0 (-8)) (Point2D 0 1) (Point2D 1 0) (Point2D 0 0) (RGB 200 0 200) (0.9, 0.0, 0.0) 0 0)
 camara :: Camara
 camara = Camara cam basCam
 
@@ -130,7 +134,7 @@ bolo'' = Sphere (Esfera (Point3D (10) (-10) (-18)) 2 (RGB 200 200 200) (0.85,0,0
 
 
 figuras :: Set.Set Shape
-figuras = Set.fromList $ addFigMult [plano0,plano1,plano3,bola,plano2,bola',plano4] []
+figuras = Set.fromList $ addFigMult [plano0,plano1,plano3,bola,plano2,bola',plano4,tri] []
 -- a :: Shape
 -- a =  Sphere (Esfera (Point3D 5 5 (-10)) 2 (RGB 200 200 200) (1, 0, 0) 1.7 0)
 
