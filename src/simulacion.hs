@@ -81,40 +81,49 @@ listRayPhoton kdt luces cam figuras rayos nRay = map (photonMap kdt luces radio 
   where
     !raySMPP = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay raySMPP
-    radio = 4
+    radio = 3
 
 
 main :: IO ()
 main = do
 
---   (vertices1, triangles7) <- loadObjFile "../meshes/simple/palace7.obj"  
---   (_, triangles6) <- loadObjFile "../meshes/simple/palace6.obj" 
---   (_, triangles5) <- loadObjFile "../meshes/simple/palace5.obj" 
---   (_, triangles4) <- loadObjFile "../meshes/simple/palace4.obj" 
---   (_, triangles3) <- loadObjFile "../meshes/simple/palace3.obj" 
---   (_, triangles2) <- loadObjFile "../meshes/simple/palace2.obj" 
---   (_, triangles1) <- loadObjFile "../meshes/simple/palace1.obj" 
---   (_, triangles0) <- loadObjFile "../meshes/simple/palace0.obj" 
+  (texturas1,vertices1, triangles9) <- loadObjFile "../meshes/simple/palace9.obj"
+  (_,_, triangles8) <- loadObjFile "../meshes/simple/palace8.obj" 
+  (_,_, triangles7) <- loadObjFile "../meshes/simple/palace7.obj"   
+  (_,_, triangles6) <- loadObjFile "../meshes/simple/palace6.obj" 
+  (_,_, triangles5) <- loadObjFile "../meshes/simple/palace5.obj" 
+  (_,_, triangles4) <- loadObjFile "../meshes/simple/palace4.obj" 
+  (_,_, triangles3) <- loadObjFile "../meshes/simple/palace3.obj" 
+  (_,_, triangles2) <- loadObjFile "../meshes/simple/palace2.obj" 
+  (_,_, triangles1) <- loadObjFile "../meshes/simple/palace1.obj" 
+  (_,_, triangles0) <- loadObjFile "../meshes/simple/palace0.obj" 
 
---   let !vertices1' = map (escalatePointt (4).movePoint (Direction 7.5 (-2.5) (-9.75)). rotatePointt 'Y' (287.5) ) vertices1
---       !customTriangles7 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles7)
---       !customTriangles6 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles6)
---       !customTriangles5 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles5)
---       !customTriangles4 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles4)
---       !customTriangles3 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles3)
---       !customTriangles2 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles2)
---       !customTriangles1 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles1)
---       !customTriangles0 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 (vertices1', triangles0)
---       !boundingVol7 = buildBVH 1000 customTriangles7
---       !boundingVol6 = buildBVH 2000 customTriangles6
---       !boundingVol5 = buildBVH 3000 customTriangles5
---       !boundingVol4 = buildBVH 4000 customTriangles4
---       !boundingVol3 = buildBVH 5000 customTriangles3
---       !boundingVol2 = buildBVH 6000 customTriangles2
---       !boundingVol1 = buildBVH 7000 customTriangles1
---       !boundingVol0 = buildBVH 8000 customTriangles0
+  -- let !vertices1' = map (escalatePointt (2).movePoint (Direction (4) (-6) (7)). rotatePointt 'Y' (90) ) vertices1
+  let !vertices1' = map (escalatePointt (1). rotatePointt 'Y' (15).movePoint (Direction (6) (-5) (8)). rotatePointt 'Y' (90) ) vertices1
 
---       figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol0),(Acelerator boundingVol1) ,(Acelerator boundingVol2),(Acelerator boundingVol3),(Acelerator boundingVol4),(Acelerator boundingVol5),(Acelerator boundingVol6),(Acelerator boundingVol7) ] $ Set.toList figuras
+      texturas1' = if length texturas1 == 0 then [Point2D 0 0] else texturas1
+      !customTriangles9 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 10 (vertices1', (map (head) triangles9), texturas1, (map (!! 1) triangles9))
+      !customTriangles8 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 11 (vertices1', (map (head) triangles8), texturas1, (map (!! 1) triangles8))
+      !customTriangles7 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 12 (vertices1', (map (head) triangles7), texturas1, (map (!! 1) triangles7))
+      !customTriangles6 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 13 (vertices1', (map (head) triangles6), texturas1, (map (!! 1) triangles6))
+      !customTriangles5 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 14 (vertices1', (map (head) triangles5), texturas1, (map (!! 1) triangles5))
+      !customTriangles4 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 15 (vertices1', (map (head) triangles4), texturas1, (map (!! 1) triangles4))
+      !customTriangles3 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 16 (vertices1', (map (head) triangles3), texturas1, (map (!! 1) triangles3))
+      !customTriangles2 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 17 (vertices1', (map (head) triangles2), texturas1, (map (!! 1) triangles2))
+      !customTriangles1 = convertToCustomFormat (RGB 220 120 50) (0.85, 0,0) 0 18 (vertices1', (map (head) triangles1), texturas1, (map (!! 1) triangles1))
+      !customTriangles0 = convertToCustomFormat (RGB 220 120 50) (0.8, 0,0.1) 0 19 (vertices1', (map (head) triangles0), texturas1, (map (!! 1) triangles0))
+      !boundingVol9 = buildBVH 1000 customTriangles9
+      !boundingVol8 = buildBVH 1000 customTriangles8
+      !boundingVol7 = buildBVH 1000 customTriangles7
+      !boundingVol6 = buildBVH 2000 customTriangles6
+      !boundingVol5 = buildBVH 3000 customTriangles5
+      !boundingVol4 = buildBVH 4000 customTriangles4
+      !boundingVol3 = buildBVH 5000 customTriangles3
+      !boundingVol2 = buildBVH 6000 customTriangles2
+      !boundingVol1 = buildBVH 7000 customTriangles1
+      !boundingVol0 = buildBVH 8000 customTriangles0
+
+      figuras' =  Set.fromList $ addFigMult [(Acelerator boundingVol0),(Acelerator boundingVol1) ,(Acelerator boundingVol2),(Acelerator boundingVol3),(Acelerator boundingVol4),(Acelerator boundingVol5),(Acelerator boundingVol6),(Acelerator boundingVol7),(Acelerator boundingVol8),(Acelerator boundingVol9) ] $ Set.toList figuras
 
 --   (verticesB1, trianglesB0) <- loadObjFile "../meshes/simple/botijo0.obj"  
   
@@ -151,15 +160,15 @@ main = do
   --     boundingVol'' = buildBVH 4000 customTrianglesH2
   --     figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
   
-  -- let objFilePath2 = "../meshes/duck.obj"  
-  -- (texturas2, vertices2, trianglesH2) <- loadObjFile objFilePath2
-  -- let vertices2' = map (escalatePointt (2).movePoint (Direction (0) (0) (0)). rotatePointt 'Y' (0)) vertices2
-  --     origtrianglesH2 = map (head) trianglesH2
-  --     textTrianglesH2 = map (!! 1) trianglesH2
-  --     -- texturas2' = if length texturas2 == 0 then [Point2D 0 0] else texturas2
-  --     customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (Set.size figuras) (vertices2', origtrianglesH2, texturas2, textTrianglesH2)
-  --     boundingVol'' = buildBVH 4000 customTrianglesH2
-  --     figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
+  let objFilePath2 = "../meshes/botijo2.obj"  
+  (texturas2, vertices2, trianglesH2) <- loadObjFile objFilePath2
+  let vertices2' = map (escalatePointt (2).movePoint (Direction (0) (0) (0)). rotatePointt 'Y' (0)) vertices2
+      origtrianglesH2 = map (head) trianglesH2
+      textTrianglesH2 = map (!! 1) trianglesH2
+      -- texturas2' = if length texturas2 == 0 then [Point2D 0 0] else texturas2
+      customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (Set.size figuras) (vertices2', origtrianglesH2, texturas2, textTrianglesH2)
+      boundingVol'' = buildBVH 4000 customTrianglesH2
+      figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
     
 
   args <- getArgs
@@ -176,11 +185,11 @@ main = do
             
       notkdt <- readObject "./kd.bin" -- Carga la lista de fotones del binario
       let kdt = createKD notkdt -- Crea el kdtree
-
-      let cams = mulCam camara 8 0.2-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
+      let cams = mulCam camara 0 0.75
+      -- let cams = mulCam camara 8 0.2-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
 
-          a = map (\rayos -> listRayPhoton kdt luces cam figuras rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayPhoton kdt luces cam figuras' rayos nRay) rayitos -- Photon mapping
           -- a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
           
           c = mediaLRGB a
@@ -195,7 +204,7 @@ main = do
     [] -> do
       gen <- newStdGen
       start <- getCPUTime
-      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras luces gen nRebotes
+      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras' luces gen nRebotes
       print $ length kdt
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Float

@@ -36,16 +36,16 @@ import qualified Data.Set as Set
 intMxKd :: Float
 intMxKd = 50
 n :: Float
-n=100000
+n=75000
 nRebotes :: Int
-nRebotes = 12
+nRebotes = 6
 -- SIMULACION
 aspectR :: Float
 aspectR = 1
 pix :: Float
-pix = 24
+pix = 300
 piCam :: Float
-piCam = 15
+piCam = 12.5
 gamma :: Float
 gamma = 2.4
 maxN :: Int
@@ -60,10 +60,10 @@ intMxSim :: Float
 intMxSim = 1.0
 
 basCam :: Base
-basCam = Base (Direction (piCam*aspectR) 0 0) (Direction 0 piCam 0) (Direction 0 0 (17.5))
+basCam = Base (Direction (piCam*aspectR) 0 0) (Direction 0 piCam 0) (Direction 0 (0) (-15))
 
 cam :: Point3D
-cam =  Point3D 0 0 35
+cam =  Point3D 0 0 (-20)
 
 -- ESCENA
 centr :: Point3D
@@ -76,18 +76,22 @@ centr' = Point3D (10) (-8) (2)
 -- centr''' = Point3D 15 (-10) (-22)
 
 luz :: Luz
-luz = Luz (Point3D (0) 8 (-3)) (RGB 255 255 255) 1 -- Dentro
-luz' :: Luz
-luz' = Luz (Point3D (10) (5) (-50)) (RGB 255 255 255) (intMxKd/2) -- Fuera de la escena
-luz'' :: Luz
-luz'' = Luz (Point3D 8 3 (-12))  (RGB 255 255 255) intMxKd -- Al lado de columna
-luz''' :: Luz
-luz''' = Luz (Point3D 0 0 (30))  (RGB 255 255 255) 1 -- Al lado de columna
+luz = Luz (Point3D (0) 2 (-7)) (RGB 255 220 175) intMxKd -- Dentro
+-- luz = Luz (Point3D (0) 0 (10)) (RGB 255 255 255) intMxKd -- Dentro
 
+luz' :: Luz
+luz' = Luz (Point3D (30) (10) (-9)) (RGB 150 150 255) (intMxKd**2) -- LUZ 1º VENTANA
+-- luz'' :: Luz
+-- luz'' = Luz (Point3D (25) (5) (11)) (RGB 150 150 255) (intMxKd**1.5) -- LUZ 2º VENTANA
+-- luz''' :: Luz
+-- luz''' = Luz (Point3D 0 0 (30))  (RGB 255 255 255) intMxKd -- Al lado de columna
+-- luz'''' = Luz (Point3D (0) 2.5 (-15)) (RGB 255 255 255) intMxKd -- Dentro
+luz''''' = Luz (Point3D (0) 2 (10)) (RGB 255 220 175) intMxKd 
+luz'''''' = Luz (Point3D (6) 2.5 (-19)) (RGB 255 255 255) intMxKd -- Dentro
 plano0 :: Shape
-plano0 = Plane (Plano (Point3D (-15) 0 0) (Direction 1 0 0) (RGB 255 10 10) (0.85,0,0) 0 0) --Izq
+plano0 = Plane (Plano (Point3D (-29) 0 0) (Direction 1 0 0) (RGB 100 100 100) (0.85,0,0) 0 0) --Izq
 plano1 :: Shape
-plano1 =  Plane (Plano (Point3D 15 0 0) (Direction 1 0 0) (RGB 10 255 10) (0.85,0,0) 0 0) -- Der
+plano1 =  Plane (Plano (Point3D 29 0 0) (Direction 1 0 0) (RGB 100 100 100) (0.85,0,0) 0 0) -- Der
 plano2 :: Shape
 plano2 =  Plane (Plano (Point3D 0 15 0) (Direction 0 1 0) (RGB 100 100 100) (0.85,0,0) 0 0) -- Techo
 plano3 :: Shape
@@ -135,7 +139,7 @@ bolo'' = Sphere (Esfera (Point3D (10) (-10) (-18)) 2 (RGB 200 200 200) (0.85,0,0
 
 
 figuras :: Set.Set Shape
-figuras = Set.fromList $ addFigMult [plano0,plano1,rect2,bola,plano2,bola',plano4,bola] []
+figuras = Set.fromList $ addFigMult [plano1{- plano0,plano1,rect2,bola,plano2,bola',plano4,bola -}] []
 
 -- a :: Shape
 -- a =  Sphere (Esfera (Point3D 5 5 (-10)) 2 (RGB 200 200 200) (1, 0, 0) 1.7 0)
@@ -150,4 +154,5 @@ figuras = Set.fromList $ addFigMult [plano0,plano1,rect2,bola,plano2,bola',plano
 -- figuras = Set.fromList $ addFigMult [a, b, c, plano3] []
 
 luces :: [Luz]
-luces = [luz]
+-- luces = [luz,luz'''',luz''''',luz'''''']
+luces = [luz, luz''''',luz']

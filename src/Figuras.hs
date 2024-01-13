@@ -392,7 +392,7 @@ convertToCustomFormat rgb (kd,ke,kr) reflec id (vertices, triangles, texturas, t
 parseTriangle :: String -> Maybe [TrianglePos]
 parseTriangle line = case words line of
     ["f", v1Str, v1Tex, v2Str,v2Tex, v3Str,v3Tex] -> Just $ [TrianglePos (read v1Str) (read v2Str) (read v3Str), TrianglePos (read v1Tex) (read v2Tex) (read v3Tex)]
-    -- ["f", v1Str, v2Str, v3Str] -> Just $ [(TrianglePos (read v1Str) (read v2Str) (read v3Str)),(TrianglePos 0 0 0)]
+    ["f", v1Str, v2Str, v3Str] -> Just $ [(TrianglePos (read v1Str) (read v2Str) (read v3Str)),(TrianglePos 0 0 0)]
     _ -> Nothing
 
 

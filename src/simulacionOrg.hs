@@ -81,7 +81,7 @@ listRayPhoton kdt luces cam figuras rayos nRay = map (photonMap kdt luces radio 
   where
     !raySMPP = map listRay $ parametricShapeCollision figuras rayos
     rayColisions = antialiasing nRay raySMPP
-    radio = 4
+    radio = 3
 
 
 main :: IO ()
@@ -107,7 +107,7 @@ $%$%$%$%
       -- let cams = mulCam camara 8 0.2-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
 
-          a = map (\rayos -> listRayPhoton kdt luces cam figuras rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayPhoton kdt luces cam figuras' rayos nRay) rayitos -- Photon mapping
           -- a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
           
           c = mediaLRGB a
@@ -122,7 +122,7 @@ $%$%$%$%
     [] -> do
       gen <- newStdGen
       start <- getCPUTime
-      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras luces gen nRebotes
+      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras' luces gen nRebotes
       print $ length kdt
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Float

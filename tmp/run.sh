@@ -1,7 +1,7 @@
 #!/bin/bash
 N=12
-pix=24
-piy=24
+pix=300
+piy=300
 etapasY=1
 etapasX=1  # You can change this value to the desired number of iterations per barrier
 pids=()

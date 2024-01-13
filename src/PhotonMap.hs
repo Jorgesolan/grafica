@@ -142,7 +142,7 @@ estDensPhoton photons obj figuras radio = newRGB
 photonMap :: KdTree Float Foton -> [Luz] -> Float -> Set.Set Shape -> Obj -> RGB
 photonMap kdt luces radio figuras obj
   | mindObj obj < 0 = RGB 0 0 0
-  | otherwise = {- addNiebla (head luces) obj 0.9 figuras $ -} difuso + espejo + cristal
+  | otherwise = addNiebla (head luces) obj 0.3 figuras $ difuso + espejo + cristal
   where
     fr = fresnell obj 1
     difuso = if kd == 0 then RGB 0 0 0 else kdToRGB kdt radio figuras obj
