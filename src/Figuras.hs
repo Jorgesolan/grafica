@@ -23,6 +23,7 @@ import Data.Ord (comparing)
 import qualified Data.DList as DL
 import qualified Data.Set as Set
 
+-- | Tipo de dato básico, se usa para representar las coordenadas U V de texturas.
 data Point2D = Point2D {uP :: Float, vP :: Float} deriving Show
 
 -- |Tipo compuesto, este representa la base de la camara y su posición tridimensional sobre dicha base.
@@ -49,8 +50,6 @@ data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: I
 
 -- |Tipo auxiliar, representa la posición de un triángulo, solo tiene sus 3 vértices.
 data TrianglePos = TrianglePos { v1 :: Int, v2 :: Int, v3 :: Int } deriving Show
-
--- data Rosquilla = Rosquilla Point3D Direction Float Float RGB Float Int
 
 
 -- |Tipo especial, sería lo equivalente a una clase virtual, esta nos permite interactuar de forma transparente con su contenido sin necesidad de saber la clase concreta que contiene.
@@ -369,31 +368,33 @@ ray1TriangleIntersection orig dir v1 v2 v3 = do
 
 -- |Función auxiliar, convierte de triangle a triangulo.
 {-# INLINE triangleToTriangulo #-}
-triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos) -> Triangulo
-triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3) =
+triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos,[Point2D], TrianglePos) -> Triangulo
+triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3, texturas, TrianglePos t1 t2 t3) =
     (Triangulo
-        (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1)) (Point2D 0 0) (Point2D 0 0) (Point2D 0 0)
+        (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1)) (texturas !! (t1 - 1)) (texturas !! (t1 - 1)) (texturas !! (t1 - 1))
         rgb (kd,ke,kr) reflec id
     )
-    where
-        v1' = vertices !! (v1 - 1)
-        v2' = vertices !! (v2 - 1)
-        v3' = vertices !! (v3 - 1)
-        vNormal = normal $ (v2' #< v1') * (v3' #< v1')
+    -- where
+        -- v1' = vertices !! (v1 - 1)
+        -- v2' = vertices !! (v2 - 1)
+        -- v3' = vertices !! (v3 - 1)
+        -- vNormal = normal $ (v2' #< v1') * (v3' #< v1')
 
 -- |Función básica, convierte los tríangulos y vértices cargados al formato deseado(color,propiedades).
 {-# INLINE convertToCustomFormat #-}
-convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> ([Point3D], [TrianglePos]) -> [Triangulo]
-convertToCustomFormat rgb (kd,ke,kr) reflec (vertices, triangles) = map (triangleToTriangulo rgb (kd,ke,kr) reflec 0 . resolveVertices) triangles
+convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], [TrianglePos], [Point2D], [TrianglePos]) -> [Triangulo]
+convertToCustomFormat rgb (kd,ke,kr) reflec id (vertices, triangles, texturas, texttring) = map (triangleToTriangulo rgb (kd,ke,kr) reflec id . resolveVertices) $ zip triangles texttring
   where
-    resolveVertices (TrianglePos v1 v2 v3) = (vertices, TrianglePos v1 v2 v3)
+    resolveVertices ((TrianglePos v1 v2 v3),(TrianglePos t1 t2 t3)) = (vertices, TrianglePos v1 v2 v3, texturas, TrianglePos t1 t2 t3)
 
 -- |Función auxiliar, dada una línea del .obj parsea el triángulo que esta contiene.
 {-# INLINE parseTriangle #-}
-parseTriangle :: String -> Maybe TrianglePos
+parseTriangle :: String -> Maybe [TrianglePos]
 parseTriangle line = case words line of
-    ["f", v1Str, v2Str, v3Str] -> Just $ TrianglePos (read v1Str) (read v2Str) (read v3Str)
+    ["f", v1Str, v1Tex, v2Str,v2Tex, v3Str,v3Tex] -> Just $ [TrianglePos (read v1Str) (read v2Str) (read v3Str), TrianglePos (read v1Tex) (read v2Tex) (read v3Tex)]
+    -- ["f", v1Str, v2Str, v3Str] -> Just $ [(TrianglePos (read v1Str) (read v2Str) (read v3Str)),(TrianglePos 0 0 0)]
     _ -> Nothing
+
 
 -- |Función auxiliar, parsea una línea del .obj a punto 3D.
 {-# INLINE parsePoint3D #-}
@@ -402,23 +403,23 @@ parsePoint3D line = case words line of
     ["v", xStr, yStr, zStr] -> Just $ Point3D (read xStr) (read yStr) (read zStr)
     _ -> Nothing
 
+-- |Función auxiliar, parsea una línea del .obj a punto 3D.
+{-# INLINE parsePoint2D #-}
+parsePoint2D :: String -> Maybe Point2D
+parsePoint2D line = case words line of
+    ["vt", uStr, vStr] -> Just $ Point2D (read uStr) (read vStr)
+    _ -> Nothing
 
 -- |Función básica, extrae los vértices y triángulos de un fichero .obj.
 {-# INLINE loadObjFile #-}
-loadObjFile :: FilePath -> IO ([Point3D], [TrianglePos])
+loadObjFile :: FilePath -> IO ([Point2D],[Point3D], [[TrianglePos]])
 loadObjFile filePath = do
     contents <- readFile filePath
     let  lines' = lines contents
-         (vertices, triangles) = foldr splitLines ([], []) lines'
+         validTexturePoints = mapMaybe parsePoint2D lines'
          validVertices = mapMaybe parsePoint3D lines'
          validTriangles = mapMaybe parseTriangle lines'
-    return (validVertices, validTriangles)
-  where
-    splitLines line (vertices, triangles)
-        | null (words line) = (vertices, triangles)
-        | Just vertex <- parsePoint3D line = (vertex : vertices, triangles)
-        | Just triangle <- parseTriangle line = (vertices, triangle : triangles)
-        | otherwise = (vertices, triangles)
+    return (validTexturePoints, validVertices, validTriangles)
 
 -- |Función auxiliar, convierte de punto3D a punto3D (convierte contenido a floats).
 {-# INLINE vertexToPoint3D #-}

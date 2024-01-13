@@ -45,10 +45,30 @@
 --       !boundingVolB5 = buildBVH 1000 customTrianglesB5
 --       figuras'' =  Set.fromList $ addFigMult [(Acelerator boundingVolB0),(Acelerator boundingVolB1),(Acelerator boundingVolB2),(Acelerator boundingVolB3),(Acelerator boundingVolB4),(Acelerator boundingVolB5)] $ Set.toList figuras'
 
---   let objFilePath2 = "../meshes/simplehaskell.obj"  
---   (vertices2, trianglesH2) <- loadObjFile objFilePath2
---   let vertices2' = map (escalatePointt (1).movePoint (Direction (-5) (-5) (-28)). rotatePointt 'Y' (90)) vertices2
---       customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (vertices2', trianglesH2)
---       boundingVol'' = buildBVH 4000 customTrianglesH2
---       figuras''' =  Set.fromList $ addFigMult [(Acelerator boundingVol'')] (Set.toList figuras'')    
+  -- let objFilePath2 = "../meshes/simplehaskell.obj"  
+  -- (vertices2, trianglesH2) <- loadObjFile objFilePath2
+  -- let vertices2' = map (escalatePointt (2).movePoint (Direction (-5) (-5) (-8)). rotatePointt 'Y' (90)) vertices2
+  --     customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (vertices2', trianglesH2)
+  --     boundingVol'' = buildBVH 4000 customTrianglesH2
+  --     figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
+  
+  -- let objFilePath2 = "../meshes/haskell.obj"  
+  -- (texturas2, vertices2, trianglesH2) <- loadObjFile objFilePath2
+  -- let vertices2' = map (escalatePointt (1.5).movePoint (Direction (-3) (-3) (-7)). rotatePointt 'Y' (90)) vertices2
+  --     origtrianglesH2 = map (head) trianglesH2
+  --     textTrianglesH2 = map (!! 1) trianglesH2
+  --     -- texturas2' = if length texturas2 == 0 then [Point2D 0 0] else texturas2
+  --     customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (Set.size figuras) (vertices2', origtrianglesH2, texturas2, textTrianglesH2)
+  --     boundingVol'' = buildBVH 4000 customTrianglesH2
+  --     figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
+  
+  -- let objFilePath2 = "../meshes/duck.obj"  
+  -- (texturas2, vertices2, trianglesH2) <- loadObjFile objFilePath2
+  -- let vertices2' = map (escalatePointt (2).movePoint (Direction (0) (0) (0)). rotatePointt 'Y' (0)) vertices2
+  --     origtrianglesH2 = map (head) trianglesH2
+  --     textTrianglesH2 = map (!! 1) trianglesH2
+  --     -- texturas2' = if length texturas2 == 0 then [Point2D 0 0] else texturas2
+  --     customTrianglesH2 = convertToCustomFormat (RGB 122 10 255) (0.85, 0,0) 0 (Set.size figuras) (vertices2', origtrianglesH2, texturas2, textTrianglesH2)
+  --     boundingVol'' = buildBVH 4000 customTrianglesH2
+  --     figuras''' =  Set.fromList $ addFigMult [Acelerator boundingVol''] (Set.toList figuras)    
   

@@ -12,6 +12,7 @@ import Funciones
 import Debug.Trace (trace)
 import qualified Data.Set as Set
 
+-- | Función principal del path tracer, calcula toda la suma de la luz indirecta.
 {-# INLINE pathTracer #-}
 pathTracer :: Float -> [Luz] -> Set.Set Shape -> Int -> Obj -> StdGen -> RGB
 pathTracer rFl luz !figuras ppp obj gen
@@ -22,14 +23,17 @@ pathTracer rFl luz !figuras ppp obj gen
     colorIndirecto = luzIndirecta obj luz figuras gen''
     (gen',gen'') = split gen
 
+
+-- | Función principal que calcula la luz directa de una escena.
 {-# INLINE luzDirecta #-}
 luzDirecta :: [Luz] -> Set.Set Shape -> Obj -> RGB
 luzDirecta luces figuras obj
   | null luces = RGB 0 0 0
   | mindObj obj < 0 = scale $ RGB 20 40 50
-  | length luces == 1 = {- addNiebla (head luces) obj 0.8 figuras $ -} luzMono obj (head luces) figuras
+  | length luces == 1 = {- addNiebla (head luces) obj 0.6 figuras $ -} luzMono obj (head luces) figuras
   | length  luces > 1 = (luzMono obj (head luces) figuras + luzDirecta (tail luces) figuras obj) `divRGB` 2 -- Si todas pesaran igual que no es asi
 
+-- | Función auxiliar que calcula la luz directa de una escena solo con una luz.
 {-# INLINE luzMono #-}
 luzMono :: Obj -> Luz -> Set.Set Shape -> RGB
 luzMono obj (Luz pointLuz rgbLuz intLuz) figuras = difuso + espejo +cristal
@@ -53,6 +57,7 @@ luzMono obj (Luz pointLuz rgbLuz intLuz) figuras = difuso + espejo +cristal
     -- micro = microfacet wH (normObj obj) 0.4
     -- shadow = shadowing (w0Obj obj) (normObj obj) 0.4
 
+-- | Función que calcula la luz indirecta de una escena.
 {-# INLINE luzIndirecta #-}
 luzIndirecta :: Obj -> [Luz] -> Set.Set Shape -> StdGen -> RGB
 luzIndirecta obj luz figuras gen = result where
@@ -78,6 +83,7 @@ luzIndirecta obj luz figuras gen = result where
     (objCr, rFlNew) = objCristal figuras' (w0Obj obj) (normObj obj) 1 (reflObj obj) (colObj obj)
     objEsp = objEspejo figuras' (w0Obj obj) (normObj obj) (colObj obj) -- Multiplicarlo por el coseno de donde sale * 2pi por el monteCarlo
 
+-- | Función principal que calcula la luz de una escena con una figura como luz de Area.
 {-# INLINE luzArea #-}
 luzArea :: Set.Set Shape -> Int -> Obj -> StdGen -> RGB
 luzArea figuras 0 obj gen = luzAreaRec figuras obj gen
@@ -85,6 +91,7 @@ luzArea figuras p obj gen = luzArea figuras (p-1) obj gen' + luzAreaRec figuras 
   where
     (gen',gen'') =split gen
 
+-- | Función que calcula la luz indirecta de una escena con una figura como luz de Area de manera recursiva.
 {-# INLINE luzAreaRec #-}
 luzAreaRec :: Set.Set Shape -> Obj -> StdGen -> RGB
 luzAreaRec figuras obj gen = rgbFin

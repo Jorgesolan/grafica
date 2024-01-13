@@ -1,7 +1,7 @@
 #!/bin/bash
-N=8
-pix=256
-piy=256
+N=12
+pix=24
+piy=24
 etapasY=1
 etapasX=1  # You can change this value to the desired number of iterations per barrier
 pids=()
@@ -49,5 +49,5 @@ time_diff=$((time2 - time1))
 
 
 # Display the time difference
-echo "Time difference: $time_diff minutes"
+echo "Time difference: $time_diff seconds"
 echo "All processes have finished."
