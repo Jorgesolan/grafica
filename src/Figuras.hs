@@ -20,44 +20,47 @@ import Data.Maybe (mapMaybe)
 import Data.List (minimumBy)
 import Data.Ord (comparing)
 
+import Codec.Picture
 import qualified Data.DList as DL
 import qualified Data.Set as Set
 
 -- | Tipo de dato básico, se usa para representar las coordenadas U V de texturas.
-data Point2D = Point2D {uP :: Float, vP :: Float} deriving Show
+data Point2D = Point2D {uP :: Float, vP :: Float}
+
+data Img = Nada | Iñagen (Image PixelRGB8) deriving (Eq)
 
 -- |Tipo compuesto, este representa la base de la camara y su posición tridimensional sobre dicha base.
 data Camara = Camara Point3D Base
 -- |Tipo compuesto, representa una esfera, tiene un punto central, la longitud del radio, el color, las propiedades del material y su indice de reflexión.
-data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int} deriving Show
+data Esfera = Esfera {centEs :: Point3D, radEs :: Float, rgbEs ::  RGB, trEs :: (Float, Float, Float), reflEs :: Float, idEs :: Int, imgEs :: Img}
 -- |Tipo compuesto, representa un plano, tiene un punto central, la dirección normal al plano, el color, las propiedades del material y su indice de reflexión.
-data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int} deriving Show
+data Plano = Plano {centPl :: Point3D, normPl :: Direction, rgbPl :: RGB, trPl :: (Float, Float, Float), reflPl :: Float, idPl :: Int, imgPl :: Img }
 -- |Tipo compuesto, representa un triángulo, tiene sus 3 vertices, el color, las propiedades del material y su indice de reflexión.
-data Triangulo = Triangulo {p0Tr :: Point3D, p1Tr :: Point3D, p2Tr :: Point3D,uv0Tr :: Point2D, uv1Tr :: Point2D, uv2Tr :: Point2D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int} deriving Show
+data Triangulo = Triangulo {p0Tr :: Point3D, p1Tr :: Point3D, p2Tr :: Point3D,uv0Tr :: Point2D, uv1Tr :: Point2D, uv2Tr :: Point2D, rgbTr :: RGB, trTr :: (Float, Float, Float), reflTr :: Float, idTr :: Int, imgTr :: Img}
 -- |Tipo compuesto, representa un cilindro, tiene un punto central, la longitud del radio, el color, las propiedades del material y su indice de reflexión.
-data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int deriving Show
+data Cilindro = Cilindro Point3D Direction Float RGB (Float, Float, Float) Float Int
 -- |Tipo compuesto, representa un cono, tiene un punto central, la longitud del radio, el color, las propiedades del material y su indice de reflexión.
-data Cono = Cono {centCo :: Point3D, altCo :: Float, radCo :: Float, rgbCo :: RGB, trCo :: (Float, Float, Float), reflCo :: Float, idCo :: Int} deriving Show
+data Cono = Cono {centCo :: Point3D, altCo :: Float, radCo :: Float, rgbCo :: RGB, trCo :: (Float, Float, Float), reflCo :: Float, idCo :: Int, imgCo :: Img}
 -- |Tipo compuesto, representa un rectángulo, tiene un punto central, las direcciones normal y tangente, longitud y anchura, el color, las propiedades del material y su indice de reflexión.
-data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int} deriving Show
+data Rectangulo = Rectangulo {centRe :: Point3D, normRe :: Direction, tngRe :: Direction, altRe :: Float, ancRe :: Float, rgbRe :: RGB, trRe :: (Float, Float, Float), reflRe:: Float, idRe:: Int, imgRe :: Img }
 
 
 -- |Tipo compuesto, representa una hitbox 3D de forma rectangular, tiene dos puntos que representan los vertices de cada extremo.
-data AABB = AABB {p0AB :: Point3D, p1AB ::  Point3D} deriving Show
+data AABB = AABB {p0AB :: Point3D, p1AB ::  Point3D}
 
 -- |Tipo compuesto, representa una BVH, es un tipo especial dado que es recursivo, contiene un AABB que actua como Hitbox, subinstancias de si mismo y una lista de triángulos.
-data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int} deriving Show
+data BVH = BVH {aabb::AABB, bvhs :: [BVH], triangulos :: [Triangulo], idBvh :: Int}
 
 -- |Tipo auxiliar, representa la posición de un triángulo, solo tiene sus 3 vértices.
-data TrianglePos = TrianglePos { v1 :: Int, v2 :: Int, v3 :: Int } deriving Show
+data TrianglePos = TrianglePos { v1 :: Int, v2 :: Int, v3 :: Int }
 
 
 -- |Tipo especial, sería lo equivalente a una clase virtual, esta nos permite interactuar de forma transparente con su contenido sin necesidad de saber la clase concreta que contiene.
-data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Cylinder Cilindro | Rectangle Rectangulo | Acelerator BVH | Cone Cono | Null deriving Show
+data Shape = Sphere Esfera | Plane Plano | Triangle Triangulo | Cylinder Cilindro | Rectangle Rectangulo | Acelerator BVH | Cone Cono | Null
 
 
 -- |Tipo compuesto, contiene todas las propiedades obtenidas al colisionar un rayo con un objeto, la distancia del impacto, el color, la dirección incidente, el punto de colisión, la dirección normal de ese punto para el objeto y las propiedades internas del mismo(coeficientes).
-data Obj = Obj {mindObj :: Float, rgbObj :: RGB, w0Obj :: Direction, colObj :: Point3D, normObj :: Direction, trObj ::(Float, Float, Float), reflObj :: Float, idObj:: Int,shObj :: Shape} deriving Show
+data Obj = Obj {mindObj :: Float, rgbObj :: RGB, w0Obj :: Direction, colObj :: Point3D, normObj :: Direction, trObj ::(Float, Float, Float), reflObj :: Float, idObj:: Int,shObj :: Shape, imgObj :: Img}
 
 instance Eq Shape where
     a == b = False
@@ -111,22 +114,22 @@ getUV (Rectangle(Rectangulo {..})) p = (u,v)
 
       calculateVertex w h = centRe `addPoints` dirPoint (escalateDir w right + escalateDir h up)
 
-      !u = distanceToRay p (Ray bottomLeft (bottomLeft #< topLeft)) / altRe
-      !v = distanceToRay p (Ray bottomLeft (bottomLeft #< bottomRight)) / ancRe
+      !u = distPoint p (distanceToRay p (Ray bottomLeft (normal (topLeft #< bottomLeft)))) / (ancRe*1.2)
+      !v = distPoint p (distanceToRay p (Ray bottomLeft (normal (bottomRight #< bottomLeft)))) / (altRe*1.2)
 
-      distanceToRay :: Point3D -> Ray -> Float -- Punto más cercano al rayo
+      distanceToRay :: Point3D -> Ray -> Point3D -- Punto más cercano al rayo
       distanceToRay point ray =
         let
             (Point3D ox oy oz) = oR ray
             (Direction dx dy dz) = dR ray
-            px = ox - xP point
+            px = -ox - xP point
             py = oy - yP point
             pz = oz - zP point
             a = dx * dx + dy * dy + dz * dz
             b = px * dx + py * dy + pz * dz
             t = -(b / a)
-            closestPoint = Point3D (ox + t * dx) (oy + t * dy) (oz + t * dz)
-            in distPoint point closestPoint
+            closestPoint = Point3D (-ox + t * dx) (oy + t * dy) (oz + t * dz)
+            in closestPoint
 
         -- (Direction x y z) = normal normRe
         -- pAbI = Point3D (xP centRe - (ancRe/2 * abs(1 - x))) (yP centRe - (altRe/2 * abs(1 - y))) (zP centRe + (ancRe/2 * abs(1 - z)))
@@ -185,7 +188,7 @@ rayIntersectsAABB (Ray {oR = Point3D x y z ,dR = Direction dx dy dz}) (AABB {p0A
 -- |Función auxiliar, dado un rayo y una lista de triángulos, intersecta este con todos y devuelve la intersección más cercana.
 {-# INLINE closestIntersection #-}
 closestIntersection :: Ray -> [Triangulo] -> (Float, Triangulo)
-closestIntersection _ [] = (-1, Triangulo (Point3D 0 0 0) (Point3D 0 0 0) (Point3D 0 0 0) (Point2D 0 0) (Point2D 0 0) (Point2D 0 0) (RGB 0 0 0) (0, 0, 0) 0 0) -- Default value
+closestIntersection _ [] = (-1, Triangulo (Point3D 0 0 0) (Point3D 0 0 0) (Point3D 0 0 0) (Point2D 0 0) (Point2D 0 0) (Point2D 0 0) (RGB 0 0 0) (0, 0, 0) 0 0 Nada) -- Default value
 closestIntersection (Ray {..}) triangles =
     foldr findClosestIntersection (-1, head triangles) triangles
     where
@@ -202,13 +205,13 @@ closestIntersection (Ray {..}) triangles =
 
 -- |Función auxiliar, dada una figura individual, añade esta a una lista de figuras.
 addFig :: Shape -> [Shape] -> [Shape]
-addFig (Plane (Plano {..})) shapes = Plane (Plano centPl normPl rgbPl trPl reflPl (length shapes)):shapes
-addFig (Sphere (Esfera {..})) shapes = Sphere (Esfera centEs radEs rgbEs trEs reflEs (length shapes)):shapes
-addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo p0Tr p1Tr p2Tr uv0Tr uv1Tr uv2Tr rgbTr trTr reflTr (length shapes)):shapes
+addFig (Plane (Plano {..})) shapes = Plane (Plano centPl normPl rgbPl trPl reflPl (length shapes) imgPl):shapes
+addFig (Sphere (Esfera {..})) shapes = Sphere (Esfera centEs radEs rgbEs trEs reflEs (length shapes) imgEs):shapes
+addFig (Triangle (Triangulo {..})) shapes = Triangle (Triangulo p0Tr p1Tr p2Tr uv0Tr uv1Tr uv2Tr rgbTr trTr reflTr (length shapes) imgTr):shapes
 addFig (Cylinder (Cilindro p1 p2 p3 color reflec kr _)) shapes = Cylinder (Cilindro p1 p2 p3 color reflec kr (length shapes)):shapes
-addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe (length shapes)):shapes
+addFig (Rectangle(Rectangulo {..})) shapes = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe (length shapes) imgRe):shapes
 addFig (Acelerator (BVH {..})) shapes = Acelerator (BVH aabb bvhs triangulos (length shapes)):shapes
-addFig (Cone (Cono {..})) shapes = Cone (Cono centCo altCo radCo rgbCo trCo reflCo (length shapes)):shapes
+addFig (Cone (Cono {..})) shapes = Cone (Cono centCo altCo radCo rgbCo trCo reflCo (length shapes) imgCo):shapes
 
 -- |Función básica, junta 2 listas de figuras.
 addFigMult :: [Shape] -> [Shape] -> [Shape]
@@ -220,9 +223,9 @@ encenderShapes = map encenderShape
 
 -- |Función auxiliar, convierte una figura a luz de área.
 encenderShape :: Shape -> Shape
-encenderShape (Plane (Plano {..})) = Plane (Plano centPl normPl rgbPl trPl reflPl (-idPl))
-encenderShape (Sphere (Esfera {..})) = Sphere (Esfera centEs radEs rgbEs trEs reflEs (-idEs))
-encenderShape (Triangle (Triangulo {..})) = Triangle (Triangulo p0Tr p1Tr p2Tr uv0Tr uv1Tr uv2Tr rgbTr trTr reflTr (-idTr))
+encenderShape (Plane (Plano {..})) = Plane (Plano centPl normPl rgbPl trPl reflPl (-idPl) imgPl)
+encenderShape (Sphere (Esfera {..})) = Sphere (Esfera centEs radEs rgbEs trEs reflEs (-idEs) imgEs)
+encenderShape (Triangle (Triangulo {..})) = Triangle (Triangulo p0Tr p1Tr p2Tr uv0Tr uv1Tr uv2Tr rgbTr trTr reflTr (-idTr) imgTr)
 
 {-# INLINE parametricShapeCollision #-}
 -- |Función básica, dada una figuro y una lista de rayos, devuelve la lista de colisiones de cada uno de los rayos con la figura.
@@ -247,17 +250,17 @@ oneCollision es@(Sphere (Esfera {..})) (Ray {..}) =
                                collisionPoint = movePoint (escalateDir mind dR) oR
                                vectorNormal = normal $ collisionPoint #< centEs
                            in if t0 > 0 || t1 > 0
-                               then (Obj mind rgbEs dR collisionPoint vectorNormal trEs reflEs idEs es)
-                               else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0 es)) else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0 es))
+                               then (Obj mind rgbEs dR collisionPoint vectorNormal trEs reflEs idEs es imgEs)
+                               else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0 es Nada)) else (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trEs reflEs 0 es Nada))
 
-oneCollision pl@(Plane (Plano {..})) (Ray {..}) = (Obj mind rgbPl dR collisionPoint vectorNormal trPl reflPl idPl pl)
+oneCollision pl@(Plane (Plano {..})) (Ray {..}) = (Obj mind rgbPl dR collisionPoint vectorNormal trPl reflPl idPl pl imgPl)
   where
     mind = ((centPl #< oR) .* vectorNormal) / (dR .* vectorNormal)
     collisionPoint = movePoint (escalateDir mind dR) oR
     vectorNormal = if (dR.*normPl) > 0 then normal (escalateDir (-1) normPl) else normal normPl
 
 
-oneCollision cl@(Cylinder(Cilindro p0 n r color reflec kr id)) (Ray {..}) = (Obj mind color dR collisionPoint vectorNormal reflec kr id cl)
+oneCollision cl@(Cylinder(Cilindro p0 n r color reflec kr id)) (Ray {..}) = (Obj mind color dR collisionPoint vectorNormal reflec kr id cl Nada)
   where
     mind = findMinPositive t1 t2
     t1 = ((p0 #< oR) .* vectorNormal + sqrt discriminant) / (dR .* vectorNormal)
@@ -277,15 +280,15 @@ oneCollision acl@(Acelerator (BVH {..})) ray =
                     let childCollisions = filter (\obj -> mindObj obj /= -1) $ map (\ch -> oneCollision (Acelerator ch) ray ) bvhs
 
                     in case childCollisions of
-                        [] -> (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 acl)
+                        [] -> (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 acl Nada)
                         _ -> let mindObj = minimum childCollisions
                              in mindObj
-        else (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 acl)
+        else (Obj (-1) (RGB 0 0 0) (dR ray) (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 acl Nada)
 
 
 oneCollision  rct@(Rectangle (Rectangulo {..})) (Ray {..})
-  | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe dR (dirPoint collisionPoint) normRe' trRe reflRe idRe rct)
-  | otherwise = (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0 rct )
+  | denom /= 0 && t > 0 && withinBounds = (Obj t rgbRe dR (dirPoint collisionPoint) normRe' trRe reflRe idRe rct imgRe)
+  | otherwise = (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) trRe reflRe 0 rct Nada )
   where
     offset = collisionPoint - pointDir centRe
     localX = offset .* right
@@ -301,8 +304,8 @@ oneCollision  rct@(Rectangle (Rectangulo {..})) (Ray {..})
     normRe' = if dR .* normRe > 0 then normal (escalateDir (-1) normRe) else normal normRe
 
 oneCollision cn@(Cone (Cono{..})) (Ray{..})
-  | denom < 0  || t < 0 = (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 cn)
-  | otherwise = trace (show t ++ " " ++ show collisionPoint) $ (Obj t rgbCo dR collisionPoint normCo trCo reflCo idCo cn)
+  | denom < 0  || t < 0 = (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 cn Nada)
+  | otherwise =(Obj t rgbCo dR collisionPoint normCo trCo reflCo idCo cn imgCo)
     where
         t = findMinPositive t1 t2
         collisionPoint = movePoint (escalateDir t dR) oR
@@ -322,9 +325,26 @@ oneCollision tr@(Triangle (Triangulo {..})) (Ray {..}) =
         Just (t, intersectionPoint) ->
             let normalVec = (p1Tr #< p0Tr) * (p2Tr #< p0Tr)
                 normalVec' = if (dR.*normalVec) > 0 then normal (escalateDir (-1) normalVec) else normal normalVec
-            in (Obj t rgbTr dR intersectionPoint normalVec' trTr reflTr idTr tr)
-        Nothing -> (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 tr)
+            in (Obj t rgbTr dR intersectionPoint normalVec' trTr reflTr idTr tr imgTr)
+        Nothing -> (Obj (-1) (RGB 0 0 0) dR (Point3D 0 0 0) (Direction 0 0 0) (0,0,0) 0 0 tr Nada)
 
+getImg :: Obj -> Image PixelRGB8
+getImg (Obj {..}) = case imgObj of
+    Iñagen img -> img
+    Nada -> error "No hay imagen"
+
+modShape :: Shape -> Image PixelRGB8 -> Shape
+modShape (Plane (Plano {..})) img = Plane (Plano centPl normPl rgbPl trPl reflPl idPl (Iñagen img))
+modShape (Sphere (Esfera {..})) img = Sphere (Esfera centEs radEs rgbEs trEs reflEs idEs (Iñagen img))
+modShape (Triangle (Triangulo {..})) img = Triangle (Triangulo p0Tr p1Tr p2Tr uv0Tr uv1Tr uv2Tr rgbTr trTr reflTr idTr (Iñagen img))
+modShape (Cylinder (Cilindro p1 p2 p3 color reflec kr id)) img = Cylinder (Cilindro p1 p2 p3 color reflec kr id)
+modShape (Rectangle(Rectangulo {..})) img = Rectangle (Rectangulo centRe normRe tngRe altRe ancRe rgbRe trRe reflRe idRe (Iñagen img))
+modShape (Acelerator (BVH {..})) img = Acelerator (BVH aabb bvhs triangulos idBvh)
+modShape (Cone (Cono {..})) img = Cone (Cono centCo altCo radCo rgbCo trCo reflCo idCo (Iñagen img))
+
+modImg :: [Shape] -> Image PixelRGB8 -> Int -> [Shape]
+modImg [] _ _ = []
+modImg (sh:shapes) img id = if id == getShapeID sh then modShape sh img : shapes else sh : modImg shapes img id
 
 -- |Función auxiliar, devuelve el id interno de las figuras.
 {-# INLINE getShapeID #-}
@@ -368,11 +388,11 @@ ray1TriangleIntersection orig dir v1 v2 v3 = do
 
 -- |Función auxiliar, convierte de triangle a triangulo.
 {-# INLINE triangleToTriangulo #-}
-triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], TrianglePos,[Point2D], TrianglePos) -> Triangulo
-triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3, texturas, TrianglePos t1 t2 t3) =
+triangleToTriangulo :: RGB -> (Float,Float,Float) -> Float -> Int -> Img -> ([Point3D], TrianglePos,[Point2D], TrianglePos) -> Triangulo
+triangleToTriangulo rgb (kd,ke,kr) reflec id img (vertices, TrianglePos v1 v2 v3, texturas, TrianglePos t1 t2 t3) =
     (Triangulo
         (vertices !! (v1 - 1)) (vertices !! (v2 - 1)) (vertices !! (v3 - 1)) (texturas !! (t1 - 1)) (texturas !! (t1 - 1)) (texturas !! (t1 - 1))
-        rgb (kd,ke,kr) reflec id
+        rgb (kd,ke,kr) reflec id img
     )
     -- where
         -- v1' = vertices !! (v1 - 1)
@@ -382,8 +402,8 @@ triangleToTriangulo rgb (kd,ke,kr) reflec id (vertices, TrianglePos v1 v2 v3, te
 
 -- |Función básica, convierte los tríangulos y vértices cargados al formato deseado(color,propiedades).
 {-# INLINE convertToCustomFormat #-}
-convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> Int -> ([Point3D], [TrianglePos], [Point2D], [TrianglePos]) -> [Triangulo]
-convertToCustomFormat rgb (kd,ke,kr) reflec id (vertices, triangles, texturas, texttring) = map (triangleToTriangulo rgb (kd,ke,kr) reflec id . resolveVertices) $ zip triangles texttring
+convertToCustomFormat :: RGB -> (Float,Float,Float) -> Float -> Int -> Img -> ([Point3D], [TrianglePos], [Point2D], [TrianglePos]) -> [Triangulo]
+convertToCustomFormat rgb (kd,ke,kr) reflec id img (vertices, triangles, texturas, texttring) = map (triangleToTriangulo rgb (kd,ke,kr) reflec id img. resolveVertices) $ zip triangles texttring
   where
     resolveVertices ((TrianglePos v1 v2 v3),(TrianglePos t1 t2 t3)) = (vertices, TrianglePos v1 v2 v3, texturas, TrianglePos t1 t2 t3)
 

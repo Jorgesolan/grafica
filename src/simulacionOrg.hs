@@ -13,7 +13,7 @@ import Elem3D
       rotatePoint,movePoint, divRGB,rotatePointt
     )
 import Figuras
-    ( Obj,
+    ( Obj, Img(..),
       Shape(Sphere, Plane, Cylinder,Rectangle,Acelerator),
       Plano(Plano),
       Esfera(Esfera),
@@ -24,7 +24,7 @@ import Figuras
       Point2D(..),
       addFigMult,
       parametricShapeCollision,
-      loadObjFile,
+      loadObjFile, modImg,
       convertToCustomFormat, encenderShape ,encenderShapes, buildBVH
       )
 import Files (writePPM, rgbToString, readObject)
@@ -33,7 +33,7 @@ import Funciones
     ( mediaLRGB,
       generateRaysForPixels,
       obtenerPrimeraColision,
-      listRay,
+      listRay, loadTexture,
       chunksOf, mulCam ,brdf, sumFlLuz)
 import PathTracer (pathTracer, luzDirecta, luzArea)
 import KdT ( createKD )
@@ -94,20 +94,27 @@ $%$%$%$%
     [Just nStr, Just mStr, Just oStr] -> do
       gen <- newStdGen
       gen' <- newStdGen
+
+      cow <- loadTexture "../meshes/cow.png"
+      romano <- loadTexture "../meshes/romano.png"
+
+      let figures = Set.fromList $ modImg (Set.toList figuras''') cow 2
+      let figures' = Set.fromList $ modImg (Set.toList figures) romano 3
+
       let n = nStr :: Int
       let etapaY = mStr :: Int
       let etapaX = oStr :: Int
       let n' = n + (etapaY * maxN)
       putStrLn $ "The value of 'n' is: " ++ show n'
       start <- getCPUTime
-            
+      
       notkdt <- readObject "./kd.bin" -- Carga la lista de fotones del binario
       let kdt = createKD notkdt -- Crea el kdtree
       let cams = mulCam camara 0 0.75
       -- let cams = mulCam camara 8 0.2-- El primer número indica el número de muestras que se toman desde la cámara, el segundo el radio de apertura
           rayitos = map (\camara -> generateRaysForPixels (maxN*etapasY) etapasX n' etapaX camara (pix*aspectR) pix nRay gen) cams -- Genera los rayos para cada pixel
 
-          a = map (\rayos -> listRayPhoton kdt luces cam figuras' rayos nRay) rayitos -- Photon mapping
+          a = map (\rayos -> listRayPhoton kdt luces cam figures' rayos nRay) rayitos -- Photon mapping
           -- a = map (\rayos -> listRayToRGB luces figuras rayos gen' nRay) rayitos -- Path tracing
           
           c = mediaLRGB a
@@ -122,7 +129,13 @@ $%$%$%$%
     [] -> do
       gen <- newStdGen
       start <- getCPUTime
-      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figuras' luces gen nRebotes
+      cow <- loadTexture "../meshes/cow.png"
+      romano <- loadTexture "../meshes/romano.png"
+      botijo <- loadTexture "../meshes/botijo2.png"
+      -- let figures = Set.fromList $ modImg (Set.toList figuras''') cow 2
+      let figures = Set.fromList $ modImg (Set.toList figuras''') botijo 20
+      let figures' = Set.fromList $ modImg (Set.toList figures) romano 2
+      let !kdt = createPhoton (sumFlLuz luces) (DL.fromList []) 0 (round n) figures' luces gen nRebotes
       print $ length kdt
       end <- getCPUTime
       let diff = fromIntegral (end - start) / (10^12) :: Float

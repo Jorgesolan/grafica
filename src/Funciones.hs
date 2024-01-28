@@ -26,7 +26,7 @@ import Elem3D
 import Figuras
     ( oneCollision,
       Camara(..),
-      Obj(..),
+      Obj(..),Img(..),getImg,
       Rectangulo(Rectangulo),
       Shape(Null,Triangle),
        getShapeID, getUV )
@@ -201,7 +201,7 @@ genPoint gen = polarToCartesian (acos randIncl') (2 * pi * randAz) randIncl'
 obtenerPrimeraColision :: Set.Set Obj -> Obj
 obtenerPrimeraColision xs =
   case Set.lookupMin $ Set.filter (\obj -> mindObj obj >= 0) xs of
-    Nothing -> (Obj (-1) (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0, 0, 0) 0 0 Null)
+    Nothing -> (Obj (-1) (RGB 0 0 0) (Direction 0 0 0) (Point3D 0 0 0) (Direction 0 0 0) (0, 0, 0) 0 0 Null Nada)
     Just obj -> obj
 
 -- dada la lista de listas de colisiones, devuelve la lista de la primera colisión de cada rayo
@@ -264,32 +264,32 @@ ruletaRusa (a,b,c) gen = (i, p')
 {-# INLINE brdf #-}
 -- | Función básica, dicta de que color se comporta un objeto.
 brdf :: Obj -> Set.Set Shape-> RGB
-brdf obj@(Obj {..}) figuras
+brdf (Obj {..}) figuras
   -- | idObj == 7 =  rgbTxt "../meshes/gold.png"
-  | idObj == 2 = rgbTxt "../meshes/algo.png"
+  -- | idObj == 2 = rgbTxt "../meshes/algo.png"
   -- | idObj == 6 = rgbTxt "../meshes/wood.png"
   | kd == 0 = RGB 1 1 1 -- Que a los cristales o espejos sin difusa no le afecte un color que le hayas puesto
-  | otherwise = scale rgbObj
+  | otherwise = rgbTxt
   where
       (kd, ke, kr) = trObj
-      rgbTxt path = getRGBTexture path obj
+      rgbTxt = getRGBTexture (Obj {..})
 
 -- | Función auxiliar, devuelve el color de un objeto en una textura.
 {-# INLINE getRGBTexture #-}
-getRGBTexture :: String -> Obj -> RGB
-getRGBTexture path (Obj {..}) = newRGB
+getRGBTexture :: Obj -> RGB
+getRGBTexture (Obj {..}) = if imgObj == Nada then scale rgbObj else newRGB
   where
-      textureImage = loadTexture path
+      textureImage = getImg (Obj {..})
       (texWidth, texHeight)
         = (fromIntegral $ imageWidth textureImage,
           fromIntegral $ imageHeight textureImage)
-      newRGB = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth - 1)) (round $  v * (texHeight - 1))
+      newRGB = pixtoRGB $ pixelAt textureImage (round $ u * (texWidth-1)) (round $ v * (texHeight-1))
       (u,v) = getUV shObj colObj
 
 -- | Función auxiliar, carga una textura  de un fichero.
-loadTexture :: FilePath -> Image PixelRGB8
+loadTexture :: FilePath -> IO(Image PixelRGB8)
 loadTexture filePath =
-    unsafePerformIO $ do
+    do
         eitherImage <- readImage filePath
         case eitherImage of
             Right (ImageRGB8 img) -> return img
@@ -308,7 +308,7 @@ pixtoRGB (PixelRGB8 r g b) = RGB (toFloat r) (toFloat g) (toFloat b)
 {-# INLINE sumFlLuz #-}
 sumFlLuz :: [Luz] -> Float
 sumFlLuz [] = 0
-sumFlLuz ((Luz _ _ int):luz) = int + sumFlLuz luz
+sumFlLuz ((Luz {..}):luz) = luzPot + sumFlLuz luz
 
 --------------------------
 --FunciónES ESTADISTICAS--
@@ -349,8 +349,9 @@ fGaus photons obj fot = if isNaN result then 0 else result
 --------------------------
 -- | Función auxiliar, devuelve el color después de que un rayo pase a traves de niebla homogenea.
 {-# INLINE addNiebla #-}
-addNiebla :: Luz -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
-addNiebla (Luz {..}) obj x figuras rgb = if (mindObj obj) < 0 {- || choca closest figuras luzP -} then RGB 0 0 0 else newRGB + (rgb `modRGB` reducObj)
+addNiebla :: [Luz] -> Obj -> Float -> Set.Set Shape ->  RGB -> RGB
+addNiebla [] _ _ _ rgb = RGB 0 0 0
+addNiebla ((Luz {..}):luz) obj x figuras rgb = addNiebla luz obj x figuras rgb + if (mindObj obj) < 0 {- || choca closest figuras luzP -} then RGB 0 0 0 else newRGB + (rgb `modRGB` reducObj)
   where
     rgb' = head $ gammaFunc' 1 2.4 [rgb]
     newRGB = RGB fact fact fact * (scale luzRGB)
@@ -361,13 +362,7 @@ addNiebla (Luz {..}) obj x figuras rgb = if (mindObj obj) < 0 {- || choca closes
     cam = Ray camP dir
     dir = normal $ (colObj obj) #< camP
     closest = distanceToRay luzP cam
-    fact = (1-x) * reducLuz * (distPoint luzP closest ** (-1.75)) -- Como afecta la luz a los objetos
-
-    choca :: Point3D -> Set.Set Shape -> Point3D -> Bool
-    choca p figuras pLuz = ((mindObj bonk) < distLuz) && (distPoint pLuz (colObj bonk) < distPoint pLuz p)
-      where
-        bonk = obtenerPrimeraColision $ Set.map (\figura -> oneCollision figura (Ray pLuz (normal $ pLuz #< p))) figuras --Saca el punto de la primera colision de la luz con las figuras
-        distLuz = distPoint pLuz p
+    fact = (1-x) * reducLuz * (distPoint luzP closest ** (-2)) -- Como afecta la luz a los objetos
 
 -- | Función auxiliar, devuelve el punto en un rayo más cerca de un punto dado.
 {-# INLINE distanceToRay #-}

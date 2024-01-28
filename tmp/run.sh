@@ -3,7 +3,7 @@ N=12
 pix=300
 piy=300
 etapasY=1
-etapasX=1  # You can change this value to the desired number of iterations per barrier
+etapasX=4  # You can change this value to the desired number of iterations per barrier
 pids=()
 binName="./simulacion"
 # Calculate the number of iterations per barrier

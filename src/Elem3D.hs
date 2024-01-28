@@ -21,7 +21,7 @@ data RGB = RGB {red :: Float, green :: Float, blue :: Float} deriving (Eq)
 -- |Tipo compuesto, representa una fuente de luz, esta se encuentra en un punto del espacio por lo que tiene un punto3D, emite una cierta tonalidad de luz por lo que tiene un RGB y emite una cierta intensidad de luz por lo que tiene el Float.
 data Luz = Luz {luzP :: Point3D, luzRGB :: RGB, luzPot :: Float}
 -- |Tipo compuesto, representa una partícula de fotón, esta tiene un punto3D, una intensidad(float), una tonalidad(RGB), por último tiene un id(Entero) para identificarlo.
-data Foton = Foton {pFot :: Point3D, iFot :: Float, rgbFot :: RGB, idFot :: Int}
+data Foton = Foton {pFot :: Point3D, iFot :: Float, rgbFot :: RGB, dirFot :: Direction, idFot :: Int}
 
 instance Binary Point3D where
   put :: Point3D -> Data.Binary.Put.Put
@@ -52,13 +52,14 @@ instance Binary RGB where
 
 instance Binary Foton where
   put :: Foton -> Data.Binary.Get.Internal.Put
-  put (Foton {..}) = put pFot >> put iFot  >> put rgbFot >> put idFot
+  put (Foton {..}) = put pFot >> put iFot  >> put rgbFot >> put dirFot >> put idFot
   get :: Data.Binary.Get.Internal.Get Foton
   get = do
     p <- get
     f <- get
     c <- get
-    Foton p f c <$> get
+    d <- get
+    Foton p f c d <$> get
 
 instance Show Point3D where
     show :: Point3D -> String
@@ -229,7 +230,7 @@ dirPoint (Direction {..}) = Point3D xD yD zD
 {-# INLINE pointToPothon#-}
 -- |Función auxiliar, dado un punto en el espacio, crea un foton "vacío" en este punto.
 pointToPothon :: Point3D -> Foton
-pointToPothon p = Foton p 0 (RGB 0 0 0) 0
+pointToPothon p = Foton p 0 (RGB 0 0 0) (Direction 0 0 0) 0
 
 {-# INLINE distFot #-}
 -- |Función básica, dados un punto y un fotón calcula la distancia real entre ambos.

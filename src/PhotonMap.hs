@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE RecordWildCards #-}
 module PhotonMap where
 
 import Elem3D
@@ -62,15 +63,15 @@ createPhoton lzT fotones contador contMx figuras luces gen nRebotes
 -- | Función auxiliar que selecciona la luz de la que se va a lanzar el fotón.
 {-# INLINE selescLightSource #-}
 selescLightSource :: [Luz] -> Int -> Int -> StdGen -> (Ray, Luz)
-selescLightSource luces contador contMx gen = (Ray pLuz (movePoint (pointDir pLuz) (genPointTotal gen) #< pLuz), luz)
+selescLightSource luces contador contMx gen = (Ray luzP (movePoint (pointDir luzP) (genPointTotal gen) #< luzP), (Luz {..}))
   where
-    luz@(Luz pLuz _ _) = head luces
+    (Luz {..}) = head luces
 
 -- | Función auxiliar que calcula y almacena el recorrido de un fotón por la escena.
 {-# INLINE traceRay #-}
 traceRay :: Point3D -> Float -> RGB -> DL.DList Foton -> Set.Set Shape -> Int -> StdGen -> Obj -> DL.DList Foton
 traceRay p pot rgb fotones figuras n gen obj
-  | n == 0 || rgb == RGB 0 0 0 = fotones
+  | n == 0 || rgb == RGB 0 0 0 || mindObj obj < 0 = fotones
   | otherwise = result
   where
     result = case caso of
@@ -87,7 +88,7 @@ traceRay p pot rgb fotones figuras n gen obj
     photonE = traceRay pObj (pot * por) (brdf obj figuras * rgb ) fotones figuras n gen' objEsp
     photonR = traceRay pObj (pot * por) (brdf obj figuras * rgb ) fotones figuras n gen' objCri
 
-    foton = Foton pObj pot' rgb (idObj obj)
+    foton = Foton pObj pot' rgb (w0Obj obj) (idObj obj)
     pot' = abs (w0Obj obj .* nObj)*pot / ((1+(modd (colObj obj #< p)/10.0))**2)
     
     nxtObj = objAleatorio figuras' obj gen -- Siguiente objeto que choca con dirección random
@@ -107,7 +108,7 @@ estDensPhoton photons obj figuras radio = newRGB
     --newRGB = sumRGB $ map (\photon -> fusion obj (1/(radio * radio * pi)) photon) photons
     newRGB = sumRGB $ map (\photon -> fusion obj (1 / (1 + distFot (colObj obj) photon)) photon) photons
     fusion :: Obj -> Float -> Foton -> RGB
-    fusion obj kernel fot = newRGB `modRGB` kernel
+    fusion obj kernel fot = if dirFot fot .* w0Obj obj >= 0 then newRGB `modRGB` kernel else RGB 0 0 0
       where
         newRGB = modRGB (scale $ rgbFot fot) (iFot fot) * brdf obj figuras
         
@@ -142,7 +143,7 @@ estDensPhoton photons obj figuras radio = newRGB
 photonMap :: KdTree Float Foton -> [Luz] -> Float -> Set.Set Shape -> Obj -> RGB
 photonMap kdt luces radio figuras obj
   | mindObj obj < 0 = RGB 0 0 0
-  | otherwise = addNiebla (head luces) obj 0.3 figuras $ difuso + espejo + cristal
+  | otherwise ={-  addNiebla luces obj 0.9 figuras $ -} difuso + espejo + cristal
   where
     fr = fresnell obj 1
     difuso = if kd == 0 then RGB 0 0 0 else kdToRGB kdt radio figuras obj
