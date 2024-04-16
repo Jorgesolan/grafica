@@ -1,6 +1,47 @@
-Aqui comienza la putisima historia donde dos locos hicieron un render con haskell :D
+<h1 align="center"> Path Tracing y Photon Mapping en Haskell </h1>
 
-# Pasos para poder ejecutar algo
+<p align="center">
+    <p align="center">
+    <a href="https://github.com/Jorgesolan"><strong>Jorge Solán</strong></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/FranciscoJavierPizarro"><strong>Francisco Javier Pizarro</strong></a>
+  </p>
+</p>
+
+<div align="center">
+  <img src="https://github.com/Jorgesolan/grafica/Images/hask.png" width="200" height="200"/>
+  <img src="https://github.com/Jorgesolan/grafica/Images/Parrot.jpeg" width="400" height="200"/>
+  <img src="https://github.com/Jorgesolan/grafica/Images/phot.jpeg" width="200" height="200"/>
+</div>
+
+## Introducción
+
+Trabajo desarrollado en la asignatura de informática gráfica de cuarto de carrera del grado de Ingeniería Informática en la Universidad de Zaragoza-Unizar.
+
+### Características principales
+
+El trabajo consiste en recrear escenas a partir de dos renders diferentes, Photon Mapping y Path Tracing.
+
+La escena se define en el fichero correspondiente "Escena.hs", primero se define todo lo relacionado a la imágen final, número de fotones lanzados si estamos en photon mapping, intensisdad de la luz, píxeles y aspect ratio de la imagen final, además de las muestras por píxel y si se quiere realizar concurrente o distribuido, parámetros extra para la partición. 
+Seguidamente, se pueden definir diferentes geometrias como esferas, planos, tríangulos o rectángulos, además de definir los puntos de luz y la cámara. Si se quiere utilizar mallas de triangulos con .obj es necesario indicarlo en el fichero "objs.hs".
+
+Toda figura viene definida por sus puntos característicos, sus normales, tripleta de cómo se comporta con la luz (Difuso, Refractante o Especular), y se le puede indicar la textura que tenga el objeto, da igual el que sea.
+
+Solo con esto ya se puede crear algunos renders simples, sin embargo este trabajo, además de la complicación de realizarlo en Haskell, se añadieron varios apartados adicionales, entre las más destacables entrarían las siguientes:
+
+
+<div align='center'>
+<h4>Brdf Phong con alpha modificable</h4>
+  <img src="https://github.com/Jorgesolan/grafica/Images/phong.png" width="400" height="400"/>
+  <h4>Bump mapping a partir de una textura</h4>
+  <img src="https://github.com/Jorgesolan/grafica/Images/wall.jpeg" width="400" height="400"/>
+  <h4>Niebla homogénea con partículas modificables en color y cantidad</h4>
+  <img src="https://github.com/Jorgesolan/grafica/Images/niebla.png" width="400" height="400"/>
+</div><br>
+Todo lo relacionado al trabajo queda explicado en su totalidad en las memorias correspondietes a los dos renders ubicadas en este mismo proyecto.
+
+## Ejecución
+
 
 Es necesario contar con las herramientas `cabal`, `ghc`, `make`, `bash/shell`, `python` (y para despliegues distribuidos `ruby`)
 
@@ -31,3 +72,5 @@ En caso de tener cualquier duda relativa a como se debe ejecutar esto, no duden 
 La documentación se genera mediante el comando:
 
 >haddock -o docs/ --quickjump --html --hyperlinked-source src/{Elem3D,Escena,Figuras,Files,Funciones,KdT,PathTracer,PhotonMap,simulacion,Tone_map}.hs
+
+<h2 href='https://render-haskell.duckdns.org/'> Documentación
