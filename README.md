@@ -9,7 +9,7 @@
 </p>
 
 <div align="center">
-  <img src="/Images/hask.png" width="250" height="250"/>
+  <img src="/Images/hask.jpeg" width="250" height="250"/>
   <img src="/Images/Parrot.jpeg" width="500" height="250"/>
   <img src="/Images/phot.jpeg" width="250" height="250"/>
 </div>
@@ -32,11 +32,11 @@ Solo con esto ya se puede crear algunos renders simples, sin embargo este trabaj
 
 <div align='center'>
 <h4>Brdf Phong con alpha modificable</h4>
-  <img src="/Images/phong.png" width="400" height="400"/>
+  <img src="/Images/phong.jpeg" width="400" height="400"/>
   <h4>Bump mapping a partir de una textura</h4>
-  <img src="/Images/wall.png" width="400" height="400"/>
+  <img src="/Images/wall.jpeg" width="400" height="400"/>
   <h4>Niebla homogénea con partículas modificables en color y cantidad</h4>
-  <img src="/Images/niebla.png" width="400" height="400"/>
+  <img src="/Images/niebla.jpeg" width="400" height="400"/>
 </div><br>
 Todo lo relacionado al trabajo queda explicado en su totalidad en las memorias correspondietes a los dos renders ubicadas en este mismo proyecto.
 
@@ -73,4 +73,5 @@ La documentación se genera mediante el comando:
 
 >haddock -o docs/ --quickjump --html --hyperlinked-source src/{Elem3D,Escena,Figuras,Files,Funciones,KdT,PathTracer,PhotonMap,simulacion,Tone_map}.hs
 <div align='center'>
+<br>
 <a href='https://render-haskell.duckdns.org/'> <strong>Documentación</strong></a>
