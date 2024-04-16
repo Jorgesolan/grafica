@@ -9,9 +9,9 @@
 </p>
 
 <div align="center">
-  <img src="https://github.com/Jorgesolan/grafica/Images/hask.png" width="200" height="200"/>
-  <img src="https://github.com/Jorgesolan/grafica/Images/Parrot.jpeg" width="400" height="200"/>
-  <img src="https://github.com/Jorgesolan/grafica/Images/phot.jpeg" width="200" height="200"/>
+  <img src="/Images/hask.png" width="250" height="250"/>
+  <img src="/Images/Parrot.jpeg" width="500" height="250"/>
+  <img src="/Images/phot.jpeg" width="250" height="250"/>
 </div>
 
 ## Introducción
@@ -32,11 +32,11 @@ Solo con esto ya se puede crear algunos renders simples, sin embargo este trabaj
 
 <div align='center'>
 <h4>Brdf Phong con alpha modificable</h4>
-  <img src="https://github.com/Jorgesolan/grafica/Images/phong.png" width="400" height="400"/>
+  <img src="/Images/phong.png" width="400" height="400"/>
   <h4>Bump mapping a partir de una textura</h4>
-  <img src="https://github.com/Jorgesolan/grafica/Images/wall.jpeg" width="400" height="400"/>
+  <img src="/Images/wall.png" width="400" height="400"/>
   <h4>Niebla homogénea con partículas modificables en color y cantidad</h4>
-  <img src="https://github.com/Jorgesolan/grafica/Images/niebla.png" width="400" height="400"/>
+  <img src="/Images/niebla.png" width="400" height="400"/>
 </div><br>
 Todo lo relacionado al trabajo queda explicado en su totalidad en las memorias correspondietes a los dos renders ubicadas en este mismo proyecto.
 
@@ -72,5 +72,5 @@ En caso de tener cualquier duda relativa a como se debe ejecutar esto, no duden 
 La documentación se genera mediante el comando:
 
 >haddock -o docs/ --quickjump --html --hyperlinked-source src/{Elem3D,Escena,Figuras,Files,Funciones,KdT,PathTracer,PhotonMap,simulacion,Tone_map}.hs
-
-<h2 href='https://render-haskell.duckdns.org/'> Documentación
+<div align='center'>
+<a href='https://render-haskell.duckdns.org/'> <strong>Documentación</strong></a>
