@@ -9,9 +9,8 @@
 </p>
 
 <div align="center">
-  <img src="/Images/hask.jpeg" width="250" height="250"/>
-  <img src="/Images/Parrot.jpeg" width="500" height="250"/>
-  <img src="/Images/phot.jpeg" width="250" height="250"/>
+  <img src="/Images/Parrot.jpeg" width="600" height="300"/>
+  
 </div>
 
 ## Introducción
